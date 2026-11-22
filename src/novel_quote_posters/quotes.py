@@ -31,11 +31,17 @@ def locate(book: dict, text: str, start: int | None = None) -> dict:
 
 def verify(book: dict, quote: dict) -> bool:
     source = quote["source"]
-    return (source["source_hash"] == book["source_hash"]
+    exact = (source["source_hash"] == book["source_hash"]
             and source["canonical_hash"] == book["canonical_hash"]
             and sha256(book["text"].encode()) == book["canonical_hash"]
             and 0 <= source["start"] < source["end"] <= len(book["text"])
             and book["text"][source["start"]:source["end"]] == quote["quote_exact"])
+    if not exact:
+        return False
+    try:
+        return source == locate(book, quote["quote_exact"], source["start"])
+    except ValueError:
+        return False
 
 
 def make_quote(book: dict, text: str, start: int | None = None) -> dict:

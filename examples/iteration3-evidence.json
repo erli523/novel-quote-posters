@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "iteration": 3,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {
+      "passed": 66,
+      "failed": 0
+    },
+    "ruff": "passed",
+    "private_evidence_id": "20261122T152007Z-3134f08e"
+  },
+  "implemented": [
+    "offline review page and all-or-nothing human record import",
+    "version bound approvals and idempotent replay",
+    "source cache revalidation against retained TXT/EPUB",
+    "recoverable multi-document writes with durable head reconciliation",
+    "incremental deterministic rendering with immutable prior versions",
+    "CLI source-analysis-render-review-export subprocess integration"
+  ],
+  "ui_verification": {
+    "sample": "fixtures/mist_letters.txt",
+    "quotes": 8,
+    "cards": 0,
+    "checks": [
+      "context disclosure expanded",
+      "default decisions remain pending",
+      "missing reviewer/attestation blocks download"
+    ],
+    "actual_human_approvals": 0,
+    "screenshot_sha256": "7df3e69b0ddd80f363b689c021cc08bb504e3e85f20696f8d6f05bd9398edd79"
+  },
+  "fault_injection": [
+    "partial multi-file materialization",
+    "files complete before SQLite event commit",
+    "composition complete before card pointer update",
+    "damaged composed asset"
+  ],
+  "image_service": {
+    "previous_attempt": "HTTP 404",
+    "retested_this_iteration": false,
+    "real_generated_images": 0
+  },
+  "limits": [
+    "no real image generation/editing/handoff verified",
+    "not all five external tool failure points exercised",
+    "initial ingest checkpoint recovery not yet implemented",
+    "actual human semantic and visual review pending",
+    "image_kind remains a declaration requiring tool provenance review"
+  ],
+  "acceptance_claim": "Automatic checks are evidence for selected portions, not a pass of all 28 criteria."
+}

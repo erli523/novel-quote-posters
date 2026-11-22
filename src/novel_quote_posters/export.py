@@ -8,7 +8,10 @@ from pathlib import Path
 
 from PIL import Image
 
+from .documents import recover_documents
 from .quotes import check_display
+from .rendering import validate_tracked_render
+from .source import validate_source
 from .storage import contained, digest_file, load_json, save_json, sha256
 
 
@@ -28,10 +31,9 @@ def quote_fingerprint(quote: dict) -> str:
 
 def export_bundle(run: Path, destination: Path, *, draft: bool = False,
                   allow_rewrite: bool = False) -> dict:
+    recover_documents(run)
     book = load_json(run / "book.json")
-    source_path = contained(run, "source." + book["format"])
-    if digest_file(source_path) != book["source_hash"]:
-        raise ValueError("source file hash changed")
+    validate_source(run, book)
     quotes = {q["quote_id"]: q for q in load_json(run / "quotes.json")}
     characters = load_json(run / "characters.json")
     cards = load_json(run / "cards.json")
@@ -59,13 +61,16 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
             raise ValueError("stale or mismatched poster/layout")
         if draft != layout["draft"]:
             raise ValueError("draft flag must match visible poster label")
+        validate_tracked_render(run, card, quote, book, characters[card["character_id"]],
+                                layout, required=not draft, source_checked=True)
         fingerprint = review_fingerprint(card, quote, image_hash, digest_file(layout_path))
         if not draft:
             review = card.get("review", {})
             speaker_review = quote.get("review", {})
             if card.get("image_kind") != "generated":
                 raise ValueError("final export requires real generated imagery")
-            if (quote["speaker"]["status"] in {"ambiguous", "narration"}
+            if (quote["quote_type"] not in {"dialogue", "monologue"}
+                    or quote["speaker"]["status"] in {"ambiguous", "narration"}
                     or quote["speaker"]["character_id"] != card["character_id"]):
                 raise ValueError("named final card has ambiguous or different speaker")
             if (speaker_review.get("status") != "approved"

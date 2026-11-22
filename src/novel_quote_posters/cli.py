@@ -5,11 +5,15 @@ import shutil
 from pathlib import Path
 
 from .analysis import apply_analysis
+from .documents import commit_documents, recover_documents
 from .export import export_bundle
 from .ingest import chunks, ingest
-from .layout import STYLES, compose
+from .layout import STYLES
 from .quotes import candidates
-from .storage import contained, digest_file, load_json, save_json
+from .rendering import render_cards
+from .review import apply_review, write_review_page
+from .source import validate_source
+from .storage import digest_file, load_json, save_json
 
 
 def main():
@@ -38,9 +42,20 @@ def main():
     command.add_argument("--output", type=Path, required=True)
     command.add_argument("--draft", action="store_true", help="requires visible pending-review labels")
     command.add_argument("--allow-rewrite", action="store_true")
+    command = commands.add_parser("review", help="write a private offline human-review page")
+    command.add_argument("--run", type=Path, required=True)
+    command.add_argument("--output", type=Path, required=True)
+    command.add_argument("--quotes-only", action="store_true")
+    command = commands.add_parser("apply-review", help="validate and import actual human decisions")
+    command.add_argument("record", type=Path)
+    command.add_argument("--run", type=Path, required=True)
+    command = commands.add_parser("recover", help="finish an interrupted JSON transaction")
+    command.add_argument("--run", type=Path, required=True)
     commands.add_parser("styles", help="print built-in, editable layout parameters")
     args = parser.parse_args()
     try:
+        if args.command not in {"ingest", "styles", "recover"}:
+            recover_documents(args.run)
         if args.command == "ingest":
             if args.run.exists():
                 raise ValueError("run already exists; use a new run ID to preserve evidence")
@@ -63,48 +78,52 @@ def main():
             import json
             print(json.dumps(STYLES, ensure_ascii=False, indent=2))
         elif args.command == "render":
-            book = load_json(args.run / "book.json")
-            quotes = {q["quote_id"]: q for q in load_json(args.run / "quotes.json")}
-            characters = load_json(args.run / "characters.json")
-            cards = load_json(args.run / "cards.json")
-            selected = [c for c in cards if not args.card or c["card_id"] == args.card]
-            if not selected:
-                raise ValueError("no matching cards")
-            for card in selected:
-                quote = quotes[card["quote_id"]]
-                from .quotes import check_display
-                check_display(book, quote, allow_rewrite=True)
-                output = contained(args.run, card["poster"])
-                if output.exists():
-                    raise ValueError("poster exists; version its path before re-rendering")
-                compose(contained(args.run, card["background"]), output,
-                        text=quote["display_text"], character=characters[card["character_id"]]["name"],
-                        title=book["title"], chapter=quote["source"]["chapter"], font_path=args.font,
-                        style_id=card["style_id"], width=args.width, height=args.height,
-                        rewrite=quote["text_mode"] == "rewrite", draft=not args.clean_candidate,
-                        overrides=card.get("layout_overrides"))
-                print(f"Rendered draft {card['card_id']}")
+            report = render_cards(args.run, args.font, card_id=args.card, width=args.width,
+                                  height=args.height, draft=not args.clean_candidate)
+            print(f"Rendered {report['rendered']}; reused {report['reused']}; image calls 0.")
         elif args.command == "export":
             report = export_bundle(args.run, args.output, draft=args.draft,
                                    allow_rewrite=args.allow_rewrite)
             print(f"Exported {len(report['assets'])} cards; draft={report['draft']}")
         elif args.command == "apply-analysis":
             book = load_json(args.run / "book.json")
+            validate_source(args.run, book)
             windows = load_json(args.run / "chunks.json")
             proposal = load_json(args.proposal)
             quotes, characters, updated = apply_analysis(book, windows, proposal)
             snapshot = args.run / "analysis" / (digest_file(args.proposal) + ".json")
-            save_json(snapshot, proposal)
-            save_json(args.run / "quotes.json", quotes)
-            save_json(args.run / "characters.json", characters)
-            save_json(args.run / "chunks.json", updated)
-            save_json(args.run / "analysis-report.json", {
+            if not snapshot.exists():
+                snapshot.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(args.proposal, snapshot)
+            elif digest_file(snapshot) != digest_file(args.proposal):
+                raise ValueError("analysis snapshot checksum mismatch")
+            existing = {q["quote_id"]: q for q in load_json(args.run / "quotes.json")}
+            for quote in quotes:
+                previous = existing.get(quote["quote_id"])
+                if previous and {k: v for k, v in previous.items() if k != "review"} == {
+                        k: v for k, v in quote.items() if k != "review"}:
+                    quote["review"] = previous["review"]
+                existing[quote["quote_id"]] = quote
+            old_characters = load_json(args.run / "characters.json") if (args.run / "characters.json").exists() else {}
+            report = {
                 "source_hash": book["source_hash"], "proposal_hash": digest_file(args.proposal),
                 "semantic_chunks_processed": sum(w["semantic_status"] == "application_processed"
                                                   for w in updated),
                 "chunks_total": len(updated), "quotes": len(quotes),
-                "human_review": "pending", "reviewer_type": "application_assistant"})
+                "human_review": "pending", "reviewer_type": "application_assistant"}
+            commit_documents(args.run, {"quotes.json": list(existing.values()),
+                                       "characters.json": {**old_characters, **characters},
+                                       "chunks.json": updated, "analysis-report.json": report},
+                             reason="application_analysis")
             print(f"Validated {len(quotes)} semantic proposals; human review pending.")
+        elif args.command == "review":
+            report = write_review_page(args.run, args.output, quotes_only=args.quotes_only)
+            print(f"Review page: {len(report['quotes'])} quotes, {len(report['cards'])} cards; no approval granted.")
+        elif args.command == "apply-review":
+            report = apply_review(args.run, load_json(args.record))
+            print(f"Imported human decisions: {report['quotes_changed']} quotes, {report['cards_changed']} cards.")
+        elif args.command == "recover":
+            print("Recovered pending transaction." if recover_documents(args.run) else "No pending transaction.")
     except (ValueError, OSError, KeyError) as error:
         parser.exit(2, f"error: {error}\n")
 

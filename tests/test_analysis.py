@@ -36,3 +36,25 @@ def test_hallucinated_evidence_and_stale_chunks_are_rejected():
     proposal["processed_chunks"][0]["sha256"] = "old"
     with pytest.raises(ValueError, match="stale"):
         apply_analysis(source, windows, proposal)
+
+
+def test_incremental_analysis_preserves_previously_processed_windows():
+    source, windows, proposal = example()
+    windows[0]["semantic_status"] = "application_processed"
+    proposal["processed_chunks"] = []
+    _, _, updated = apply_analysis(source, windows, proposal)
+    assert updated[0]["semantic_status"] == "application_processed"
+
+
+def test_narration_cannot_masquerade_as_named_dialogue():
+    source, windows, proposal = example()
+    proposal["quotes"][0]["quote_type"] = "narration"
+    with pytest.raises(ValueError, match="consistently"):
+        apply_analysis(source, windows, proposal)
+
+
+def test_named_attribution_requires_an_actual_character():
+    source, windows, proposal = example()
+    proposal["quotes"][0]["speaker"]["character_id"] = None
+    with pytest.raises(ValueError, match="needs a character"):
+        apply_analysis(source, windows, proposal)

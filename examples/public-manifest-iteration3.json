@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "9f6db6168a73635f27f28cd6414533a304c53a285f4a8f1b557a2bd71daf4286",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "README.md",
+      "sha256": "45712d22d152c579d775299f3d08947bd326a74a7a50cda96d53be8c78ce9122",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "34e8986e37062e018a929c68da3aa034b29da784ed705e635fdf4be928e01895",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "c4eed621a1b3026f1a649edc2c066a6d85e4978fd026faf4a13625e23e68f01a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "d95d3e6d2adf1ea6270bc1d8738e749675a33d55beb0ef5bafbd9a860331e7e9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "b7f7bd0970aec7c7df46f5fa9f86559436ac276b9a7bfd49d36ba6e23d4a9fe7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "scripts/public_manifest.py",
+      "sha256": "69d62845c95d799fc1c7660c801d3f93919036767338fe998a6b9b004a02d98b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/analysis.py",
+      "sha256": "db2a5e07d0b297940e5df9a6a60844e4752008d3f878c2efa1fcb468f07e15ce",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "6604cf61981c351b997ca36ef75513da9d6b7c9795528541a8b66cf1d2dd7911",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/export.py",
+      "sha256": "dfe787787df38c0c39f219ee17e4820cbdc9f58a98448211197df558b655e910",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/quotes.py",
+      "sha256": "18fd9c56aea1574ae086fd659a62f7e0a18c212347668700e5fb3868c89b6bbb",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/conftest.py",
+      "sha256": "9e2a45e7dc7df7c60794e14e33d42fd2b423217f81bb1f104992c13ab695c400",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_analysis.py",
+      "sha256": "ae55a50cb8a7b98ae4aa9a4cce164aed4f32a9fac2f177480ae917621e123ab6",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration3-evidence.json",
+      "sha256": "488d7a4073ee3c81475c5ed10f76654c332a3b1eb6ef0dedde232ec2e660364c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/documents.py",
+      "sha256": "5efd1b98dd4f883b44cbf1264c9e012d71c9ec5cbcf00ded66537fbe320f60b7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/rendering.py",
+      "sha256": "df1df4c71b4f522c3ad597af8bedef8f700895d7f9dd6ba3c924d73958b71fb2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/review.py",
+      "sha256": "84a9fd7e2e331958d5b9aa4991711e8dae926630176c6aadf4be82f31776372c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/source.py",
+      "sha256": "44dd473c9a56a32e374becafa9485d5bb2810bccc3264de279e175978be3161c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "sha256": "84f1deef999125efe0e2a1d39536bf2b145d9f8e06bac691835a967f0ab9adb9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_documents.py",
+      "sha256": "5c7eb76692ba2a6e91c375536f91351bc47a6f69bea516ff18d2674c63ebe326",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_rendering.py",
+      "sha256": "e1187c4ef7b6bc524966796108d0947c5196c3428cee47fd14e8fc0afd405586",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_review.py",
+      "sha256": "4d32cb05120bc5432c045a078799b9208e6b8972ca3550349c3c5eba960a6f9e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_source_integrity.py",
+      "sha256": "5349a8d3b1981da25ec8408e653b5332d048f1575c4b216803279dc9f57c54b3",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}
