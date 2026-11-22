@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "iteration": 2,
+  "contract": "docs/plans/v1.md",
+  "sample_hash": "2c789908a4e8293ed2e910fc142f62c6d407b7a9af41c912f7a507eaf1d82e5b",
+  "checks": {
+    "pytest": {
+      "passed": 43,
+      "failed": 0
+    },
+    "ruff": "passed",
+    "script": "scripts/check.py",
+    "private_evidence_id": "20261122T145400Z-468ed111"
+  },
+  "semantic_sample": {
+    "chapters": 3,
+    "chunks_indexed": 2,
+    "chunks_application_processed": 2,
+    "candidates": 8,
+    "selected": 3,
+    "human_review": "pending"
+  },
+  "layout_checks": {
+    "styles": 6,
+    "lengths": [
+      70,
+      100
+    ],
+    "font_floor": 36,
+    "image_kind": "synthetic_test_fixture_not_generated_art",
+    "reviewer_type": "AI_and_automatic"
+  },
+  "source_evidence": "fixtures/mist_analysis.json",
+  "image_tool": {
+    "calls": 1,
+    "status": "blocked",
+    "error": "HTTP 404",
+    "images_generated": 0
+  },
+  "incomplete": [
+    "real image generation/editing/handoff",
+    "human review interface",
+    "CLI recovery integration",
+    "complete acceptance matrix"
+  ],
+  "product_gates": {
+    "P0": "pending_human_review",
+    "P1": "incomplete",
+    "P2": "blocked",
+    "P3": "incomplete"
+  }
+}

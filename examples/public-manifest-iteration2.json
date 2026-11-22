@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": ".github/workflows/checks.yml",
+      "sha256": "b07c9e39f712c91477c5ca7b46a39ed10cd3d6b16ad7bceba19d6e25b140f533",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "README.md",
+      "sha256": "6ff75a7b56cec6daa70545542d08e5acc9421509019a491a69e20fd5f8f5c450",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "5d3ef186e820824db0645395296551187c25dde8e0066eace0423a7104b459ca",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "02f8ce33f39194a860dcfa9c696ba198f441ff0b04760491ec3896e875023c4f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/quotes.py",
+      "sha256": "5fcaec7d3e76cb8a1dddb58cc9f9242ffd0680d7094d935b42ade2bbac5552d6",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "4d12ea062cd6c4df9f5d0ceef91e0e964d052ff426dc534a8bd541c4d92a4e51",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration2-evidence.json",
+      "sha256": "5571ed4706510e06718f6cec8bd52461116c16a9598219e72e6fdeb8059f13ce",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "fixtures/mist_analysis.json",
+      "sha256": "2a35073ce7f2999f76d8852d412a9c3588ee232c5da7e4bdeca0a07b603e4540",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "requirements-dev.lock",
+      "sha256": "60a0b6f334615b4443d1958a96e912d62e5d2611d0d5287975b0044e75d2f614",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "scripts/check.py",
+      "sha256": "f803d818523e81efea7144293bb0b7579412cbabea96b7f9497ff0b89cf5b021",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/analysis.py",
+      "sha256": "be48f47ad569a88394aaaaa95f96276c4b60abe5e4e7cba8ebf61b4f52a515c8",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/export.py",
+      "sha256": "4ff39e14b472e57ce3a5f2ed18b46fc829ac8505eb669c48d8cb701e883c1675",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/layout.py",
+      "sha256": "a66fbd33869a27b45503526cb53020fa5e26357a41bb4e22c54dc1342128b308",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/workflow.py",
+      "sha256": "f0bc0016167d918b4a16f85048202cea0d3039576148105559bfb8a912cc4b01",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/conftest.py",
+      "sha256": "75ecfe71afb12cd46e9fb465d7f964551ce5e2efe8b4d864cfc146a842e4868f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_analysis.py",
+      "sha256": "a44ec301f91d99846bfc57e6cacba2d49cd6bdb6fabb59dbca9f23827305124b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_export.py",
+      "sha256": "9b0f8b2009e7e8e7c402e14513dfeff73b0b7e7b7d3f84951a0c44cdbce06ab0",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_layout.py",
+      "sha256": "69337356e1902894c19d45c511cc97d27ab70fcde4befb5d4d04e58410872be3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_workflow.py",
+      "sha256": "bfa24ca0abf8c04dea2d00bceab4a11cada68702a21b7cdd2b043279fe10fdc8",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "source_hash": "2c789908a4e8293ed2e910fc142f62c6d407b7a9af41c912f7a507eaf1d82e5b",
+  "analyzer": "application_assistant",
+  "model_version": "unavailable",
+  "characters": {
+    "lin_che": {
+      "character_id": "lin_che",
+      "name": "林澈",
+      "aliases": [
+        "林澈"
+      ],
+      "traits": [
+        {
+          "kind": "explicit",
+          "value": "27岁，黑色短发，左眉尾浅疤，深蓝现代风衣",
+          "evidence": [
+            {
+              "start": 70,
+              "end": 116,
+              "text": "林澈是个二十七岁的青年，黑色短发，左眉尾有一道浅疤。他穿着深蓝色的现代风衣，衣领被山雨打湿。"
+            }
+          ]
+        },
+        {
+          "kind": "design_choice",
+          "value": "偏瘦脸型，深灰内搭，克制的电影插画感",
+          "evidence": []
+        }
+      ],
+      "visual_anchor_version": 1,
+      "reference_image": null
+    },
+    "wen_xue": {
+      "character_id": "wen_xue",
+      "name": "闻雪",
+      "aliases": [
+        "闻雪"
+      ],
+      "traits": []
+    }
+  },
+  "quotes": [
+    {
+      "quote_exact": "要是走错了呢？",
+      "start": 29,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "wen_xue",
+        "evidence": [
+          {
+            "start": 17,
+            "end": 28,
+            "text": "闻雪停在路边，问林澈："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 55,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "上下文依赖或句意较短，保留为备选，不凑数量。",
+        "selected": false,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    },
+    {
+      "quote_exact": "山不会替你走路，但它会告诉你，路还在。",
+      "start": 49,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "lin_che",
+        "evidence": [
+          {
+            "start": 37,
+            "end": 48,
+            "text": "林澈望着山顶的灯，说："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 89,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "成长主题明确，山路意象可视觉化，离开上下文仍可读。",
+        "selected": true,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    },
+    {
+      "quote_exact": "你还在等那个人吗？",
+      "start": 167,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "wen_xue",
+        "evidence": [
+          {
+            "start": 162,
+            "end": 166,
+            "text": "闻雪问："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 55,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "上下文依赖或句意较短，保留为备选，不凑数量。",
+        "selected": false,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    },
+    {
+      "quote_exact": "有些告别没有声音，却会在往后的每一场雨里响起。",
+      "start": 199,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "lin_che",
+        "evidence": [
+          {
+            "start": 189,
+            "end": 198,
+            "text": "过了很久，林澈说："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 86,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "告别与雨形成可回味的声音意象；情绪与成长句形成变化。",
+        "selected": true,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    },
+    {
+      "quote_exact": "那就把窗打开吧。",
+      "start": 229,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "wen_xue",
+        "evidence": [
+          {
+            "start": 224,
+            "end": 228,
+            "text": "闻雪说："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 55,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "上下文依赖或句意较短，保留为备选，不凑数量。",
+        "selected": false,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    },
+    {
+      "quote_exact": "明天还走吗？",
+      "start": 294,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "wen_xue",
+        "evidence": [
+          {
+            "start": 285,
+            "end": 293,
+            "text": "闻雪指着窗外问："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 55,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "上下文依赖或句意较短，保留为备选，不凑数量。",
+        "selected": false,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    },
+    {
+      "quote_exact": "我不是因为看见终点才出发，是因为还有想见的人。",
+      "start": 311,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "lin_che",
+        "evidence": [
+          {
+            "start": 302,
+            "end": 310,
+            "text": "林澈点点头，说："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 85,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "行动动机清晰，人物温柔坚定，可作收束。",
+        "selected": true,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    },
+    {
+      "quote_exact": "等天亮了，我们就沿着有光的地方走。",
+      "start": 345,
+      "speaker": {
+        "status": "explicit",
+        "character_id": "wen_xue",
+        "evidence": [
+          {
+            "start": 336,
+            "end": 344,
+            "text": "临别时，闻雪说："
+          }
+        ],
+        "explanation": "明确动作主语及说/问动词指向紧接的引语；这是应用端判断，待用户核对。"
+      },
+      "quote_type": "dialogue",
+      "selection": {
+        "score": 55,
+        "score_kind": "AI_assistance_not_truth",
+        "reason": "上下文依赖或句意较短，保留为备选，不凑数量。",
+        "selected": false,
+        "spoiler_risk": "low_in_this_fictional_sample"
+      }
+    }
+  ],
+  "processed_chunks": [
+    {
+      "chunk_id": "chunk00001",
+      "sha256": "43be1ee4dc239a3141f102714ec49ad0f61597dcdf9f215b54683977666bbdb5",
+      "summary": "山路及旧站对话；外貌线索为27岁短发浅疤与深蓝风衣。末尾引语跨窗，在下一窗口继续核对。"
+    },
+    {
+      "chunk_id": "chunk00002",
+      "sha256": "a63b93371be393e91ec5f8862afcfb7a7976b787e506a4ed142801b8050581e1",
+      "summary": "重叠旧站收尾，检查灯火章三轮明确问答与临别语；末句旁白不冒充角色台词。"
+    }
+  ]
+}
