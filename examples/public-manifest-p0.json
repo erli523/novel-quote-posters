@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "9f8a3266734ff86117fb4a29998bc16848c699e8ace84ec08f1ae5f14f9bb1e7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": ".github/workflows/checks.yml",
+      "sha256": "3077e6033a87d7a27b9153fdfe150919f4d9a5bbe1be5f412e3c1674adc71b65",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "f875522f0fb0f27eded44abd1cf8e9c85c92c9dbd1b2788cc5d6661156733dfd",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "rules.md",
+      "sha256": "88d9bf900a603034b5cf8ad7afe1efea5ce43d4474369065644f8594056d706b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "README.md",
+      "sha256": "be660040b8d4bba5dd576e67e0efa6e3503237e45fcbcd882bc10241bbba0026",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "e3c7d27c35770e8a7e529e9b6e6325431f86da3b5e1c92d9c12e44f062357d16",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "066d6f1725fe48eeafed386a28cb7e8238439019182f7d3c3aa31e9acd36426e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/requirements.md",
+      "sha256": "34833141b971656b8e832c43de835044dbc3818ede87c3edda231d95cbad38c7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "6a176ad97bb5caba9abbd2f7fd89fd07536fb05f0d6c54946978c5f375afccfe",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/acceptance.md",
+      "sha256": "544d4213e9865b51a4fbdfee3235942332dd3a5f0c7057549fa345f057b98f2f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/engineering-review.md",
+      "sha256": "9bc781645e538467e303f9b2dc292c769f77e26afff2abf753178ed2e0202794",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "73443b6e99c0d7fb6578929e39194504294f10853c2be7cfa3b70bcdcf3a9ac3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "f3f6598c5ff45da22dafdafc5406bfc6ef3a79608d171f90c55a4a3584fd7b0c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/reference/proposal-v1.1.md",
+      "sha256": "bb47a9d5577f1672bd83356038d05378cb33ed4b6f2db1db0e58fab0f58851c4",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "fixtures/mist_letters.txt",
+      "sha256": "2c789908a4e8293ed2e910fc142f62c6d407b7a9af41c912f7a507eaf1d82e5b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "fixtures/README.md",
+      "sha256": "d825cf847d97ed77c3de3405bf46233b23e2662c9f7ff22802ebb11ef60cf6c3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/bootstrap-evidence.json",
+      "sha256": "f91eea640dce82c655a3cb60835657262f0de826eb9b0acfc597bac51f78fc60",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "scripts/public_manifest.py",
+      "sha256": "a82e2cc412ee7f58598f315c88595e77e129afbf863d3e7119a044b74d97c6fd",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/__init__.py",
+      "sha256": "9b001a86dc83242d5483b279947fa28aeca464cb759953d88dcbf69ac60c7210",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/storage.py",
+      "sha256": "dbc35d1c838090b7481b7a0bb3287640c6d5fe36db4d6f98ab6f57d11807d44a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/ingest.py",
+      "sha256": "e0fed80c4728106ef2c281fa9f92e862632bd07fa2a9ed0cbd0b054cb279793f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/quotes.py",
+      "sha256": "6ace615a1cb8ffd89d6441f7c64699e0f0c3efc17e576d6da78051f5c04fa928",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "e43ffb8838655852e15d96fb45cc23acc6c6551da78d7da46adedc0d6ef4e1c3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_sources.py",
+      "sha256": "9683d963ac4803df9dbcbe2537c350dc17b3ed91864531369b15ef4ff5359bbc",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "e94d7993adcb80b79cc8dfe82cedf7840b44c6051a3982ae940d7b890fa346df",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

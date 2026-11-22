@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-22",
+  "contract": "docs/plans/v1.md",
+  "automatic_checks": {"source_tests": 13, "passed": 13, "ruff": "passed"},
+  "sample": {"path": "fixtures/mist_letters.txt", "chapters_indexed": 3, "candidates": 8, "semantic_chunks_processed": 0},
+  "image_capability": {"tool": "image_gen.imagegen", "attempts": 1, "status": "blocked", "error": "HTTP 404 Not Found", "images_generated": 0},
+  "gates": {"P0": "pending_review_and_remote_verification", "P1": "incomplete", "P2": "blocked", "P3": "not_run"},
+  "reviewer_type": "AI_and_automatic_checks",
+  "human_review": "pending",
+  "limitations": ["index coverage does not prove semantic extraction", "no generated character image exists", "no product gate claimed passed"]
+}

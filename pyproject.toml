@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "novel-quote-posters"
+version = "0.1.0"
+description = "Traceable novel quotations and editable Chinese character posters"
+requires-python = ">=3.11"
+dependencies = ["Pillow>=10.2,<13", "fonttools>=4.40,<5"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4,<10", "ruff>=0.11,<1"]
+
+[project.scripts]
+novel-posters = "novel_quote_posters.cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.setuptools.packages.find]
+where = ["src"]
