@@ -92,6 +92,8 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
                          text=(.08, .16, .92, .46))
         elif style_id == "warm_memory":
             style.update(panel=(.065, .49, .935, .94), text=(.1, .55, .9, .85))
+        elif style_id == "ink_whitespace":
+            style["text"] = (.09, .16, .39, .84)
     fg, accent = style["fg"], style["accent"]
     scale = width / 1080
 

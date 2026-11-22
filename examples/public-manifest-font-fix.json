@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "src/novel_quote_posters/layout.py",
+      "sha256": "9a687a16b8c44e4badec5cd9a3519ec6fd9b3772c5c43f8b075b9d2ecc168d29",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "b05ffd8c5bfd2d459e7b59699be568cea1b71c14f7c0903cb34eed344cafc021",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}
