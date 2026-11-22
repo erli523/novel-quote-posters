@@ -9,6 +9,7 @@ from pathlib import Path
 from PIL import Image
 
 from .documents import recover_documents
+from .images import validate_image_asset
 from .quotes import check_display
 from .rendering import validate_tracked_render
 from .source import validate_source
@@ -67,8 +68,9 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
         if not draft:
             review = card.get("review", {})
             speaker_review = quote.get("review", {})
-            if card.get("image_kind") != "generated":
-                raise ValueError("final export requires real generated imagery")
+            image_asset = validate_image_asset(run, card, required=True)
+            if image_asset["source_kind"] not in {"generated", "user_provided"}:
+                raise ValueError("test fixtures cannot be final exported imagery")
             if (quote["quote_type"] not in {"dialogue", "monologue"}
                     or quote["speaker"]["status"] in {"ambiguous", "narration"}
                     or quote["speaker"]["character_id"] != card["character_id"]):
@@ -116,7 +118,8 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
                                  for k, v in row.items()})
                 assets.append({"path": f"douyin_batch/{name}", "sha256": digest_file(target),
                                "card_id": card["card_id"], "quote_id": quote["quote_id"],
-                               "fingerprint": fingerprint, "image_kind": card.get("image_kind", "unknown")})
+                               "fingerprint": fingerprint, "image_kind": card.get("image_kind", "unknown"),
+                               "image_asset_id": card.get("image_asset_id")})
             (stage / "quotes.csv").write_text(csv_file.getvalue(), encoding="utf-8-sig", newline="")
             save_json(stage / "cards.json", cards)
             save_json(stage / "quotes.json", [q for _, q, *_ in selected])

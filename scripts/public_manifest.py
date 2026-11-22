@@ -10,7 +10,7 @@ from pathlib import Path
 
 from novel_quote_posters.storage import contained, digest_file, save_json
 
-FORBIDDEN = {"data", "runs", "dist", "evidence", ".git", ".env", ".venv", ".state"}
+FORBIDDEN = {"data", "runs", "dist", "evidence", ".git", ".env", ".venv", ".state", ".ingest-staging"}
 PATTERNS = [r"[A-Za-z]:[/\\](?:Users|自动配图)", r"gh[oprs]_[A-Za-z0-9]{20,}",
             r"sk-[A-Za-z0-9_-]{20,}", r"-----BEGIN [A-Z ]*PRIVATE KEY-----"]
 

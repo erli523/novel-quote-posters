@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "iteration": 4,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {
+      "passed": 85,
+      "failed": 0
+    },
+    "ruff": "passed",
+    "private_evidence_id": "20261122T155717Z-f1ae928b"
+  },
+  "implemented": [
+    "checkpointed atomic ingest and explicit resume",
+    "CLI image request reservation, bounded retry and reconciliation",
+    "image import/receipt registry and provenance-aware final export",
+    "user-provided replacement images kept separate from generated outputs",
+    "reference/selected-card/image attachment commands",
+    "progress status and additive ledger migration"
+  ],
+  "actual_sample": {
+    "source": "fixtures/mist_letters.txt",
+    "source_hash": "2c789908a4e8293ed2e910fc142f62c6d407b7a9af41c912f7a507eaf1d82e5b",
+    "chapters_indexed": 3,
+    "application_processed_chunks": 2,
+    "candidates": 8,
+    "cards": {
+      "awaiting_image": 3
+    }
+  },
+  "actual_native_tool_attempts": {
+    "count": 2,
+    "outcome": "HTTP 404 on both attempts",
+    "generated_images": 0,
+    "budget_limit": 10,
+    "conservatively_reserved": 2,
+    "remaining": 8,
+    "api_fallback_enabled": false
+  },
+  "simulated_test_scope": [
+    "registration replay after interruption",
+    "source-provided replacement export after simulated human approval",
+    "unknown outcomes and retry/budget limits",
+    "legacy budget preservation and future-schema rejection"
+  ],
+  "limits": [
+    "simulated receipts are not actual image-tool output evidence",
+    "human semantic and visual review pending",
+    "successful image generation, editing and handoff still unverified",
+    "full 28-item acceptance not passed"
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "b4ccdd6346792b4a1b060f5a784afa31d67875c7d1569704a2b143e45de8d3c6",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "README.md",
+      "sha256": "31ffff16f937bb6c7d9e787065b045fe8897efca0b4e7342cae68c76ed67151d",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "8b88fada68e616b50a69049e7859a3e91bbbcb471bc32889ba15efc70974684e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "0a64c6480e884fcf8fce18fa23373295385964d3afb229225b37b5878e8bf20a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "94104eb88c2c35f5892bf3e0679d20163bf97154f2ad6b55df754cfe0dfc4966",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "847fbeb54386c212c5965115e13ff70336bfac945dafc98e48efec91153e99de",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "265ebb681c7c9891028a497c7ba40082935c2764185c7acb7f749fa570888f74",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "scripts/public_manifest.py",
+      "sha256": "3c63c0a09c3b082217a79b226f9125be05dcae81c703d26e58bd2059dc5d4818",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "38c0dcc06e5129ea20d22f5f41ff344914c63feb157a7389b473780fdfd4fc1a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/documents.py",
+      "sha256": "50b853ab00cdcbdd0d6d27c5ee0f9d9cb797c43ca111cfd1034ca544207ae5b0",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/export.py",
+      "sha256": "bb08f8f5b8a4d975fb549a30462ce6b470c5b6d4240027b8fed95bfc425af28e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/rendering.py",
+      "sha256": "e64b15c8aa940f4a74af8e933ff8fa7967328a644895b8b399b2f4886ad2f9b1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/storage.py",
+      "sha256": "8311a6db27613cbc8bcf651b638dab90017aca9d2370f26f5cdacc169af940c1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/workflow.py",
+      "sha256": "96a43a05df5ba5f87104e7fbb22d70ddd15beec353fb71bf7b03dd1df5c82376",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/bootstrap.py",
+      "sha256": "04ea61924dd7711efabcca1cddd61a43426f1322ac9979a70129d8de72ee0a46",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/images.py",
+      "sha256": "973ab840a3152831473e7b665510d2dd60eb8653e072f095c61e788241137a1c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/status.py",
+      "sha256": "cf668b1195b31a54382d3ab33df265ea4910459b362149c33889029e3c3e9c74",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "sha256": "a40248a0fdcc2e374c0d0c115f6a5ab468b0848cde08469466e1a5bf6442a7f2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_workflow.py",
+      "sha256": "5341626eaee4951f5b8235ce90618a7ed98627c62e208187b4c46585fdb9147f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_bootstrap.py",
+      "sha256": "b90dca05fe0d791b1bdeeeba49acb0820e67ba6ec7a5413391d7a04b6ad9ccf5",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_images.py",
+      "sha256": "6a32bacf49e806ef74687e8e41d63e69f6d8913cad79943003c38b230f189b8c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_status.py",
+      "sha256": "d7278d0402ec80ea71742ca879d70e76f0d4bc02387cae0e5bf2c88785e8575d",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_storage.py",
+      "sha256": "5f804d8223751398991fd22be60c9c858500ddfae404f758a9734bca53aef89c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration4-evidence.json",
+      "sha256": "c2791a8b268aed91df511a8163ccb11047517acfd134c5886be896d8f9ce44bb",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

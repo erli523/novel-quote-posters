@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import shutil
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
@@ -12,8 +13,29 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def fingerprint(value) -> str:
+    return sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode())
+
+
 def digest_file(path: Path) -> str:
-    return sha256(path.read_bytes())
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def copy_atomic(source: Path, destination: Path) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=".copying-", dir=destination.parent)
+    try:
+        with os.fdopen(fd, "wb") as target, source.open("rb") as original:
+            shutil.copyfileobj(original, target)
+            target.flush()
+            os.fsync(target.fileno())
+        os.replace(temporary, destination)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
 
 
 def now() -> str:

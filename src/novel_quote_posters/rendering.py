@@ -1,20 +1,16 @@
 """Incremental, recoverable composition. This module never calls an image service."""
 
 import importlib.metadata
-import json
 import re
 from pathlib import Path
 
 from . import layout
 from .documents import commit_documents, recover_documents
+from .images import validate_image_asset
 from .quotes import check_display
 from .source import validate_source
-from .storage import contained, digest_file, load_json, save_json, sha256
+from .storage import contained, digest_file, fingerprint, load_json, save_json
 from .workflow import Ledger
-
-
-def fingerprint(value) -> str:
-    return sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode())
 
 
 def render_inputs(run: Path, book: dict, quote: dict, character: dict, card: dict,
@@ -23,6 +19,7 @@ def render_inputs(run: Path, book: dict, quote: dict, character: dict, card: dic
     check_display(book, quote, allow_rewrite=True)
     if not source_checked:
         validate_source(run, book)
+    image_asset = validate_image_asset(run, card)
     references = {}
     if character.get("reference_image"):
         reference = contained(run, character["reference_image"])
@@ -33,6 +30,7 @@ def render_inputs(run: Path, book: dict, quote: dict, character: dict, card: dic
             "source": {k: book[k] for k in ["source_hash", "canonical_hash", "title", "parser_version"]},
             "quote": {k: v for k, v in quote.items() if k != "review"},
             "character": character, "references": references,
+            "image_asset": image_asset,
             "card": {k: v for k, v in card.items() if k not in {"poster", "review"}},
             "background_sha256": digest_file(contained(run, card["background"])),
             "font_sha256": digest_file(font), "width": width, "height": height, "draft": draft}

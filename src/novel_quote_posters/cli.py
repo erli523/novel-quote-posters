@@ -5,15 +5,25 @@ import shutil
 from pathlib import Path
 
 from .analysis import apply_analysis
+from .bootstrap import initialize_run
 from .documents import commit_documents, recover_documents
 from .export import export_bundle
-from .ingest import chunks, ingest
+from .images import (
+    attach_image,
+    budget_summary,
+    import_legacy_failures,
+    plan_image,
+    prepare_cards,
+    record_failure,
+    register_image,
+    set_reference,
+)
 from .layout import STYLES
-from .quotes import candidates
 from .rendering import render_cards
 from .review import apply_review, write_review_page
 from .source import validate_source
-from .storage import digest_file, load_json, save_json
+from .status import run_status
+from .storage import digest_file, load_json
 
 
 def main():
@@ -26,6 +36,8 @@ def main():
     command.add_argument("--encoding")
     command.add_argument("--chunk-size", type=int, default=6000)
     command.add_argument("--overlap", type=int, default=300)
+    command.add_argument("--resume", action="store_true")
+    command.add_argument("--image-limit", type=int, default=10)
     command = commands.add_parser("render", help="compose imported card data; draft unless approved")
     command.add_argument("--run", type=Path, required=True)
     command.add_argument("--font", type=Path, required=True)
@@ -51,29 +63,44 @@ def main():
     command.add_argument("--run", type=Path, required=True)
     command = commands.add_parser("recover", help="finish an interrupted JSON transaction")
     command.add_argument("--run", type=Path, required=True)
+    command = commands.add_parser("status", help="show observed progress and stale/awaiting cards")
+    command.add_argument("--run", type=Path, required=True)
+    for name, help_text in [("image-plan", "reserve budget and save an application-tool request"),
+                            ("image-fail", "record a failure or unknown tool outcome"),
+                            ("image-import", "register an actual image file and its receipt"),
+                            ("budget", "show conservative image call counts"),
+                            ("import-call-log", "preserve prior failed/unknown call counts"),
+                            ("prepare-cards", "prepare source-verified application-selected cards"),
+                            ("attach-image", "attach a registered image to a card"),
+                            ("set-reference", "set a registered character reference image")]:
+        command = commands.add_parser(name, help=help_text)
+        command.add_argument("--run", type=Path, required=True)
+        if name in {"image-plan", "import-call-log"}:
+            command.add_argument("file", type=Path)
+        elif name == "image-import":
+            command.add_argument("source", type=Path)
+            command.add_argument("--receipt", type=Path, required=True)
+        elif name == "image-fail":
+            command.add_argument("--call", required=True)
+            command.add_argument("--status", choices=["failed", "unknown_outcome", "tool_unavailable"], required=True)
+            command.add_argument("--failure-kind", required=True)
+            command.add_argument("--note", required=True)
+        elif name == "prepare-cards":
+            command.add_argument("--count", type=int, default=10)
+            command.add_argument("--style", default="mist_cinema")
+        elif name in {"attach-image", "set-reference"}:
+            command.add_argument("asset_id")
+            command.add_argument("--card" if name == "attach-image" else "--character", required=True)
     commands.add_parser("styles", help="print built-in, editable layout parameters")
     args = parser.parse_args()
     try:
-        if args.command not in {"ingest", "styles", "recover"}:
+        if args.command not in {"ingest", "styles", "recover", "status"}:
             recover_documents(args.run)
         if args.command == "ingest":
-            if args.run.exists():
-                raise ValueError("run already exists; use a new run ID to preserve evidence")
-            book = ingest(args.source, args.title, args.encoding)
-            windows = chunks(book, args.chunk_size, args.overlap)
-            quotes, issues = candidates(book)
-            args.run.mkdir(parents=True)
-            source = args.run / ("source" + args.source.suffix.lower())
-            shutil.copyfile(args.source, source)
-            save_json(args.run / "book.json", book)
-            save_json(args.run / "chunks.json", windows)
-            save_json(args.run / "quotes.json", quotes)
-            save_json(args.run / "ingest-report.json", {
-                "source_hash": book["source_hash"], "chapters_indexed": len(book["chapters"]),
-                "characters_indexed": len(book["text"]), "chunks_indexed": len(windows),
-                "semantic_chunks_processed": 0, "candidates": len(quotes), "issues": issues,
-                "speaker_review": "pending", "coverage_claim": "index_only"})
-            print(f"Indexed {len(book['chapters'])} chapters; {len(quotes)} unreviewed candidates.")
+            report = initialize_run(args.source, args.run, title=args.title, encoding=args.encoding,
+                                    size=args.chunk_size, overlap=args.overlap, resume=args.resume,
+                                    image_limit=args.image_limit)
+            print(f"Indexed {report['chapters_indexed']} chapters; {report['candidates']} candidates; reused={report['reused']}.")
         elif args.command == "styles":
             import json
             print(json.dumps(STYLES, ensure_ascii=False, indent=2))
@@ -124,6 +151,30 @@ def main():
             print(f"Imported human decisions: {report['quotes_changed']} quotes, {report['cards_changed']} cards.")
         elif args.command == "recover":
             print("Recovered pending transaction." if recover_documents(args.run) else "No pending transaction.")
+        else:
+            import json
+            if args.command == "image-plan":
+                report = plan_image(args.run, load_json(args.file))
+            elif args.command == "image-fail":
+                report = record_failure(args.run, args.call, args.status,
+                                        failure_kind=args.failure_kind, note=args.note)
+            elif args.command == "image-import":
+                report = register_image(args.run, args.source, load_json(args.receipt))
+            elif args.command == "budget":
+                report = budget_summary(args.run)
+            elif args.command == "import-call-log":
+                report = import_legacy_failures(args.run, args.file)
+            elif args.command == "prepare-cards":
+                report = prepare_cards(args.run, count=args.count, style_id=args.style)
+            elif args.command == "attach-image":
+                report = attach_image(args.run, args.asset_id, args.card)
+            elif args.command == "set-reference":
+                report = set_reference(args.run, args.asset_id, args.character)
+            elif args.command == "status":
+                report = run_status(args.run)
+            else:
+                raise ValueError("unhandled command")
+            print(json.dumps(report, ensure_ascii=False, indent=2))
     except (ValueError, OSError, KeyError) as error:
         parser.exit(2, f"error: {error}\n")
 

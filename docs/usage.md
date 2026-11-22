@@ -18,7 +18,9 @@ Linux/macOS 使用 `.venv/bin/python`。测试需要中文字体：Windows 使�
 .venv\Scripts\python -m novel_quote_posters.cli ingest fixtures/mist_letters.txt --run runs/my-demo --title 雾山来信 --chunk-size 300 --overlap 80
 ```
 
-TXT 支持严格解码 UTF-8/BOM、UTF-16/BOM、GB18030，可用 --encoding 指定。EPUB 按 spine 顺序读取 XHTML，不执行其中脚本。DOCX/PDF/OCR 当前明确不支持。book.json 含私有全文；不要推送 runs/。重复 run 路径会拒绝，避免覆盖证据。
+TXT 支持严格解码 UTF-8/BOM、UTF-16/BOM、GB18030，可用 --encoding 指定。EPUB 按 spine 顺序读取 XHTML，不执行其中脚本。DOCX/PDF/OCR 当前明确不支持。book.json 含私有全文；不要推送 runs/。重复 run 路径默认拒绝。
+
+导入先在同级私有 .ingest-staging/ 保存原文件及解析/窗口/候选检查点，完成后才原子发布任务目录。中断后用相同参数增加 --resume，复用已完成阶段；损坏检查点会隔离保存并重做。完整任务的 --resume 校验固定输入及配置，保留后续审核和分析，不重置预算。旧任务若没有 ingest-contract/seal，不伪装成新格式的可恢复导入，应保留旧任务并另建新 run。完整任务的不可变导入文件损坏会明确拒绝，不能悄悄覆盖已有人工数据。
 
 ## 2. 应用端语义分析
 
@@ -32,7 +34,7 @@ TXT 支持严格解码 UTF-8/BOM、UTF-16/BOM、GB18030，可用 --encoding 指�
 
 ## 3. 真实生图与卡片
 
-由应用端实际工具生成基准肖像及无字底图，保存到 run 内，保留提示词、实际参考图和调用记录。V1 没有从 Python 请求应用内置生图的隐藏接口。若工具不可用，可继续验证程序，不能把测试底图记为真实生图。
+由应用端实际工具生成基准肖像及无字底图，保存到 run 内，保留提示词、实际参考图和调用记录。[图像交接与预算](image-workflow.md) 给出 image-plan/image-import/budget/set-reference/prepare-cards/attach-image 的完整步骤。V1 没有从 Python 请求应用内置生图的隐藏接口。若工具不可用，可继续验证程序，不能把测试底图记为真实生图。
 
 cards.json 是数组，每项示例：
 
@@ -48,7 +50,7 @@ cards.json 是数组，每项示例：
 }
 ```
 
-路径须在 run 内。poster 可省略；render 会为 card_id 与输入内容生成稳定版本文件名，并回填 cards.json，不覆盖旧图。image_kind 为来源声明，不能单独证明真实工具调用；验收仍须检查调用记录与资产。`styles` 命令打印当前布局参数；单卡可提供 layout_overrides 覆盖色板和归一化坐标，须重新排版审阅。
+上例用于说明旧草稿数据格式。正式流程用 image-import/attach-image 自动填入 image_asset_id、来源种类及路径，不能只手填 image_kind=generated。路径须在 run 内。poster 可省略；render 会为 card_id 与输入内容生成稳定版本文件名，并回填 cards.json，不覆盖旧图。来源登记仍需对照真实工具轨迹，不能独立证明图像内容真实。`styles` 命令打印当前布局参数；单卡可提供 layout_overrides 覆盖色板和归一化坐标，须重新排版审阅。
 
 ## 4. 排版与导出
 
@@ -81,4 +83,4 @@ ZIP 包含序号 PNG、手机缩略图、CSV/JSON、来源及顺序说明；不�
 
 workflow.Ledger 已接入 render 的资产与依赖记录。CLI 的分析、审核、卡片指针更新使用多文件事务：中断后在下一次操作前完成同一事务；也可手动执行 recover --run runs/my-demo。已渲染完但尚未回填 cards.json 的产物能被发现并复用；缺失或损坏的图/报告会生成新的尝试版本，保留损坏证据。排序变化不触发重新生图或重排；正文/档案/模板变化会使受影响结果及审核失效。
 
-当前恢复验证覆盖文档更新及确定性排版，**未覆盖真实图像工具调用的端到端恢复**。预算预留和未知结果对账仍由应用端协调，不能宣传脚本可以自动请求内置生图。本版本不提供无人值守生图，也未通过完整能力验收；参看开发记录。
+当前恢复验证覆盖初次导入的阶段边界、文档更新、确定性排版，以及图像注册/结果对账中断；**未覆盖实际成功生图的端到端恢复**。预算预留和未知结果对账已经有命令，但真正调用仍由应用端协调，不能宣传脚本可以自动请求内置生图。本版本不提供无人值守生图，也未通过完整能力验收；参看开发记录。

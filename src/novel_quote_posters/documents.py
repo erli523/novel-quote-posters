@@ -11,7 +11,8 @@ from pathlib import Path
 from .storage import contained, digest_file, load_json, now, save_json
 from .workflow import Ledger
 
-ALLOWED = {"quotes.json", "characters.json", "cards.json", "chunks.json", "analysis-report.json"}
+ALLOWED = {"quotes.json", "characters.json", "cards.json", "chunks.json", "analysis-report.json",
+           "image-assets.json"}
 
 
 def _recover(run: Path, ledger: Ledger) -> bool:

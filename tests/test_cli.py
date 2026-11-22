@@ -42,3 +42,37 @@ def test_cli_source_analysis_render_reuse_review_export_recovery(tmp_path, chine
         assert "book.json" not in archive.namelist()
     assert "No pending" in cli("recover", "--run", run)
     assert "draft flag" in cli("export", "--run", run, "--output", tmp_path / "final", expected=2)
+
+
+def test_cli_image_budget_provenance_and_pending_card_progress(tmp_path):
+    import json
+
+    run = tmp_path / "run"
+    cli("ingest", ROOT / "fixtures/mist_letters.txt", "--run", run, "--title", "雾山来信",
+        "--chunk-size", "300", "--overlap", "80")
+    assert "reused=True" in cli("ingest", ROOT / "fixtures/mist_letters.txt", "--run", run,
+                                 "--title", "雾山来信", "--chunk-size", "300", "--overlap", "80", "--resume")
+    cli("apply-analysis", ROOT / "fixtures/mist_analysis.json", "--run", run)
+    result = json.loads(cli("prepare-cards", "--run", run, "--count", "10"))
+    assert result["prepared"] == 3 and result["shortfall"] == 7
+    assert json.loads(cli("status", "--run", run))["card_counts"] == {"awaiting_image": 3}
+    request = run / "request.json"
+    save_json(request, {"call_id": "SIMULATED", "asset_id": "TEST_REF", "kind": "reference",
+                        "character_id": "lin_che", "tool": "image_gen.imagegen", "references": [],
+                        "prompt": "Automated test request; no real tool call occurs."})
+    assert json.loads(cli("image-plan", request, "--run", run))["action"] == "invoke"
+    cli("image-fail", "--run", run, "--call", "SIMULATED", "--status", "tool_unavailable",
+        "--failure-kind", "unavailable", "--note", "SIMULATED FAILURE ONLY")
+    assert json.loads(cli("budget", "--run", run))["reserved_calls"] == 1
+    image = run / "test-only.png"
+    Image.new("RGB", (600, 900), "gray").save(image)
+    from novel_quote_posters.storage import digest_file
+    receipt = run / "receipt.json"
+    save_json(receipt, {"source_kind": "test_fixture", "character_id": "lin_che",
+                        "source_note": "Synthetic automated test image, not generated art",
+                        "image_sha256": digest_file(image)})
+    asset = json.loads(cli("image-import", image, "--receipt", receipt, "--run", run))
+    cli("attach-image", asset["asset_id"], "--card", "card001", "--run", run)
+    cli("set-reference", asset["asset_id"], "--character", "lin_che", "--run", run)
+    status = json.loads(cli("status", "--run", run))
+    assert status["card_counts"] == {"awaiting_image": 2, "awaiting_render": 1}

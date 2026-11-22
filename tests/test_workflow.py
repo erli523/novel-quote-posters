@@ -1,3 +1,5 @@
+import sqlite3
+
 import pytest
 
 from novel_quote_posters.workflow import Ledger
@@ -67,3 +69,27 @@ def test_cycles_are_rejected(tmp_path):
         ledger.put("b", path, ["a"])
         with pytest.raises(ValueError, match="cycle"):
             ledger.put("a", path, ["b"])
+
+
+def test_additive_schema_migration_preserves_budget_and_core_rows(tmp_path):
+    path = tmp_path / "old.sqlite"
+    with sqlite3.connect(path) as db:
+        db.execute("CREATE TABLE config(key TEXT PRIMARY KEY,value TEXT)")
+        db.execute("INSERT INTO config VALUES ('limit','2')")
+        db.execute("CREATE TABLE calls(id TEXT PRIMARY KEY,input_hash TEXT,status TEXT,output TEXT)")
+        db.execute("INSERT INTO calls VALUES ('historical','hash','failed',NULL)")
+    with Ledger(path, limit=10) as ledger:
+        assert ledger.budget()["limit"] == 2
+        assert ledger.budget()["remaining"] == 1
+        assert ledger.events()[0]["type"] == "ledger_migrated"
+
+
+def test_future_schema_is_not_silently_downgraded(tmp_path):
+    path = tmp_path / "future.sqlite"
+    with sqlite3.connect(path) as db:
+        db.execute("CREATE TABLE config(key TEXT PRIMARY KEY,value TEXT)")
+        db.execute("INSERT INTO config VALUES ('schema_version','999')")
+    with pytest.raises(ValueError, match="refusing downgrade"):
+        Ledger(path)
+    with sqlite3.connect(path) as db:
+        assert db.execute("SELECT value FROM config WHERE key='schema_version'").fetchone()[0] == "999"
