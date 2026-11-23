@@ -9,6 +9,7 @@ from PIL import Image
 
 from .albums import album_review_complete, load_album_review, selection_target
 from .bundles import build_payload, verify_archive, write_archive
+from .contracts import load_contract, selection_issues
 from .documents import recover_documents
 from .images import validate_character_reference, validate_image_asset
 from .quotes import check_display
@@ -19,9 +20,11 @@ from .storage import contained, digest_file, fingerprint, load_json, now, save_j
 from .workflow import Ledger
 
 
-def review_fingerprint(card: dict, quote: dict, image_hash: str, layout_hash: str) -> str:
+def review_fingerprint(card: dict, quote: dict, image_hash: str, layout_hash: str,
+                       contract_fingerprint: str | None = None) -> str:
     import json
     material = {"visual_policy_version": VISUAL_POLICY_VERSION,
+                "task_contract": contract_fingerprint,
                 "card": {k: v for k, v in card.items() if k != "review"},
                 "quote": {k: v for k, v in quote.items() if k != "review"},
                 "image_hash": image_hash, "layout_hash": layout_hash}
@@ -45,6 +48,7 @@ def _select(run: Path, *, draft: bool = False,
     quotes = {q["quote_id"]: q for q in load_json(run / "quotes.json")}
     characters = load_json(run / "characters.json")
     cards = load_json(run / "cards.json")
+    contract = load_contract(run, book)
     if not cards or len({c["card_id"] for c in cards}) != len(cards):
         raise ValueError("empty or duplicate card IDs")
     selected = []
@@ -73,7 +77,8 @@ def _select(run: Path, *, draft: bool = False,
             raise ValueError("draft flag must match visible poster label")
         validate_tracked_render(run, card, quote, book, characters[card["character_id"]],
                                 layout, required=not draft, source_checked=True)
-        fingerprint = review_fingerprint(card, quote, image_hash, digest_file(layout_path))
+        fingerprint = review_fingerprint(card, quote, image_hash, digest_file(layout_path),
+                                         contract["fingerprint"] if contract else None)
         if not draft:
             review = card.get("review", {})
             speaker_review = quote.get("review", {})
@@ -97,16 +102,22 @@ def _select(run: Path, *, draft: bool = False,
             if image_asset["source_kind"] == "generated":
                 validate_character_reference(run, characters[card["character_id"]], required=True)
         selected.append((card, quote, image, layout_path, fingerprint))
-    if not draft and not album_review_complete(load_album_review(run), selection_target(book, selected, draft)):
-        raise ValueError("whole-album human approval missing or invalidated by order/content changes")
+    if not draft:
+        contract = load_contract(run, book, required=True)
+        issues = selection_issues(contract, cards, quotes)
+        if issues:
+            raise ValueError("task contract violated: " + "; ".join(issues))
+        if not album_review_complete(load_album_review(run), selection_target(book, selected, draft, contract)):
+            raise ValueError("whole-album human approval missing or invalidated by order/content changes")
     return book, characters, selected
 
 
 def _snapshot(book: dict, characters: dict, selected: list, draft: bool, allow_rewrite: bool,
-              *, album_review: dict | None = None) -> dict:
+              *, album_review: dict | None = None, task_contract: dict | None = None) -> dict:
     return {"schema_version": 2, "source": {k: book[k] for k in ["source_hash", "canonical_hash", "title"]},
             "draft": draft, "allow_rewrite": allow_rewrite,
             "album_review": album_review,
+            "task_contract": task_contract,
             "characters": {c["character_id"]: characters[c["character_id"]] for c, *_ in selected},
             "cards": [{"card": card, "quote": quote, "poster_sha256": digest_file(image),
                        "layout_sha256": digest_file(layout), "approval": approval}
@@ -164,7 +175,8 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
                   allow_rewrite: bool = False, resume: bool = False) -> dict:
     run, destination = run.resolve(), destination.resolve()
     book, characters, selected = _select(run, draft=draft, allow_rewrite=allow_rewrite)
-    snapshot = _snapshot(book, characters, selected, draft, allow_rewrite, album_review=load_album_review(run))
+    snapshot = _snapshot(book, characters, selected, draft, allow_rewrite, album_review=load_album_review(run),
+                         task_contract=load_contract(run, book))
     signature = fingerprint(snapshot)
     zip_name = "draft-review.zip" if draft else "export.zip"
     if destination == destination.parent:
@@ -220,7 +232,7 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
                 if not report:
                     raise ValueError("new export failed archive verification")
             current = _snapshot(*_select(run, draft=draft, allow_rewrite=allow_rewrite), draft, allow_rewrite,
-                                album_review=load_album_review(run))
+                                album_review=load_album_review(run), task_contract=load_contract(run))
             if fingerprint(current) != signature:
                 raise ValueError("inputs changed while exporting; no final package was published")
             # Both absolute paths are checked before this Windows directory move.
@@ -249,7 +261,8 @@ def export_status(run: Path) -> dict:
         if digest_file(archive) != report["zip_sha256"]:
             return {"state": "corrupt", "input_fingerprint": report["input_fingerprint"]}
         snapshot = _snapshot(*_select(run, draft=report["draft"], allow_rewrite=row["snapshot"]["allow_rewrite"]),
-                             report["draft"], row["snapshot"]["allow_rewrite"], album_review=load_album_review(run))
+                             report["draft"], row["snapshot"]["allow_rewrite"], album_review=load_album_review(run),
+                             task_contract=load_contract(run))
         return {"state": "current" if fingerprint(snapshot) == report["input_fingerprint"] else "invalidated",
                 "draft": report["draft"], "input_fingerprint": report["input_fingerprint"]}
     except (ValueError, OSError, KeyError) as error:

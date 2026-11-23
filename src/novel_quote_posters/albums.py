@@ -13,12 +13,13 @@ ALBUM_CHECKS = {
 }
 
 
-def album_target(book: dict, rows: list[dict]) -> dict | None:
+def album_target(book: dict, rows: list[dict], contract: dict | None = None) -> dict | None:
     if not rows:
         return None
     if len({row["card_id"] for row in rows}) != len(rows):
         raise ValueError("duplicate album card IDs")
     material = {"policy_version": ALBUM_POLICY_VERSION, "source_hash": book["source_hash"],
+                "task_contract_fingerprint": contract["fingerprint"] if contract else None,
                 "book_title": book["title"], "cover_policy": "first_card_no_extra_cover",
                 "count": len(rows), "ordered_cards": [
                     {"sequence": index, **{k: row[k] for k in ["card_id", "quote_id", "fingerprint", "image_sha256", "draft"]}}
@@ -27,10 +28,10 @@ def album_target(book: dict, rows: list[dict]) -> dict | None:
             "checks": dict.fromkeys(ALBUM_CHECKS, "pending"), "note": ""}
 
 
-def selection_target(book: dict, selected: list, draft: bool) -> dict:
+def selection_target(book: dict, selected: list, draft: bool, contract: dict | None = None) -> dict:
     return album_target(book, [{"card_id": card["card_id"], "quote_id": card["quote_id"],
                                "fingerprint": approval, "image_sha256": digest_file(image), "draft": draft}
-                              for card, quote, image, layout, approval in selected])
+                              for card, quote, image, layout, approval in selected], contract)
 
 
 def load_album_review(run: Path) -> dict | None:

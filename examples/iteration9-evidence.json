@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "iteration": 9,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {"passed": 137, "failed": 0},
+    "ruff": "passed",
+    "private_evidence_id": "20261123T045725Z-c9272db9",
+    "retained_initial_failure": {"passed": 134, "failed": 1, "reason": "temporary poster fixture lacked chunks.json", "private_evidence_id": "20261123T044421Z-8a57f3b1"}
+  },
+  "implemented": [
+    "explicit per-run task contract without inferring intent from existing cards",
+    "quantity, character/chapter/type/style diversity, display and rewrite constraints",
+    "version-bound individual, whole-album, edit and image request context",
+    "effective budget ceiling with lock-protected reservation/update checks",
+    "scope-filtered preparation and persisted quantity/candidate-buffer shortfalls",
+    "new image reservations and final visual approvals require a configured task",
+    "schema-4 packaged contract and declared selection conformance checks",
+    "legacy schema-2/3 integrity verification without inventing contract approval"
+  ],
+  "actual_main_demo": {
+    "source_hash": "2c789908a4e8293ed2e910fc142f62c6d407b7a9af41c912f7a507eaf1d82e5b",
+    "target_count": 3,
+    "character_id": "lin_che",
+    "min_distinct_styles": 2,
+    "rewrite_allowed": false,
+    "source_and_book_unchanged": true,
+    "legacy_call_count_preserved": 2,
+    "budget_limit": 10,
+    "remaining": 8,
+    "awaiting_image_cards": 3,
+    "actual_generated_images": 0,
+    "actual_human_approvals": 0,
+    "legacy_ingest_seal_created": false
+  },
+  "actual_ui_and_package_qa": {
+    "chinese_task_summary": "verified",
+    "unsigned_review_download": "blocked",
+    "browser_console_errors": 0,
+    "synthetic_schema4_draft_selection_constraints": "passed",
+    "real_legacy_schema3_archive_integrity": "passed",
+    "actual_new_image_tool_calls": 0
+  },
+  "limits": [
+    "permission and editor fields are declarations rather than identity or rights authentication",
+    "theme, forbidden elements, speaker meaning and actual visual quality require real human judgment",
+    "package conformance covers declared selection constraints, not original-source authenticity or runtime budget spend",
+    "all image success/editing/handoff and full product stage gates remain incomplete",
+    "no external image API fallback or automatic social publishing enabled"
+  ]
+}

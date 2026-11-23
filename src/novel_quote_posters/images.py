@@ -1,11 +1,13 @@
 """Application-tool reservations and provenance import, without making image API calls."""
 
+import math
 import re
 import uuid
 from pathlib import Path
 
 from PIL import Image
 
+from .contracts import load_contract, selection_issues
 from .documents import commit_documents, recover_documents
 from .quotes import check_display
 from .source import validate_source
@@ -39,7 +41,9 @@ def plan_image(run: Path, request: dict) -> dict:
         with Image.open(path) as picture:
             picture.verify()
         reference_hashes[relative] = digest_file(path)
+    initial_contract = load_contract(run, book)
     payload = {"schema_version": 1, "request": request, "source_hash": book["source_hash"],
+               "task_contract_fingerprint": initial_contract["fingerprint"] if initial_contract else None,
                "character_snapshot": character, "reference_hashes": reference_hashes}
     input_hash = fingerprint(payload)
     snapshot = run / ".state" / "image-requests" / f"{input_hash}.json"
@@ -47,9 +51,21 @@ def plan_image(run: Path, request: dict) -> dict:
         save_json(snapshot, payload)
     elif load_json(snapshot) != payload:
         raise ValueError("image request snapshot damaged")
-    with Ledger(run / ".state" / "ledger.sqlite") as ledger:
+    with Ledger(run / ".state" / "ledger.sqlite") as ledger, ledger.db:
+        ledger.db.execute("UPDATE config SET value=value WHERE key='limit'")
         budget = ledger.budget()
         existing = next((c for c in budget["calls"] if c["call_id"] == identity), None)
+        contract = load_contract(run, book)
+        if not existing and contract is None:
+            raise ValueError("explicit task contract required before a new image reservation")
+        if not existing and (contract != initial_contract or load_json(run / "characters.json")[request["character_id"]] != character):
+            raise ValueError("image inputs or contract changed before reservation; prepare fresh inputs")
+        if not existing and contract:
+            definition = contract["definition"]
+            if request["character_id"] not in definition["character_ids"] or TOOL not in definition["allowed_destinations"]:
+                raise ValueError("image request outside task contract character/destination scope")
+            if budget["reserved_calls"] >= definition["image_call_limit"]:
+                raise ValueError("task contract image budget exhausted")
         if not existing and request.get("retry_of"):
             parent = next((c for c in budget["calls"] if c["call_id"] == request["retry_of"]), None)
             if not parent or parent["status"] != "failed" or (parent["result"] or {}).get("failure_kind") not in {"transient", "not_invoked"}:
@@ -72,9 +88,12 @@ def plan_image(run: Path, request: dict) -> dict:
             if related and not request.get("new_candidate_reason"):
                 raise ValueError("a new candidate needs an explicit reason or bounded retry_of")
         result = ledger.reserve(identity, input_hash, request=payload)
+        remaining = ledger.budget()["remaining"]
+        if contract:
+            remaining = min(remaining, max(0, contract["definition"]["image_call_limit"]-ledger.budget()["reserved_calls"]))
         return {**result, "call_id": identity, "input_hash": input_hash,
                 "request_snapshot": snapshot.relative_to(run).as_posix(),
-                "remaining": ledger.budget()["remaining"], "tool_was_called": False}
+                "remaining": remaining, "tool_was_called": False}
 
 
 def record_failure(run: Path, call_id: str, status: str, *, failure_kind: str, note: str) -> dict:
@@ -85,15 +104,22 @@ def record_failure(run: Path, call_id: str, status: str, *, failure_kind: str, n
     recover_documents(run)
     with Ledger(run / ".state" / "ledger.sqlite") as ledger:
         ledger.resolve_call(call_id, status, details={"failure_kind": failure_kind, "note": note})
-        return {"call_id": call_id, "status": status, "remaining": ledger.budget()["remaining"]}
+        budget = ledger.budget()
+        contract = load_contract(run)
+        limit = min(budget["limit"], contract["definition"]["image_call_limit"]) if contract else budget["limit"]
+        return {"call_id": call_id, "status": status, "remaining": max(0, limit-budget["reserved_calls"])}
 
 
 def budget_summary(run: Path) -> dict:
     recover_documents(run)
     with Ledger(run / ".state" / "ledger.sqlite") as ledger:
         data = ledger.budget()
+        contract = load_contract(run)
+        effective_limit = min(data["limit"], contract["definition"]["image_call_limit"]) if contract else data["limit"]
         # Normal status output intentionally excludes prompts, raw responses and private paths.
         return {**{k: v for k, v in data.items() if k != "calls"},
+                "ledger_limit": data["limit"], "limit": effective_limit,
+                "remaining": max(0, effective_limit-data["reserved_calls"]),
                 "calls": [{k: c[k] for k in ["call_id", "status", "input_hash", "output"]}
                           for c in data["calls"]]}
 
@@ -231,31 +257,46 @@ def import_legacy_failures(run: Path, path: Path) -> dict:
         return {"imported": len(rows), "budget": budget_summary(run)}
 
 
-def prepare_cards(run: Path, *, count: int = 10, style_id: str = "mist_cinema") -> dict:
+def prepare_cards(run: Path, *, count: int | None = None, style_id: str | None = None) -> dict:
     from .layout import STYLES
-    if count <= 0 or style_id not in STYLES:
-        raise ValueError("invalid count or style")
     recover_documents(run)
     if (run / "cards.json").exists():
         raise ValueError("cards already exist; update their stable IDs rather than replacing them")
     book = load_json(run / "book.json")
     validate_source(run, book)
+    contract = load_contract(run, book)
+    count = count if count is not None else contract["definition"]["target_count"] if contract else 10
+    style_id = style_id or (contract["definition"]["style_ids"][0] if contract else "mist_cinema")
+    if count <= 0 or style_id not in STYLES:
+        raise ValueError("invalid count or style")
+    if contract and (count != contract["definition"]["target_count"] or style_id not in contract["definition"]["style_ids"]):
+        raise ValueError("prepare count/style differs from task contract; change the contract explicitly")
     quotes = load_json(run / "quotes.json")
     characters = load_json(run / "characters.json")
     selected = [q for q in quotes if q.get("selection", {}).get("selected")
                 and q["speaker"]["status"] in {"explicit", "context_inferred"}
                 and q["speaker"]["character_id"] in characters]
     selected.sort(key=lambda q: -(q.get("selection", {}).get("score") or 0))
+    if contract:
+        selected = [q for q in selected if not selection_issues(contract, [
+            {"card_id": "candidate", "quote_id": q["quote_id"], "character_id": q["speaker"]["character_id"],
+             "style_id": style_id}], {q["quote_id"]: q}, check_count=False)]
     cards = []
     for quote in selected[:count]:
-        check_display(book, quote)
+        check_display(book, quote, allow_rewrite=bool(contract and contract["definition"]["allow_rewrite"]))
         cards.append({"card_id": f"card{len(cards)+1:03d}", "quote_id": quote["quote_id"],
                       "character_id": quote["speaker"]["character_id"], "style_id": style_id,
                       "image_kind": "pending", "review": {"status": "pending"}})
-    if cards:
-        commit_documents(run, {"cards.json": cards}, reason="selected_quotes_to_cards")
-    return {"requested": count, "prepared": len(cards), "shortfall": max(0, count-len(cards)),
-            "reason": "only source-verified, application-selected quotes; no invented fillers"}
+    buffer_target = math.ceil(count*(1+contract["definition"]["candidate_buffer_ratio"])) if contract else count
+    report = {"requested": count, "prepared": len(cards), "shortfall": max(0, count-len(cards)),
+              "candidate_buffer_target": buffer_target, "eligible_selected": len(selected),
+              "candidate_buffer_shortfall": max(0, buffer_target-len(selected)),
+              "task_contract_fingerprint": contract["fingerprint"] if contract else None,
+              "reason": "only source-verified, application-selected quotes; no invented fillers"}
+    commit_documents(run, {"preparation-report.json": report, **({"cards.json": cards} if cards else {})},
+                     reason="selected_quotes_to_cards", expected={"task-contract.json": contract,
+                         "book.json": book, "quotes.json": quotes, "characters.json": characters, "cards.json": None})
+    return report
 
 
 def attach_image(run: Path, asset_id: str, card_id: str) -> dict:

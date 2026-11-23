@@ -3,6 +3,7 @@
 import copy
 from pathlib import Path
 
+from .contracts import load_contract
 from .documents import commit_documents, recover_documents
 from .layout import STYLES
 from .quotes import check_display
@@ -10,7 +11,7 @@ from .source import validate_source
 from .storage import fingerprint, load_json, now, save_json
 from .workflow import Ledger
 
-DOCUMENTS = ["quotes.json", "characters.json", "cards.json"]
+DOCUMENTS = ["quotes.json", "characters.json", "cards.json", "task-contract.json"]
 
 
 def _read(run: Path) -> tuple[dict, dict]:
@@ -26,7 +27,7 @@ def _read(run: Path) -> tuple[dict, dict]:
 
 
 def _signature(book: dict, values: dict) -> str:
-    return fingerprint({"edit_policy_version": 1, "book": book, "documents": values})
+    return fingerprint({"edit_policy_version": 2, "book": book, "documents": values})
 
 
 def edit_targets(run: Path) -> dict:
@@ -134,6 +135,11 @@ def apply_edits(run: Path, request: dict, *, allow_rewrite: bool = False) -> dic
     reason = "application_edits:" + request_hash
     history = run / ".state" / "edits" / (request_hash + ".json")
     book, before = _read(run)
+    contract = load_contract(run, book)
+    if contract and not contract["definition"]["allow_rewrite"] and any(
+            isinstance(op, dict) and op.get("type") == "set-display-text" and op.get("text_mode") == "rewrite"
+            for op in request["operations"]):
+        raise ValueError("rewrite forbidden by task contract, even with --allow-rewrite")
     current = _signature(book, before)
     if history.exists():
         previous = load_json(history)
@@ -173,5 +179,5 @@ def apply_edits(run: Path, request: dict, *, allow_rewrite: bool = False) -> dic
     # Check all dependency documents while holding the same lock as the atomic commit.
     validate_source(run, book)
     transaction = commit_documents(run, changed, reason=reason,
-                                   expected={**before, "book.json": book}) if changed else None
+                                   expected={**before, "book.json": book, "task-contract.json": contract}) if changed else None
     return {**result, "transaction": transaction, "reused": False}

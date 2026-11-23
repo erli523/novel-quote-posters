@@ -34,6 +34,8 @@ TXT 支持严格解码 UTF-8/BOM、UTF-16/BOM、GB18030，可用 --encoding 指�
 
 ## 3. 真实生图与卡片
 
+先按 [每次运行的任务契约](task-contract.md) 生成并填写 contract-template，再 apply-contract；明确张数、人物/风格、原文政策、来源权利和预算。prepare-cards 不传数量/风格时采用该契约，默认不扩大权限。没有明确契约不能预留新生图或批准正式成品，旧运行可先保留待审资料。
+
 由应用端实际工具生成基准肖像及无字底图，保存到 run 内，保留提示词、实际参考图和调用记录。[图像交接与预算](image-workflow.md) 给出 image-plan/image-import/budget/set-reference/prepare-cards/attach-image 的完整步骤。V1 没有从 Python 请求应用内置生图的隐藏接口。若工具不可用，可继续验证程序，不能把测试底图记为真实生图。
 
 cards.json 是数组，每项示例：
@@ -101,7 +103,9 @@ ZIP 包含序号 PNG、手机缩略图、CSV/JSON、layouts 布局报告、image
 
 verify-export 无需原任务，检查清单、路径、哈希、图像尺寸/配置文件和交叉引用；它不认证作者、审核人的真实身份或真实生图。原句是否来自书中、人物归属和原始调用链仍须对照原任务。相同清单的 ZIP 使用固定容器元数据，可确定性复现字节；生成式图片本身不承诺逐像素复现。
 
-新交付包清单 schema 3，补入 album-review.json 的整组目标和审核摘要，验证时与序号图片交叉核对。待审包中的整组记录保持 pending，不带旧版本批准。旧 schema 2 包仍可检查原有完整性；没有整组记录不能被理解为已做整组审核。
+包清单从 schema 3 起包含 album-review.json 的整组目标和审核摘要，验证时与序号图片交叉核对。待审包中的整组记录保持 pending，不带旧版本批准。旧 schema 2 包仍可检查原有完整性；没有整组记录不能被理解为已做整组审核。
+
+当前新增包清单 schema 4 同时带 task-contract.json，整组与单卡审核绑定任务版本；任务选择约束与实际图片/引语交叉核对。旧 schema 2/3 仍可检查原完整性；task_conformance_scope 明确只是包内声明的选择约束，不能替代真实图片、权限或人工验收。任务改动后需要新的审核页，像素未变不会自动请求生图。
 
 ## 恢复与当前限制
 

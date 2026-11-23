@@ -10,6 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 from .albums import ALBUM_CHECKS, album_target
+from .contracts import load_contract, selection_issues
 from .documents import commit_documents, recover_documents
 from .export import quote_fingerprint, review_fingerprint
 from .images import validate_character_reference
@@ -20,6 +21,27 @@ from .source import validate_source
 from .storage import contained, digest_file, load_json, now, save_json, sha256
 from .workflow import Ledger
 
+STYLE_LABELS = {"mist_cinema": "雾感电影", "archive_paper": "旧纸档案", "dark_stage": "暗色舞台",
+                "ink_whitespace": "水墨留白", "modern_editorial": "现代杂志", "warm_memory": "暖色回忆"}
+
+
+def task_issue_label(issue: str, definition: dict | None, card_count: int) -> str:
+    if definition is None:
+        return "尚未设置明确的任务要求。"
+    if issue.startswith("poster count"):
+        return f"目标 {definition['target_count']} 张，现有 {card_count} 张；请补齐或明确修改目标。"
+    if issue.startswith("distinct style"):
+        return f"至少需要 {definition['min_distinct_styles']} 套风格，当前不足。"
+    key = issue.split(":", 1)[0]
+    if "character/style" in issue:
+        return key + "：人物或风格不在本次范围内。"
+    if "type/chapter" in issue:
+        return key + "：引语类型或章节不在本次范围内。"
+    if "rewrite forbidden" in issue:
+        return key + "：本次任务只允许原文，请恢复原句或明确修改政策。"
+    if "text length" in issue:
+        return key + f"：文字长度须为 {definition['min_quote_chars']}～{definition['max_quote_chars']} 字。"
+    return "任务要求尚有待处理项，请核对配置。"
 
 def character_label(identity: str | None, characters: dict) -> str:
     if identity not in characters:
@@ -63,6 +85,10 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
     validate_source(run, book)
     quotes = load_json(run / "quotes.json")
     characters = load_json(run / "characters.json")
+    contract = load_contract(run, book)
+    contract_hash = contract["fingerprint"] if contract else None
+    current_cards = load_json(run / "cards.json") if (run / "cards.json").exists() else []
+    issues = selection_issues(contract, current_cards, {q["quote_id"]: q for q in quotes}) if contract else ["explicit task contract missing"]
     rows = []
     for quote in quotes:
         check_display(book, quote, allow_rewrite=True)
@@ -79,7 +105,7 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
     card_rows = []
     if not quotes_only:
         by_id = {q["quote_id"]: q for q in quotes}
-        for card in load_json(run / "cards.json"):
+        for card in current_cards:
             image = contained(run, card["poster"])
             layout_path = image.with_suffix(".layout.json")
             layout = load_json(layout_path)
@@ -92,7 +118,7 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
             views = visual_views(run, card, character, layout)
             card_rows.append({"card_id": card["card_id"], "quote_id": card["quote_id"],
                               "fingerprint": review_fingerprint(card, by_id[card["quote_id"]],
-                                                               digest_file(image), digest_file(layout_path)),
+                                                               digest_file(image), digest_file(layout_path), contract_hash),
                               "poster": card["poster"], "image_sha256": digest_file(image),
                               "draft": layout["draft"], "image_kind": card.get("image_kind", "unknown"),
                               "character": character_label(card["character_id"], characters),
@@ -105,7 +131,8 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
                               "status": "pending", "note": ""})
     return {"schema_version": 3, "source_hash": book["source_hash"], "book_title": book["title"],
             "reviewer_type": "human", "reviewer": "", "attested": False,
-            "reviewed_at": "", "quotes": rows, "cards": card_rows, "album": album_target(book, card_rows)}
+            "reviewed_at": "", "quotes": rows, "cards": card_rows, "album": album_target(book, card_rows, contract),
+            "task_contract": contract, "task_issues": issues}
 
 
 def write_review_page(run: Path, output: Path, *, quotes_only: bool = False):
@@ -114,6 +141,14 @@ def write_review_page(run: Path, output: Path, *, quotes_only: bool = False):
     targets = review_targets(run, quotes_only)
     view = json.loads(json.dumps(targets, ensure_ascii=False))
     characters = load_json(run / "characters.json")
+    definition = targets["task_contract"]["definition"] if targets["task_contract"] else None
+    count = len(load_json(run / "cards.json")) if (run / "cards.json").exists() else 0
+    view["task_summary"] = {"characters": [character_label(k, characters) for k in definition["character_ids"]],
+                            "styles": [STYLE_LABELS[k] for k in definition["style_ids"]],
+                            "chapters": [c["title"] for c in load_json(run / "book.json")["chapters"]
+                                         if c["chapter_id"] in definition["chapter_ids"]] if definition["chapter_ids"] else ["全部章节"],
+                            "quote_types": [{"dialogue": "对白", "monologue": "独白"}[k] for k in definition["quote_types"]]} if definition else None
+    view["task_issue_labels"] = [task_issue_label(issue, definition, count) for issue in targets["task_issues"]]
     cards = {card["card_id"]: card for card in load_json(run / "cards.json")} if not quotes_only else {}
     for card in view["cards"]:
         source = cards[card["card_id"]]
@@ -148,7 +183,7 @@ def apply_review(run: Path, record: dict) -> dict:
     except ValueError as error:
         raise ValueError("review time must be ISO 8601 with a timezone") from error
     snapshot = {name: load_json(run / name) if (run / name).exists() else None for name in
-                ["book.json", "quotes.json", "characters.json", "cards.json", "album-review.json"]}
+                ["book.json", "quotes.json", "characters.json", "cards.json", "album-review.json", "task-contract.json"]}
     expected = review_targets(run, quotes_only=not bool(record.get("cards")))
     if record["source_hash"] != expected["source_hash"]:
         raise ValueError("review targets a different source")
@@ -170,6 +205,8 @@ def apply_review(run: Path, record: dict) -> dict:
             if category == "cards" and row["status"] == "approved" and available[key]["draft"]:
                 raise ValueError("approve a clean candidate, not a draft-labelled poster")
             if category == "cards":
+                if row["status"] == "approved" and expected["task_issues"]:
+                    raise ValueError("task contract blocks visual approval: " + "; ".join(expected["task_issues"]))
                 if (row.get("view_hashes") != available[key]["view_hashes"]
                         or row.get("crop_box") != available[key]["crop_box"]
                         or row.get("visual_policy_version") != VISUAL_POLICY_VERSION):
@@ -199,6 +236,8 @@ def apply_review(run: Path, record: dict) -> dict:
             if not isinstance(checks, dict) or set(checks) != set(ALBUM_CHECKS) or any(v not in {"pending", "passed", "failed"} for v in checks.values()):
                 raise ValueError("invalid whole-album checklist")
             if album["status"] == "approved":
+                if expected["task_issues"]:
+                    raise ValueError("task contract blocks album approval: " + "; ".join(expected["task_issues"]))
                 if any(row["draft"] for row in expected["cards"]):
                     raise ValueError("approve a clean whole-album candidate, not draft-labelled images")
                 if checks != dict.fromkeys(ALBUM_CHECKS, "passed"):
@@ -256,6 +295,7 @@ dialog::backdrop{background:#12212ccc}#original-view img{max-width:none;max-heig
 </style><main><h1 id="title"></h1>
 <p class="notice">本页只在本地展示原文和图片，不联网，不会自动批准。请逐项核对说话人、原句、人物一致性、文字与手机可读性。图片点击后可查看原尺寸。测试底图不能作为真实生图验收。</p>
 <label>审核人 <input type="text" id="reviewer" placeholder="填写实际审核人"></label>
+<h2>本次任务要求</h2><section id="task"></section>
 <h2>原句与说话人</h2><section id="quotes"></section>
 <h2>图片与排版</h2><section id="cards"></section>
 <h2>图集顺序与节奏</h2><section id="album"></section>
@@ -265,6 +305,14 @@ dialog::backdrop{background:#12212ccc}#original-view img{max-width:none;max-heig
 <script>"use strict";const review=__REVIEW_DATA__;
 document.getElementById('title').textContent='《'+review.book_title+'》审核';
 function element(tag,text,parent){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(parent)parent.append(el);return el;}
+if(review.task_contract){const d=review.task_contract.definition,a=element('article',undefined,document.getElementById('task'));
+ element('p','目标 '+d.target_count+' 张 · '+d.output.width+'×'+d.output.height+' · '+(d.allow_rewrite?'允许标记改写':'只用原文'),a);
+ element('p','人物范围：'+review.task_summary.characters.join('、')+'；风格：'+review.task_summary.styles.join('、')+'；至少 '+d.min_distinct_styles+' 套',a);
+ element('p','章节：'+review.task_summary.chapters.join('、')+'；引语：'+review.task_summary.quote_types.join('、')+'；长度 '+d.min_quote_chars+'～'+d.max_quote_chars+' 字',a);
+ element('p','主题：'+(d.theme||'未限定')+'；禁用元素：'+(d.forbidden_elements.join('、')||'未另列'),a);
+ element('p','主题、禁用元素与人物含义请本人逐项核对，程序不自动判断。',a);
+}else{element('p','尚未设置明确任务契约，不能批准正式成品。',document.getElementById('task'));}
+for(const issue of review.task_issue_labels)element('p','待处理：'+issue,document.getElementById('task'));
 function openOriginal(source,description){const view=document.getElementById('original-view');view.replaceChildren();
  const image=element('img',undefined,view);image.src=source;image.alt=description;document.getElementById('image-dialog').showModal();}
 document.getElementById('close-dialog').onclick=()=>document.getElementById('image-dialog').close();
@@ -315,10 +363,11 @@ if(review.album){const a=element('article',undefined,document.getElementById('al
 }else{element('p','当前只审核原句，图片就绪后再生成图集审核页。',document.getElementById('album'));}
 document.getElementById('download').onclick=()=>{const name=document.getElementById('reviewer').value.trim();
  if(!name||!document.getElementById('attest').checked){document.getElementById('message').textContent='请填写审核人，并勾选本人核对。';return;}
+ if(review.task_issues.length&&(review.cards.some(c=>c.status==='approved')||(review.album&&review.album.status==='approved'))){document.getElementById('message').textContent='本次任务仍有配置或范围问题，不能批准成品；可保留待审或退回意见。';return;}
  for(const card of review.cards){if(card.status==='approved'&&(card.draft||Object.values(card.visual_checks).some(v=>v!=='passed')||(card.image_kind==='generated'&&!card.reference_usable))){document.getElementById('message').textContent=card.card_id+' 尚未满足批准条件，请检查草稿标签、基准图和逐项视觉判断。';return;}}
  if(review.album&&review.album.status==='approved'&&(review.cards.some(c=>c.draft)||Object.values(review.album.checks).some(v=>v!=='passed'))){document.getElementById('message').textContent='整组尚未满足批准条件，请检查草稿标签和整组判断。';return;}
  const result=JSON.parse(JSON.stringify(review));result.reviewer=name;result.attested=true;result.reviewed_at=new Date().toISOString();
- for(const card of result.cards)delete card.view_data;delete result.visual_check_labels;delete result.album_check_labels;
+ for(const card of result.cards)delete card.view_data;delete result.visual_check_labels;delete result.album_check_labels;delete result.task_summary;delete result.task_issue_labels;
  const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));
  const link=document.createElement('a');link.href=url;link.download='review-record.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
  document.getElementById('message').textContent='审核记录已下载；导入后只对相同版本有效。';};

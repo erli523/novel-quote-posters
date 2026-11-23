@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "0d2fe6b135df1a9dbb2d56de3413c6e5ff630f3d4a95b7be4e151b32fb91fbc3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "7ffd79ce5813718dd7c9040814de3808a627929fdb3256a1644406cf0849406a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "856dbfd789de824279c6c4c1dc06e8e168a0b39929403ef80ad3adb696641667",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "36caa291040f70992cec927bf0722a4496ab183ded23dc69d5da9218027d5a40",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "fad303220ff039255f6ecb40010137c275af673b4239906d3d1d892d8a144a29",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/task-contract.md",
+      "sha256": "e0e55769cdd22dcb1d262651621b8dd3252e731a306ffd3a9371e0eae0a95dcd",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "91994057d0890ec97dd909c88b70d204294dfd9166c662f106c66c7b94cb3ef9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/albums.py",
+      "sha256": "543b64c8ad5a9ccbef2c4541cd09e18052a6b33a934add14cf5e8c36f9c1ffc1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/bundles.py",
+      "sha256": "880b372c3bbd1689c93f9cc8114100403d818af598f7490c438ea7d7c2934cc2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "aa0a283e450c7406e209173803a87d4a7de03fd6c4a783b40aea33aeaeda579d",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/contracts.py",
+      "sha256": "15e707bc7e6cae9c56e7c8da78f6ac0f7b1da6f204a777a554d77301a64459ac",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/documents.py",
+      "sha256": "8b79fa2903c0e63b74ecca2bb488f820809068f5ff99a40a7d9b0a5baba98f8e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/edits.py",
+      "sha256": "71cbedf97238898d370e87d44273bf1e23f5955c67b93d8081313a0b3641c240",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/export.py",
+      "sha256": "6f7ece9b489888b3416345dc315c5dff59c423b87a1ca0049c39eb416fef755f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/images.py",
+      "sha256": "95287fb22aa21b5cfacbb4269cfd8225f8a3bcc0859fb0185d4167f8ae9edcdc",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/review.py",
+      "sha256": "aa5a04bfaf70d2254dad757dd9d2bd249e360c1a402762a14d2634c7914b9dec",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/status.py",
+      "sha256": "986b0608d7110f45b741c90bbc59e9d924051d9408f15f8b359b09c3996b298f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/conftest.py",
+      "sha256": "040cc76088b3a2501a4e61a44e5227802c5ed745bbc074c5bbdcf44851814fde",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "sha256": "1a47a3d731e3c7942fb14e4bfe5b97382b6429c8c2e9e7d5172275faac435511",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_images.py",
+      "sha256": "0444521cd0e5ef645afde33c1aa9063522252359fb3cad58ce74036b6e6aaaaa",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_contracts.py",
+      "sha256": "38f4dec672b95fac856e7a3c6bab9c8f83af7b4d146667bb84dd4cd1b74a68cc",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration9-evidence.json",
+      "sha256": "b2392558fb17542570c0b1510042250bc9cfd0ac5538f3bb7c562c6c52eea33f",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

@@ -4,9 +4,11 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from novel_quote_posters.ingest import ingest
+from novel_quote_posters.contracts import default_definition
+from novel_quote_posters.ingest import chunks, ingest
+from novel_quote_posters.layout import STYLES
 from novel_quote_posters.quotes import candidates
-from novel_quote_posters.storage import save_json
+from novel_quote_posters.storage import fingerprint, save_json
 
 
 @pytest.fixture(scope="module")
@@ -34,6 +36,7 @@ def poster_run(tmp_path):
              "text": "林澈说："}])
         quote["quote_type"] = "dialogue"
     save_json(run / "book.json", book)
+    save_json(run / "chunks.json", chunks(book, 6000, 300))
     save_json(run / "quotes.json", quotes)
     save_json(run / "characters.json", {"lin_che": {"character_id": "lin_che", "name": "林澈",
                                                    "traits": [], "reference_image": None}})
@@ -46,4 +49,9 @@ def poster_run(tmp_path):
                       "background": image.name, "poster": f"posters/initial-{index}.png",
                       "image_kind": "test_fixture"})
     save_json(run / "cards.json", cards)
+    definition = default_definition(book, "synthetic-test", count=2, characters=["lin_che"], styles=list(STYLES))
+    definition.update(allow_rewrite=True, min_quote_chars=1, input_rights_note="Self-authored fictional automated test; no actual approval")
+    save_json(run / "task-contract.json", {"schema_version": 1, "version": 1, "definition": definition,
+        "fingerprint": fingerprint({"version": 1, "definition": definition}), "editor": "SIMULATED TEST SETUP",
+        "reason": "Synthetic fixture contract", "recorded_at": "2026-11-23T00:00:00Z"})
     return run

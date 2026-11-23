@@ -6,13 +6,14 @@ is released by the OS on process death; no stale lock file needs to be guessed a
 """
 
 import uuid
+from collections.abc import Callable
 from pathlib import Path
 
 from .storage import contained, digest_file, load_json, now, save_json
 from .workflow import Ledger
 
 ALLOWED = {"quotes.json", "characters.json", "cards.json", "chunks.json", "analysis-report.json",
-           "image-assets.json", "album-review.json"}
+           "image-assets.json", "album-review.json", "task-contract.json", "preparation-report.json"}
 
 
 def _recover(run: Path, ledger: Ledger) -> bool:
@@ -60,7 +61,8 @@ def recover_documents(run: Path) -> bool:
         return _recover(run, ledger)
 
 
-def commit_documents(run: Path, values: dict, *, reason: str, expected: dict | None = None) -> str:
+def commit_documents(run: Path, values: dict, *, reason: str, expected: dict | None = None,
+                     guard: Callable[[Ledger], None] | None = None) -> str:
     if not values or not set(values) <= ALLOWED:
         raise ValueError("unsupported transaction document")
     if not run.is_dir():
@@ -68,6 +70,8 @@ def commit_documents(run: Path, values: dict, *, reason: str, expected: dict | N
     with Ledger(run / ".state" / "ledger.sqlite") as ledger, ledger.db:
         ledger.db.execute("UPDATE config SET value=value WHERE key='limit'")
         _recover(run, ledger)
+        if guard is not None:
+            guard(ledger)
         if expected is not None:
             if not set(expected) <= ALLOWED | {"book.json"}:
                 raise ValueError("unsupported expected document")

@@ -7,6 +7,7 @@ from pathlib import Path
 from .analysis import apply_analysis
 from .bootstrap import initialize_run
 from .bundles import verify_archive
+from .contracts import apply_contract, contract_template
 from .documents import commit_documents, recover_documents
 from .edits import apply_edits, edit_targets
 from .export import export_bundle
@@ -75,6 +76,12 @@ def main():
     command.add_argument("--allow-rewrite", action="store_true")
     command = commands.add_parser("recover", help="finish an interrupted JSON transaction")
     command.add_argument("--run", type=Path, required=True)
+    command = commands.add_parser("contract-template", help="prepare explicit per-run intent; never infer count from cards")
+    command.add_argument("--run", type=Path, required=True)
+    command.add_argument("--output", type=Path, required=True)
+    command = commands.add_parser("apply-contract", help="version task scope without approving content or resetting calls")
+    command.add_argument("request", type=Path)
+    command.add_argument("--run", type=Path, required=True)
     command = commands.add_parser("status", help="show observed progress and stale/awaiting cards")
     command.add_argument("--run", type=Path, required=True)
     for name, help_text in [("image-plan", "reserve budget and save an application-tool request"),
@@ -98,8 +105,8 @@ def main():
             command.add_argument("--failure-kind", required=True)
             command.add_argument("--note", required=True)
         elif name == "prepare-cards":
-            command.add_argument("--count", type=int, default=10)
-            command.add_argument("--style", default="mist_cinema")
+            command.add_argument("--count", type=int)
+            command.add_argument("--style")
         elif name in {"attach-image", "set-reference"}:
             command.add_argument("asset_id")
             command.add_argument("--card" if name == "attach-image" else "--character", required=True)
@@ -195,6 +202,14 @@ def main():
                 report = {"output": str(args.output), "expected_fingerprint": report["expected_fingerprint"]}
             elif args.command == "apply-edits":
                 report = apply_edits(args.run, load_json(args.request), allow_rewrite=args.allow_rewrite)
+            elif args.command == "contract-template":
+                if args.output.exists():
+                    raise ValueError("contract template exists; choose a new version")
+                report = contract_template(args.run)
+                save_json(args.output, report)
+                report = {"output": str(args.output), "expected_fingerprint": report["expected_fingerprint"]}
+            elif args.command == "apply-contract":
+                report = apply_contract(args.run, load_json(args.request))
             else:
                 raise ValueError("unhandled command")
             print(json.dumps(report, ensure_ascii=False, indent=2))

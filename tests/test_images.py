@@ -134,6 +134,11 @@ def test_user_supplied_replacement_can_be_final_exported_after_simulated_review(
 
 
 def test_selected_cards_report_shortfall_without_inventing_quotes(poster_run):
+    from novel_quote_posters.contracts import apply_contract, contract_template
+    contract = contract_template(poster_run)
+    contract.update(editor="SIMULATED TEST", reason="test a requested quantity of ten")
+    contract["definition"]["target_count"] = 10
+    apply_contract(poster_run, contract)
     (poster_run / "cards.json").unlink()
     quotes = load_json(poster_run / "quotes.json")
     quotes[0]["selection"].update(selected=True, score=80)
@@ -156,6 +161,11 @@ def test_legacy_call_counts_are_preserved_and_never_reset(poster_run, tmp_path):
 def test_generated_candidate_cannot_be_approved_using_a_test_baseline(poster_run, chinese_font):
     # All provider output and human decisions in this test are simulated.
     save_json(poster_run / "cards.json", load_json(poster_run / "cards.json")[:1])
+    from novel_quote_posters.contracts import apply_contract, contract_template
+    contract = contract_template(poster_run)
+    contract.update(editor="SIMULATED TEST", reason="single-card provenance test")
+    contract["definition"]["target_count"] = 1
+    apply_contract(poster_run, contract)
     plan = images.plan_image(poster_run, {**request(), "kind": "background"})
     asset = images.register_image(poster_run, poster_run / "test-only-1.png", simulated_receipt(poster_run, plan))
     images.attach_image(poster_run, asset["asset_id"], "card001")

@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from .albums import album_status, album_target
+from .contracts import load_contract, selection_issues
 from .documents import recover_documents
 from .export import export_status, quote_fingerprint, review_fingerprint
 from .images import budget_summary, validate_character_reference, validate_image_asset
@@ -35,6 +36,8 @@ def run_status(run: Path) -> dict:
     quotes = {q["quote_id"]: q for q in load_json(run / "quotes.json")}
     characters = load_json(run / "characters.json") if (run / "characters.json").exists() else {}
     cards = load_json(run / "cards.json") if (run / "cards.json").exists() else []
+    contract = load_contract(run, book)
+    issues = selection_issues(contract, cards, quotes) if contract else ["explicit task contract missing"]
     rows, album_rows = [], []
     for card in cards:
         row = {"card_id": card["card_id"], "state": "awaiting_image"}
@@ -54,12 +57,13 @@ def run_status(run: Path) -> dict:
                 quote = quotes[card["quote_id"]]
                 validate_tracked_render(run, card, quote, book, characters[card["character_id"]],
                                         report, required=True, source_checked=True)
-                current = review_fingerprint(card, quote, digest_file(image), digest_file(report_path))
+                current = review_fingerprint(card, quote, digest_file(image), digest_file(report_path),
+                                             contract["fingerprint"] if contract else None)
                 album_rows.append({"card_id": card["card_id"], "quote_id": card["quote_id"], "fingerprint": current,
                                    "image_sha256": digest_file(image), "draft": report["draft"]})
                 visual = card.get("review", {})
                 semantic = quote.get("review", {})
-                approved = (visual.get("status") == "approved" and visual.get("reviewer_type") == "human"
+                approved = (not issues and visual.get("status") == "approved" and visual.get("reviewer_type") == "human"
                             and visual_review_complete(visual)
                             and (card.get("image_kind") != "generated" or bool(
                                 validate_character_reference(run, characters[card["character_id"]], required=True)))
@@ -82,6 +86,10 @@ def run_status(run: Path) -> dict:
             "index_ranges_complete": not gap and covered == len(book["text"]),
             "semantic_quality_claim": "requires_actual_review", "candidate_count": len(quotes),
             "card_counts": counts, "cards": rows, "budget": budget_summary(run),
-            "album_review": album_status(run, album_target(book, album_rows) if len(album_rows) == len(cards) else None),
+            "task_contract": {"state": "configured" if contract else "missing", "issues": issues,
+                              "fingerprint": contract["fingerprint"] if contract else None,
+                              "requested": contract["definition"]["target_count"] if contract else None,
+                              "shortfall": max(0, contract["definition"]["target_count"]-len(cards)) if contract else None},
+            "album_review": album_status(run, album_target(book, album_rows, contract) if len(album_rows) == len(cards) else None),
             "export": export_status(run),
             "overall_acceptance": "not_inferred_from_progress"}

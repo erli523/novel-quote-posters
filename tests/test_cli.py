@@ -64,6 +64,13 @@ def test_cli_image_budget_provenance_and_pending_card_progress(tmp_path):
     assert "reused=True" in cli("ingest", ROOT / "fixtures/mist_letters.txt", "--run", run,
                                  "--title", "雾山来信", "--chunk-size", "300", "--overlap", "80", "--resume")
     cli("apply-analysis", ROOT / "fixtures/mist_analysis.json", "--run", run)
+    contract = run / "task-request.json"
+    cli("contract-template", "--run", run, "--output", contract)
+    form = load_json(contract)
+    form.update(editor="SIMULATED_CLI_TEST", reason="explicit ten-card test task before image reservation")
+    form["definition"].update(character_ids=["lin_che"], input_rights_note="Self-authored fictional fixture, software tests only")
+    save_json(contract, form)
+    cli("apply-contract", contract, "--run", run)
     result = json.loads(cli("prepare-cards", "--run", run, "--count", "10"))
     assert result["prepared"] == 3 and result["shortfall"] == 7
     assert json.loads(cli("status", "--run", run))["card_counts"] == {"awaiting_image": 3}
