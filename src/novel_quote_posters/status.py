@@ -11,6 +11,7 @@ from .rendering import validate_tracked_render
 from .review_policy import visual_review_complete
 from .source import validate_source
 from .source_context import SourceContext, context_review_complete
+from .source_quality import source_observations
 from .storage import contained, digest_file, load_json
 
 
@@ -90,6 +91,7 @@ def run_status(run: Path) -> dict:
             "chunks_application_processed": sum(w.get("semantic_status") == "application_processed" for w in windows),
             "index_ranges_complete": not gap and covered == len(book["text"]),
             "semantic_quality_claim": "requires_actual_review", "candidate_count": len(quotes),
+            "source_observations": source_observations(book),
             "card_counts": counts, "cards": rows, "budget": budget,
             "task_contract": {"state": "configured" if contract else "missing", "issues": issues,
                               "fingerprint": contract["fingerprint"] if contract else None,

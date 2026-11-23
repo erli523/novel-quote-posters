@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-23T08:27:34.422625+00:00",
+  "recorded_at": "2026-11-23T09:01:59.114218+00:00",
   "scope": "Source inventory and actual structure checks, not a book redistribution or authenticity/rights certification",
   "sources": [
     {
@@ -86,6 +86,419 @@
       "all_58_pages_observed": true,
       "square_placeholders": 0,
       "unclosed_quote_diagnostics": 3,
+      "transcription_accuracy": "not_human_verified",
+      "text_republished_in_this_repository": false
+    },
+    {
+      "title": "儒林外史",
+      "edition": "Wikisource 56-chapter Novel-template edition",
+      "source_url": "https://zh.wikisource.org/wiki/儒林外史",
+      "catalog_revision": 1645632,
+      "catalog_response_sha256": "f224c18a7d5d815b0e3853e81612d92730b9024cb6854ae4f4284fdd43161179",
+      "chapter_responses": [
+        {
+          "number": 1,
+          "revid": 2648156,
+          "sha256": "f294fb14b52e9778cf225baa011eab5d8f44cfc7a27817c0b1222c115b055877",
+          "bytes": 46650,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC01%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 2,
+          "revid": 1565053,
+          "sha256": "edf368a7c0b7ecccd9de9f47d64571501e1c40eea855ec2b755afee144860f07",
+          "bytes": 40907,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC02%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 3,
+          "revid": 1565054,
+          "sha256": "b1b089ce8ba6442ff526cc904bf266d3ce816796a070c500643142d2a1756339",
+          "bytes": 52630,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC03%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 4,
+          "revid": 1565055,
+          "sha256": "8d581545b55581e34843e6063e0e4453982155cd6fec4d5d1452632c591bd218",
+          "bytes": 40098,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC04%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 5,
+          "revid": 1565056,
+          "sha256": "cfacc47c7a567fef9073853675a3f9cf86374735652760c66b25738ccee189eb",
+          "bytes": 43719,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC05%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 6,
+          "revid": 1565057,
+          "sha256": "ebc8900e2c1c1e1b49a6bceda665b6183ab299762d1c9ff71c93494fbb86aee0",
+          "bytes": 42686,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC06%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 7,
+          "revid": 1565058,
+          "sha256": "d0b5ad71c0073c6be8469a8befd4ad167dfbb66e82f903631d58ac3a4f14a187",
+          "bytes": 40930,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC07%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 8,
+          "revid": 1565059,
+          "sha256": "6e973d65b84393497e3b1a8dc30d64714b2eeff88398a2883b8d317774912dc5",
+          "bytes": 40696,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC08%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 9,
+          "revid": 1565060,
+          "sha256": "5ec3e70e75aced0ea14d092eefc358358548e7de7a96ee604e631ad9302b86ed",
+          "bytes": 41758,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC09%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 10,
+          "revid": 1565061,
+          "sha256": "f7ac63ee418589fdb05b8e5d66a02b3de90790d497f5ca143e40f405e640a950",
+          "bytes": 39486,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC10%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 11,
+          "revid": 1565062,
+          "sha256": "e86f209bf6854fd67be5dabd94996e44bdf402271d5519ec2f5d52295079abf0",
+          "bytes": 39785,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC11%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 12,
+          "revid": 1565063,
+          "sha256": "ad3ecc2f431974d1403ce89fe30c33de7d3efadb59543a1c91458adbc2733c31",
+          "bytes": 40676,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC12%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 13,
+          "revid": 2329825,
+          "sha256": "21024bc2ed7dc4740bfcbac2f30772def48a413447aa7c57660345727ed4abcb",
+          "bytes": 41412,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC13%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 14,
+          "revid": 1565065,
+          "sha256": "60609239b5dcf929de90ed061631068cafbce22ca0e43bb035f958b3054ba0f2",
+          "bytes": 38362,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC14%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 15,
+          "revid": 1565066,
+          "sha256": "3f49b1572b4dc72de21a03bf44dcdfcf07c9825e1f163d4721cf782d8d100dd9",
+          "bytes": 39335,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC15%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 16,
+          "revid": 1565067,
+          "sha256": "5602b13554aa03af908cdb31517c240f872313f4d4096b033a148410f2c0f0ce",
+          "bytes": 39465,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC16%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 17,
+          "revid": 1565068,
+          "sha256": "741e843d3773008ffefb103739a694670e94965b060b9dd81e1947bc95d7e1c8",
+          "bytes": 39830,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC17%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 18,
+          "revid": 1565069,
+          "sha256": "b68c87b14076f4fc09f194bf05879e47d737d06a418eb2a5ccc58befcaa341eb",
+          "bytes": 37053,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC18%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 19,
+          "revid": 1565070,
+          "sha256": "5369188ae615900f92b06ad652c397b5bb4be2592afb5ded0e8daad16747c6d4",
+          "bytes": 40605,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC19%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 20,
+          "revid": 1565071,
+          "sha256": "5babe3a25c049febdbca5aab8ec40757c8febc42b829d72a308f8567249df0e8",
+          "bytes": 36539,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC20%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 21,
+          "revid": 1565072,
+          "sha256": "6585a25ac4895d666518b4b712dca93f0e9cfca84d585efe35b1944117d4391d",
+          "bytes": 38583,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC21%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 22,
+          "revid": 1565073,
+          "sha256": "e471e90a200eaeed262351c8c9c1dd5637aff1d58fb698519418e94e14ce3ab8",
+          "bytes": 41588,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC22%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 23,
+          "revid": 1565074,
+          "sha256": "34817cef6a110d9e5dfc0f668435803efbeaa2c748529a1a20010bb122f07997",
+          "bytes": 41180,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC23%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 24,
+          "revid": 1565075,
+          "sha256": "f66e180810d9dae120f80ad27b9afbfaf3b90afe0c4ddaa1a6de8b1c2607c4d5",
+          "bytes": 39752,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC24%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 25,
+          "revid": 1565076,
+          "sha256": "45facb0260509f81f757d3c0dc1f29c33f88653f0ea7ac5bcc016f99af35ab87",
+          "bytes": 39591,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC25%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 26,
+          "revid": 1565077,
+          "sha256": "56ad4050a4e06d5ae0321342694eaf16a383e5a0bf7db3fb5dabb59c11bc47f4",
+          "bytes": 38830,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC26%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 27,
+          "revid": 2413606,
+          "sha256": "df610025f45afb6768b90344815fbab2a0ce0b258fdcbe358aa886c18f878fa0",
+          "bytes": 36552,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC27%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 28,
+          "revid": 1565080,
+          "sha256": "71e7d71394eb2a7cc99eece4eac1265d19d54df8a4562fa6e4cfccd192f3e2bf",
+          "bytes": 40164,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC28%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 29,
+          "revid": 1565081,
+          "sha256": "5ed302414342125b07467b9cc9e7cb582198fa4984e369975af0be33390dde4f",
+          "bytes": 39037,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC29%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 30,
+          "revid": 1565082,
+          "sha256": "3dfe9333d773ec41f7b18a578ea88faa92befc386cecd9977dc5c291678698ee",
+          "bytes": 39431,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC30%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 31,
+          "revid": 1565083,
+          "sha256": "5614fd1b948e411ade9ebf017d2170058d1faf05e317887a09515718fc32a2dd",
+          "bytes": 45864,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC31%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 32,
+          "revid": 1565084,
+          "sha256": "a3417d883c0a8f571af41416f1d7c4c4dce6b0e278edbc3975f63ae848d8c593",
+          "bytes": 38294,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC32%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 33,
+          "revid": 1565085,
+          "sha256": "d217372b002e8203d6deea57cd53c4da357bbbcddb388ad2e7cb5ddf4f3398a9",
+          "bytes": 38781,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC33%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 34,
+          "revid": 1565086,
+          "sha256": "c6f187f71468c2e621b66b04e84b9103c88e52b246bc63f719b2f074814e1f37",
+          "bytes": 42665,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC34%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 35,
+          "revid": 1565087,
+          "sha256": "4f0bcadbf61304df2baa4e5778f334158051db126abc11d0d5f4f882300a9bf6",
+          "bytes": 35014,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC35%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 36,
+          "revid": 1565088,
+          "sha256": "fb84aa793e76bfcaa82f666d795459a66f9ad5a69eb3ff49f21b55663bf9d393",
+          "bytes": 39003,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC36%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 37,
+          "revid": 1565089,
+          "sha256": "631219b81ed6a3564565c81259f47f285788c5e062ef40a0928681a726f7b9fb",
+          "bytes": 43311,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC37%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 38,
+          "revid": 1565090,
+          "sha256": "d556d0d59c3328fa2acae9d31fa87af196436a2651193d25ab7d12411969e2dc",
+          "bytes": 39999,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC38%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 39,
+          "revid": 1565091,
+          "sha256": "0298b8fd24974bd879f736c5e3d941147f06cb83935531de2c9dcfb54c0627ad",
+          "bytes": 34907,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC39%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 40,
+          "revid": 1565092,
+          "sha256": "5c041de2d07605e74bd47416a089020618848a63e1f2747d7d55121c04ddaac5",
+          "bytes": 40044,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC40%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 41,
+          "revid": 2157954,
+          "sha256": "48776a731c70071ffe9df2c7565793f44808dd8175b9a1844a19abecac094d8e",
+          "bytes": 41032,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC41%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 42,
+          "revid": 1565094,
+          "sha256": "bbbbc78b8c88d11d307569031bcbc394eb4507f9c5297b2c0cd95a30359a6021",
+          "bytes": 38318,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC42%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 43,
+          "revid": 1565095,
+          "sha256": "fb0a4c26ca414a88abe12639839ee4883b30ea16db730b5efa21896c6d2b38e7",
+          "bytes": 37623,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC43%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 44,
+          "revid": 1565096,
+          "sha256": "f1b4e602ac8fa3d6d65a420684ecc8332fc0fab7f26780a63fe8e40ce2092b58",
+          "bytes": 34200,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC44%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 45,
+          "revid": 1565097,
+          "sha256": "602c016f00b70974f3bee497b9861215e54eadcdc1a6104605293b62ef40ba94",
+          "bytes": 39685,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC45%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 46,
+          "revid": 1565107,
+          "sha256": "b8b0f84041ac6c67b456608b1bcc2505999f74539b2f6cad111a3482e39a8395",
+          "bytes": 38917,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC46%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 47,
+          "revid": 1565098,
+          "sha256": "bc110900aed33af6e4440f9eb1eea09f572a100b35118bbbe4504d643bf76d4b",
+          "bytes": 39521,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC47%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 48,
+          "revid": 1565099,
+          "sha256": "d7b2fb4344be577864abaab888b6f141e9f96f4862153b12718dfad7105d3480",
+          "bytes": 37571,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC48%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 49,
+          "revid": 1565100,
+          "sha256": "e768c750946a8f558bf5541494a388bf13f22a9831ede07e4485a4cf744c0654",
+          "bytes": 35376,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC49%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 50,
+          "revid": 1565101,
+          "sha256": "2a2b94885dc0b67c3c492724d0741f9646cc94280ed36d0739e1a5f6d8ab8fef",
+          "bytes": 32342,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC50%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 51,
+          "revid": 1565102,
+          "sha256": "cc94c531199e2d66b79f3070b42a827fef9864bb466a77f2acf04da744c7b941",
+          "bytes": 29890,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC51%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 52,
+          "revid": 1565103,
+          "sha256": "341baaa9d96ca714c99cf6d5a85d3017469949f57c22e2707b8d5216eeee30fb",
+          "bytes": 39478,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC52%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 53,
+          "revid": 1565105,
+          "sha256": "a1cdbdba2c2337f5034e0b552a0dcd1129d07e78d591e1a6a3771235dcd917ad",
+          "bytes": 35303,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC53%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 54,
+          "revid": 1567662,
+          "sha256": "380cedc62a00a007c9095474f780d7f3294c4c5ae72c2f0641d02e3ad633a4ad",
+          "bytes": 46393,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC54%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 55,
+          "revid": 1565106,
+          "sha256": "10bbe96dc06eb380129b979ca409ee6a23816df53df2f7c2223b232487fab652",
+          "bytes": 40250,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC55%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        },
+        {
+          "number": 56,
+          "revid": 1567657,
+          "sha256": "79dadd21f6c29e9fa6bfae4f4d56b59e38e6e3c43a50810bee0511b396efdff2",
+          "bytes": 27831,
+          "url": "https://zh.wikisource.org/w/api.php?action=parse&page=%E5%84%92%E6%9E%97%E5%A4%96%E5%8F%B2%2F%E7%AC%AC56%E5%9B%9E&prop=text%7Cwikitext%7Crevid&format=json&formatversion=2"
+        }
+      ],
+      "body_sha256": "b97107fa7c6d8d4f3a7107655e96f03ae7fe0544044db4dd87a901ef7a342008",
+      "body_codepoints": 331106,
+      "chapter_sequence_matches": true,
+      "story_chapters": 56,
+      "square_placeholders": 0,
+      "quote_delimiter_issues": {
+        "unmatched_close": 60,
+        "unclosed_quote": 23
+      },
+      "edition_note": "Chapter 56 authorship is disputed in the source catalog; this test explicitly declares this edition.",
       "transcription_accuracy": "not_human_verified",
       "text_republished_in_this_repository": false
     }

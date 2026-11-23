@@ -12,6 +12,89 @@ NUMBER = re.compile(r"^第([零〇一二三四五六七八九十百千万两\d]+
 DIGITS = dict(zip("零〇一二三四五六七八九两", [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 2], strict=True))
 
 
+def wikisource_chapter_body(html: str, expected_number: int) -> tuple[bytes, dict]:
+    """Prepare a declared Novel-template chapter, retaining its source header title.
+
+    Separate from the transcluded-pages extractor: no general HTML import promise.
+    The returned coordinates address derived text, never HTML byte positions.
+    """
+    if type(expected_number) is not int or expected_number <= 0:
+        raise ValueError("declare a positive expected chapter number")
+
+    class Extractor(HTMLParser):
+        def __init__(self):
+            super().__init__(convert_charrefs=True)
+            self.stack, self.parts, self.cells = [], [], []
+            self.roots, self.headers, self.transclusions = 0, 0, 0
+
+        def handle_starttag(self, tag, attrs):
+            classes = set(dict(attrs).get("class", "").split())
+            parent = self.stack[-1] if self.stack else {}
+            root = "mw-parser-output" in classes
+            self.roots += int(root)
+            active = root or parent.get("active", False)
+            blocked = parent.get("blocked", False) or tag in {"script", "style"} or bool(
+                classes & {"noprint", "ws-noexport", "ws-footer", "mw-editsection", "pagenum", "ws-pagenum"})
+            header = active and ("ws-header" in classes or parent.get("header", False))
+            self.headers += int(active and "ws-header" in classes)
+            self.transclusions += int(active and "prp-pages-output" in classes)
+            cell = [] if tag == "td" and header and not blocked else parent.get("cell")
+            if tag == "td" and cell is not None:
+                self.cells.append(cell)
+            if tag == "br" and active and not blocked and not header:
+                self.parts.append("\n")
+            if tag not in {"br", "img", "hr", "meta", "link", "input", "wbr", "source", "area", "embed", "param", "track", "col", "base"}:
+                self.stack.append({"tag": tag, "active": active, "blocked": blocked, "header": header, "cell": cell})
+
+        def handle_endtag(self, tag):
+            for index in range(len(self.stack)-1, -1, -1):
+                frame = self.stack[index]
+                if frame["tag"] == tag:
+                    if (frame["active"] and not frame["blocked"] and not frame["header"]
+                            and tag in {"p", "div", "h1", "h2", "h3", "h4", "dd", "dt", "li", "blockquote", "pre", "section"}):
+                        self.parts.append("\n")
+                    del self.stack[index:]
+                    break
+
+        def handle_data(self, data):
+            if not self.stack:
+                return
+            frame = self.stack[-1]
+            if frame["active"] and not frame["blocked"]:
+                if frame["header"] and frame["cell"] is not None:
+                    frame["cell"].append(data)
+                elif not frame["header"]:
+                    self.parts.append(data)
+
+    parser = Extractor()
+    parser.feed(html)
+    parser.close()
+    if (parser.roots != 1 or not parser.headers or parser.transclusions
+            or any(f["active"] for f in parser.stack)):
+        raise ValueError("one complete Wikisource Novel chapter container with source header required")
+    titles = [" ".join("".join(cell).split()) for cell in parser.cells]
+    titles = [(value, NUMBER.match(value)) for value in titles if NUMBER.match(value)]
+    if (len(titles) != 1 or titles[0][1][2] != "回"
+            or chapter_number(titles[0][1][1]) != expected_number):
+        raise ValueError("source chapter header differs from declared chapter number")
+    title = titles[0][0]
+    body = "".join(parser.parts).replace("\r\n", "\n").replace("\r", "\n").strip()
+    if not body:
+        raise ValueError("empty Wikisource chapter body")
+    data = (title+"\n\n"+body+"\n").encode()
+    return data, {"schema_version": 1, "extractor": "wikisource-novel-chapter-1",
+                  "html_sha256": sha256(html.encode()), "body_sha256": sha256(data),
+                  "source_header_title": title, "declared_chapter_number": expected_number,
+                  "text_body_start": len(title)+2,
+                  "coordinate_unit": "derived_unicode_codepoint_not_html_byte_offset",
+                  "transformations": ["one mw-parser-output Novel-template chapter",
+                                      "source header title whitespace collapsed into one heading line",
+                                      "body text nodes and block/br line breaks; HTML entities decoded",
+                                      "navigation/headers/footers/page labels/scripts/styles excluded",
+                                      "outer body whitespace trimmed; source wording retained"],
+                  "transcription_accuracy": "requires_source_and_human_review"}
+
+
 def wikisource_body(html: str) -> tuple[bytes, dict]:
     """Explicit corpus preparation, not general HTML/PDF input support or OCR."""
     class Extractor(HTMLParser):

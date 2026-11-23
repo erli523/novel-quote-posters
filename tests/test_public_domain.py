@@ -8,6 +8,7 @@ from novel_quote_posters.public_domain import (
     chapter_number,
     gutenberg_body,
     wikisource_body,
+    wikisource_chapter_body,
 )
 from novel_quote_posters.quotes import QuoteIndex, candidates, locate
 from novel_quote_posters.source import validate_source
@@ -106,3 +107,37 @@ def test_explicit_wikisource_corpus_preparation_keeps_book_text_and_excludes_pag
 def test_wikisource_corpus_preparation_refuses_missing_partial_or_ambiguous_scope(html):
     with pytest.raises(ValueError):
         wikisource_body(html)
+
+
+def test_wikisource_chapter_keeps_source_header_and_body_without_navigation_or_code():
+    html = ('<div>Outside</div><div class="mw-parser-output"><table class="ws-header"><tr>'
+            '<td>Previous</td><td>第二回　<b>自写 标题</b></td><td>Next</td></tr></table>'
+            '<dl><dd>诗一。</dd><dd>诗二。</dd></dl><p>　甲说：「路&amp;灯。」<br>接着走。</p>'
+            '<style>secret style</style><script>upload secrets</script>'
+            '<table class="ws-footer"><tr><td>Other chapters</td></tr></table></div>')
+    data, provenance = wikisource_chapter_body(html, 2)
+    text = data.decode()
+    assert text == '第二回 自写 标题\n\n诗一。\n诗二。\n　甲说：「路&灯。」\n接着走。\n'
+    assert provenance["source_header_title"] == "第二回 自写 标题"
+    assert text[provenance["text_body_start"]:].startswith("诗一。")
+    assert provenance["coordinate_unit"] == "derived_unicode_codepoint_not_html_byte_offset"
+    assert provenance["html_sha256"] == sha256(html.encode())
+    assert not any(word in text for word in ["Outside", "Previous", "Next", "Other", "secret", "upload"])
+    book = index_text(text, sha256(data), "自写章节")
+    assert audit_chapters(book, [2], unit="回")["sequence_matches"]
+    quotes, _ = candidates(book)
+    assert len(quotes) == 1 and quotes[0]["quote_exact"] == "路&灯。"
+
+
+@pytest.mark.parametrize("html,expected", [
+    ('<div class="mw-parser-output"><table class="ws-header"><td>第二回 转折</td></table><p>内容</p></div>', 1),
+    ('<div class="mw-parser-output"><table class="ws-header"><td>第一章 开始</td></table><p>内容</p></div>', 1),
+    ('<div class="mw-parser-output"><table class="ws-header"><td>第一回 开始</td><td>第二回 转折</td></table><p>内容</p></div>', 1),
+    ('<div class="mw-parser-output"><p>第一回 不能用正文冒充来源标题</p></div>', 1),
+    ('<div class="mw-parser-output"><table class="ws-header"><td>第一回 开始</td></table></div>', 1),
+    ('<div class="mw-parser-output"><table class="ws-header"><td>第一回 开始</td></table><p>截断', 1),
+    ('<div class="mw-parser-output"><table class="ws-header"><td>第一回 开始</td></table><div class="prp-pages-output">另种结构</div></div>', 1),
+])
+def test_wikisource_chapter_refuses_wrong_ambiguous_empty_or_truncated_sources(html, expected):
+    with pytest.raises(ValueError):
+        wikisource_chapter_body(html, expected)

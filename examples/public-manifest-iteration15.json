@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "c5b8e4a38a39a7f15c2bfcfa0b3be4d416222e8defc4cde94b3021546274e7d5",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "8928b8a13756e6e644b6a3d10498dab50bf1d04d26fbbd8b877b354d123f5204",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-generation-diagnosis.md",
+      "sha256": "d393d5a906c52caec710d66e6c58aec73f21e5f008d3eeb3b374cd10168ddb9e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "5289d71826fb9dcb25e2228e73fa85db2b1456851e99f6a35852e5875321713c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "80d262ca9335af367eca2e47e61df1771442d59c16b4ee5739d9083d1df1bf9c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/image-recovery-real-novels.md",
+      "sha256": "3117f959c9b03fde46bad63c1ee4245bd045dff3e20c28bafac3555f87153d49",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-novel-tests.md",
+      "sha256": "52b8dc2f1aeed3fc6b2bece7e7dc1db77dc6e876c571c988d7e15617bb922729",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "5b0ba534945114950291e16b1f698a954e7a65520aa59ef785536aa3ed785f8e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration15-evidence.json",
+      "sha256": "045eec1d758500353cacf9e9d276a4199177f2c4b12935d8bf21555110fe716b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/real-novel-sources.json",
+      "sha256": "13dd3a74f67047ec1b385bc4b3408b1d0eeeccdad364f9625b976444ba857fc6",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/public_domain.py",
+      "sha256": "1e2e5530ed40e7b1106c9f786f3e964343dabbd8e0ec433fb525e65f48bdae34",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/source_quality.py",
+      "sha256": "5dbe10ea7093cf792dfe08ad8c651bb008907368c977ca8e9185a67351590f39",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/status.py",
+      "sha256": "35a9869da9bb4061170f09fe969e374a405eebc03186c9e358e5475a6f76a73c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_public_domain.py",
+      "sha256": "feb0b50c5ca3eb87121778876488eed1d8d4955cdda8224f30232c15efa2a29a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_status.py",
+      "sha256": "754188d57ff3d77cb0bc3471717658eda7f6d45ec70c1e9b2bd97300d8edca55",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": [],
+  "target_repository": "erli523/novel-quote-posters",
+  "target_visibility": "PUBLIC",
+  "authorization": "Standing user authorization for public milestone synchronization.",
+  "ai_content_review": "Reviewed changed code, self-authored tests, documentation, source URLs/revisions/hashes and sanitized actual counts. Complete novels, actual annotation proposals, raw responses, local runtime config and credentials excluded.",
+  "reviewed_at": "2026-11-23T12:34:36.169889+00:00"
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "iteration": 15,
+  "contract": "docs/plans/image-recovery-real-novels.md",
+  "checks": {
+    "pytest_passed": 220,
+    "pytest_failed": 0,
+    "ruff": "passed",
+    "private_evidence_id": "20261123T090054Z-48b56cf1"
+  },
+  "complete_real_long_novel_test": {
+    "source_hash": "b97107fa7c6d8d4f3a7107655e96f03ae7fe0544044db4dd87a901ef7a342008",
+    "catalog_revision": 1645632,
+    "chapters": 56,
+    "retained_raw_responses": 57,
+    "prepared_codepoints": 331106,
+    "chunks": 59,
+    "matched_candidates": 3867,
+    "exact_spans_checked": 3867,
+    "all_preparation_replays_identical": true,
+    "all_candidate_chapter_mappings_checked": true,
+    "all_window_hashes_and_union_checked": true,
+    "same_configuration_resume_unchanged": true,
+    "ingest_seconds": 0.4738321999902837,
+    "square_placeholders": 0,
+    "replacement_characters": 0,
+    "quote_delimiter_issues": {
+      "unmatched_close": 60,
+      "unclosed_quote": 23
+    },
+    "application_semantic_windows_processed": 0,
+    "human_approvals": 0,
+    "image_calls": 0
+  },
+  "source_status_checks": {
+    "actual_runs_checked": 4,
+    "source_and_application_documents_unchanged": true,
+    "zero_warning_is_not_accuracy_certification": true,
+    "historical_report_not_required_for_current_observations": true
+  },
+  "downloads": {
+    "rate_limit_failures_preserved": 2,
+    "retry_after_seconds_observed": 35,
+    "final_serial_min_interval_seconds": 7,
+    "external_EPUB_attempts": 2,
+    "external_EPUB_downloads": 0,
+    "external_EPUB_test": "not_run_download_unavailable"
+  },
+  "native_images": {
+    "non_image_dispatch_control": "still_http404",
+    "runtime_repair": "unverified",
+    "new_image_calls": 0,
+    "main_reserved": 3,
+    "main_limit": 10,
+    "remaining": 7,
+    "actual_outputs": 0
+  },
+  "limits": [
+    "This explicitly declares the source 56-chapter edition; the source notes disputed final-chapter authorship.",
+    "Full machine coverage and exact matched spans are not semantic reading or exhaustive extraction.",
+    "No source text, real annotations, raw logs, runtime configuration or credentials published.",
+    "No independent image API or social publishing enabled."
+  ]
+}
