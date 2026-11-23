@@ -1,6 +1,7 @@
 """Offline, version-bound review records. AI never calls this to approve itself."""
 
 import base64
+import copy
 import io
 import json
 from datetime import datetime
@@ -8,6 +9,7 @@ from pathlib import Path
 
 from PIL import Image
 
+from .albums import ALBUM_CHECKS, album_target
 from .documents import commit_documents, recover_documents
 from .export import quote_fingerprint, review_fingerprint
 from .images import validate_character_reference
@@ -16,6 +18,7 @@ from .rendering import validate_tracked_render
 from .review_policy import VISUAL_CHECKS, VISUAL_POLICY_VERSION, visual_review_complete
 from .source import validate_source
 from .storage import contained, digest_file, load_json, now, save_json, sha256
+from .workflow import Ledger
 
 
 def character_label(identity: str | None, characters: dict) -> str:
@@ -100,9 +103,9 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
                               "visual_policy_version": VISUAL_POLICY_VERSION,
                               "visual_checks": {key: "pending" for key in VISUAL_CHECKS},
                               "status": "pending", "note": ""})
-    return {"schema_version": 2, "source_hash": book["source_hash"], "book_title": book["title"],
+    return {"schema_version": 3, "source_hash": book["source_hash"], "book_title": book["title"],
             "reviewer_type": "human", "reviewer": "", "attested": False,
-            "reviewed_at": "", "quotes": rows, "cards": card_rows}
+            "reviewed_at": "", "quotes": rows, "cards": card_rows, "album": album_target(book, card_rows)}
 
 
 def write_review_page(run: Path, output: Path, *, quotes_only: bool = False):
@@ -120,6 +123,7 @@ def write_review_page(run: Path, output: Path, *, quotes_only: bool = False):
             raise ValueError("review images changed while preparing page")
         card["view_data"] = {key: _data_url(raw) for key, raw in views["bytes"].items()}
     view["visual_check_labels"] = VISUAL_CHECKS
+    view["album_check_labels"] = ALBUM_CHECKS
     # Prevent novel content from ending the fixed script element or inserting HTML.
     data = json.dumps(view, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
     html = PAGE.replace("__REVIEW_DATA__", data)
@@ -131,8 +135,8 @@ def write_review_page(run: Path, output: Path, *, quotes_only: bool = False):
 
 def apply_review(run: Path, record: dict) -> dict:
     recover_documents(run)
-    if record.get("schema_version") != 2:
-        raise ValueError("review schema 2 required; regenerate old review forms without upgrading approvals")
+    if record.get("schema_version") != 3:
+        raise ValueError("review schema 3 required; regenerate old review forms without upgrading approvals")
     if (record.get("reviewer_type") != "human"
             or record.get("attested") is not True or not isinstance(record.get("reviewer"), str)
             or not record["reviewer"].strip() or not isinstance(record.get("reviewed_at"), str)):
@@ -143,6 +147,8 @@ def apply_review(run: Path, record: dict) -> dict:
             raise ValueError("timezone missing")
     except ValueError as error:
         raise ValueError("review time must be ISO 8601 with a timezone") from error
+    snapshot = {name: load_json(run / name) if (run / name).exists() else None for name in
+                ["book.json", "quotes.json", "characters.json", "cards.json", "album-review.json"]}
     expected = review_targets(run, quotes_only=not bool(record.get("cards")))
     if record["source_hash"] != expected["source_hash"]:
         raise ValueError("review targets a different source")
@@ -179,11 +185,35 @@ def apply_review(run: Path, record: dict) -> dict:
             if category == "cards":
                 changes[category][key].update(visual_policy_version=VISUAL_POLICY_VERSION,
                     visual_checks=row.get("visual_checks", {}), view_hashes=row["view_hashes"], crop_box=row["crop_box"])
-    # Validate the whole record before committing any decisions.
     values = {}
+    album_changed = False
+    album = record.get("album")
+    if album is not None:
+        if not isinstance(album, dict) or album.get("status") not in {"pending", "approved", "rejected"}:
+            raise ValueError("invalid whole-album review decision")
+        if album["status"] != "pending":
+            target = expected["album"]
+            if target is None or album.get("fingerprint") != target["fingerprint"] or album.get("material") != target["material"]:
+                raise ValueError("whole-album review invalidated by order/content changes")
+            checks = album.get("checks", {})
+            if not isinstance(checks, dict) or set(checks) != set(ALBUM_CHECKS) or any(v not in {"pending", "passed", "failed"} for v in checks.values()):
+                raise ValueError("invalid whole-album checklist")
+            if album["status"] == "approved":
+                if any(row["draft"] for row in expected["cards"]):
+                    raise ValueError("approve a clean whole-album candidate, not draft-labelled images")
+                if checks != dict.fromkeys(ALBUM_CHECKS, "passed"):
+                    raise ValueError("whole-album checklist must be fully passed before approval")
+            proposed = {"schema_version": 1, "material": target["material"], "fingerprint": target["fingerprint"],
+                        "status": album["status"], "checks": checks, "reviewer_type": "human",
+                        "reviewer": record["reviewer"], "attested": True, "reviewed_at": record["reviewed_at"],
+                        "note": album.get("note", "")}
+            if proposed != snapshot["album-review.json"]:
+                values["album-review.json"] = proposed
+                album_changed = True
+    # Validate the whole record before committing any decisions, including the album.
     for category, identity in [("quotes", "quote_id"), ("cards", "card_id")]:
         if changes[category]:
-            items = load_json(run / f"{category}.json")
+            items = copy.deepcopy(snapshot[f"{category}.json"])
             for item in items:
                 if item[identity] in changes[category]:
                     proposed = changes[category][item[identity]]
@@ -195,11 +225,14 @@ def apply_review(run: Path, record: dict) -> dict:
                 values[f"{category}.json"] = items
     record_hash = sha256(json.dumps(record, sort_keys=True, ensure_ascii=False).encode())
     history = run / "reviews" / f"{record_hash}.json"
-    if not history.exists():
-        save_json(history, {"record": record, "imported_at": now()})
-    transaction = commit_documents(run, values, reason="human_review") if values else None
+    with Ledger(run / ".state/ledger.sqlite") as ledger, ledger.db:
+        ledger.db.execute("UPDATE config SET value=value WHERE key='limit'")
+        if not history.exists():
+            save_json(history, {"record": record, "imported_at": now()})
+    transaction = commit_documents(run, values, reason="human_review", expected=snapshot) if values else None
     return {"record_hash": record_hash, "transaction": transaction,
-            "quotes_changed": len(changes["quotes"]), "cards_changed": len(changes["cards"])}
+            "quotes_changed": len(changes["quotes"]), "cards_changed": len(changes["cards"]),
+            "album_changed": album_changed}
 
 
 PAGE = '''<!doctype html><html lang="zh-CN"><meta charset="utf-8">
@@ -216,6 +249,7 @@ img{max-width:100%;max-height:850px;object-fit:contain;background:#eee}small{col
 .comparison{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
 figure{margin:0}figcaption{font-weight:600;margin:8px 0}.mobile-view{width:360px}
 .visual-checks{border:1px solid #d6d9d5;padding:16px;margin-top:20px}.visual-checks label{font-size:15px}
+.album-strip{display:flex;gap:16px;overflow-x:auto;padding:12px 0}.album-strip figure{flex:0 0 130px}.album-strip img{width:120px;height:160px}
 dialog{max-width:90vw;max-height:90vh;overflow:auto;border:1px solid #64747c;border-radius:8px}
 dialog::backdrop{background:#12212ccc}#original-view img{max-width:none;max-height:none;width:auto;height:auto;display:block;margin-top:12px}
 .notice{background:#fff2d6;padding:16px;border-radius:8px}.sticky{position:sticky;bottom:0;background:#f3f1eb;padding:16px;border-top:1px solid #ccc}
@@ -224,6 +258,7 @@ dialog::backdrop{background:#12212ccc}#original-view img{max-width:none;max-heig
 <label>审核人 <input type="text" id="reviewer" placeholder="填写实际审核人"></label>
 <h2>原句与说话人</h2><section id="quotes"></section>
 <h2>图片与排版</h2><section id="cards"></section>
+<h2>图集顺序与节奏</h2><section id="album"></section>
 <div class="sticky"><label><input id="attest" type="checkbox"> 我已亲自核对所作出的审核决定</label>
 <button id="download">下载审核记录</button><p id="message" role="status"></p></div></main>
 <dialog id="image-dialog" aria-label="原尺寸图片"><button id="close-dialog">关闭原图</button><div id="original-view"></div></dialog>
@@ -264,11 +299,26 @@ for(const row of review.cards){const a=element('article',undefined,document.getE
   for(const [value,name] of [['pending','未检查'],['passed','通过'],['failed','需修改']]){const option=element('option',name,select);option.value=value;}
   select.onchange=()=>row.visual_checks[key]=select.value;}
  decision(row,a);}
+if(review.album){const a=element('article',undefined,document.getElementById('album'));
+ element('h3','整组 '+review.album.material.count+' 张 · 按下列顺序上传',a);
+ element('p','首张卡片兼首图，没有额外封面；请实际查看首、中、末页，再逐项判断。',a);
+ const strip=element('div',undefined,a);strip.className='album-strip';
+ for(const item of review.album.material.ordered_cards){const card=review.cards.find(c=>c.card_id===item.card_id),figure=element('figure',undefined,strip);
+  element('figcaption',String(item.sequence).padStart(3,'0')+' · '+item.card_id,figure);
+  const image=element('img',undefined,figure);image.src=card.view_data.mobile;image.alt='图集第 '+item.sequence+' 张 '+card.character;
+  image.onclick=()=>openOriginal(card.view_data.full,image.alt);}
+ const checks=element('fieldset',undefined,a);checks.className='visual-checks';element('legend','整组检查',checks);
+ for(const [key,text] of Object.entries(review.album_check_labels)){const label=element('label',text+' ',checks),select=element('select',undefined,label);
+  for(const [value,name] of [['pending','未检查'],['passed','通过'],['failed','需修改']]){const option=element('option',name,select);option.value=value;}
+  select.onchange=()=>review.album.checks[key]=select.value;}
+ decision(review.album,a);
+}else{element('p','当前只审核原句，图片就绪后再生成图集审核页。',document.getElementById('album'));}
 document.getElementById('download').onclick=()=>{const name=document.getElementById('reviewer').value.trim();
  if(!name||!document.getElementById('attest').checked){document.getElementById('message').textContent='请填写审核人，并勾选本人核对。';return;}
  for(const card of review.cards){if(card.status==='approved'&&(card.draft||Object.values(card.visual_checks).some(v=>v!=='passed')||(card.image_kind==='generated'&&!card.reference_usable))){document.getElementById('message').textContent=card.card_id+' 尚未满足批准条件，请检查草稿标签、基准图和逐项视觉判断。';return;}}
+ if(review.album&&review.album.status==='approved'&&(review.cards.some(c=>c.draft)||Object.values(review.album.checks).some(v=>v!=='passed'))){document.getElementById('message').textContent='整组尚未满足批准条件，请检查草稿标签和整组判断。';return;}
  const result=JSON.parse(JSON.stringify(review));result.reviewer=name;result.attested=true;result.reviewed_at=new Date().toISOString();
- for(const card of result.cards)delete card.view_data;delete result.visual_check_labels;
+ for(const card of result.cards)delete card.view_data;delete result.visual_check_labels;delete result.album_check_labels;
  const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));
  const link=document.createElement('a');link.href=url;link.download='review-record.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
  document.getElementById('message').textContent='审核记录已下载；导入后只对相同版本有效。';};

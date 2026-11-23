@@ -10,6 +10,7 @@ from pathlib import Path, PurePosixPath
 
 from PIL import Image
 
+from .albums import album_review_complete, album_target, portable_album_review, selection_target
 from .images import validate_image_asset
 from .storage import contained, copy_atomic, digest_file, load_json, save_json, sha256
 
@@ -99,6 +100,7 @@ def build_payload(run: Path, folder: Path, book: dict, characters: dict, selecte
     used = {c["character_id"] for c in cards}
     save_json(folder / "characters.json", {key: portable_character(run, characters[key]) for key in sorted(used)})
     save_json(folder / "image-provenance.json", provenance)
+    save_json(folder / "album-review.json", portable_album_review(run, selection_target(book, selected, draft), draft))
     (folder / "发布说明.txt").write_text(
         ("待审核演示包，不是已批准的发布成品。\n" if draft else "已审阅图集，请手工上传。\n")
         + "按 douyin_batch 前缀排序，出处见 quotes.csv，布局见 layouts。未自动发布抖音。\n"
@@ -106,7 +108,7 @@ def build_payload(run: Path, folder: Path, book: dict, characters: dict, selecte
         + "审核和来源记录为声明；原句、归属和工具真实性仍需对照原任务。\n", encoding="utf-8")
     inventory = [{"path": p.relative_to(folder).as_posix(), "sha256": digest_file(p), "size": p.stat().st_size}
                  for p in sorted(folder.rglob("*")) if p.is_file()]
-    manifest = {"schema_version": 2, "draft": draft, "source_hash": book["source_hash"],
+    manifest = {"schema_version": 3, "draft": draft, "source_hash": book["source_hash"],
                 "book_title": book["title"], "input_fingerprint": signature,
                 "assets": assets, "files": inventory, "review_status": "pending" if draft else "approved",
                 "verification_scope": "integrity_only_without_original_run"}
@@ -147,7 +149,7 @@ def verify_archive(path: Path) -> dict:
                         or (entry.external_attr >> 16) & 0o170000 == 0o120000):
                     raise ValueError("unsafe archive member")
             manifest = json.loads(archive.read("manifest.json"))
-            if manifest.get("schema_version") != 2:
+            if manifest.get("schema_version") not in {2, 3}:
                 raise ValueError("unsupported export manifest version")
             inventory = manifest["files"]
             if len({row["path"] for row in inventory}) != len(inventory):
@@ -179,6 +181,16 @@ def verify_archive(path: Path) -> dict:
                         picture.verify()
                 if sha256(archive.read(card["poster"])) != asset["sha256"] or sha256(archive.read(card["preview"])) != layout["preview_sha256"]:
                     raise ValueError("archive image/layout checksum mismatch")
+            if manifest["schema_version"] == 3:
+                target = album_target({"source_hash": manifest["source_hash"], "title": manifest["book_title"]}, [
+                    {"card_id": a["card_id"], "quote_id": a["quote_id"], "fingerprint": a["fingerprint"],
+                     "image_sha256": a["sha256"], "draft": manifest["draft"]} for a in manifest["assets"]])
+                review = json.loads(archive.read("album-review.json"))
+                if (not target or not isinstance(review, dict) or review.get("fingerprint") != target["fingerprint"]
+                        or review.get("material") != target["material"]
+                        or (not manifest["draft"] and not album_review_complete(review, target))
+                        or (manifest["draft"] and review.get("status") != "pending")):
+                    raise ValueError("archive whole-album review/order mismatch")
             return {"manifest": manifest, "files_checked": len(inventory), "integrity": "passed",
                     "authenticity": "not_authenticated", "original_quote_verification": "requires_original_run"}
     except (zipfile.BadZipFile, KeyError, json.JSONDecodeError, OSError) as error:

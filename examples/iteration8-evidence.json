@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "iteration": 8,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {"passed": 122, "failed": 0},
+    "ruff": "passed",
+    "private_evidence_id": "20261123T042614Z-ad9e335a"
+  },
+  "implemented": [
+    "whole-album review bound to source, title, count, cover policy and exact ordered card versions",
+    "ordered thumbnail strip and four pending human checks",
+    "formal export requires current individual and whole-album approval",
+    "cooperative compare-and-swap protects review imports against concurrent changes",
+    "schema-3 export includes a portable album attestation summary",
+    "standalone verifier checks album/image order cross-references while retaining schema-2 integrity support"
+  ],
+  "actual_application_qa": {
+    "scope": "self_authored_synthetic_software_test",
+    "cards": 3,
+    "order": ["card001", "card002", "card003"],
+    "album_decision": "pending",
+    "unsigned_download": "blocked",
+    "browser_console_errors": 0,
+    "draft_archive_reopened_and_verified": true,
+    "actual_human_approvals": 0,
+    "actual_generated_images": 0
+  },
+  "regressions": [
+    "individual approvals alone cannot export a final album",
+    "reordering preserves single images and invalidates album approval",
+    "a fresh simulated review permits the new order",
+    "incomplete album checks do not partially commit other decisions",
+    "draft albums cannot be approved",
+    "concurrent document edits are not overwritten",
+    "album order mismatch is rejected even with recalculated payload checksums",
+    "malformed album records are refused"
+  ],
+  "image_budget": {"limit": 10, "reserved": 2, "remaining": 8, "new_calls": 0},
+  "limits": [
+    "human judgments are declarations, not identity authentication",
+    "synthetic tests and local ZIP reopening do not prove actual tool-image handoff or user download acceptance",
+    "successful image generation, reference editing and real human semantic/visual acceptance remain incomplete",
+    "no external image API fallback enabled and no automatic social publishing"
+  ]
+}

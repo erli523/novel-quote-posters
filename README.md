@@ -4,7 +4,7 @@
 
 **开发中，尚未通过产品验收。** 以 [需求](docs/requirements.md)、[工程规则](rules.md)、[28 项验收标准](docs/acceptance.md) 和 [开发契约](docs/plans/v1.md) 为依据。当前迭代状态见 [开发记录](docs/milestones/progress.md)。
 
-[实际验收状态表](docs/milestones/acceptance-status.md) 分别列出已运行的程序证据和仍待真实图片/人工检查的缺口。离线视觉审核支持基准对照、手机图、裁切模拟和逐项判断；默认不授予任何批准。
+[实际验收状态表](docs/milestones/acceptance-status.md) 分别列出已运行的程序证据和仍待真实图片/人工检查的缺口。离线审核支持人物对照、手机图、裁切模拟及单卡/整组逐项判断；默认不授予任何批准。顺序或卡片版本变化后，旧整组批准不能用于正式导出。
 
 [受控修改](docs/edit-workflow.md) 支持保留原句的显示编辑、已有原句换绑、风格和排序；修改绑定输入版本，冲突拒绝覆盖，换人物清除旧配图指针。
 

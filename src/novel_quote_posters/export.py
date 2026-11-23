@@ -7,6 +7,7 @@ from pathlib import Path
 
 from PIL import Image
 
+from .albums import album_review_complete, load_album_review, selection_target
 from .bundles import build_payload, verify_archive, write_archive
 from .documents import recover_documents
 from .images import validate_character_reference, validate_image_asset
@@ -96,12 +97,16 @@ def _select(run: Path, *, draft: bool = False,
             if image_asset["source_kind"] == "generated":
                 validate_character_reference(run, characters[card["character_id"]], required=True)
         selected.append((card, quote, image, layout_path, fingerprint))
+    if not draft and not album_review_complete(load_album_review(run), selection_target(book, selected, draft)):
+        raise ValueError("whole-album human approval missing or invalidated by order/content changes")
     return book, characters, selected
 
 
-def _snapshot(book: dict, characters: dict, selected: list, draft: bool, allow_rewrite: bool) -> dict:
+def _snapshot(book: dict, characters: dict, selected: list, draft: bool, allow_rewrite: bool,
+              *, album_review: dict | None = None) -> dict:
     return {"schema_version": 2, "source": {k: book[k] for k in ["source_hash", "canonical_hash", "title"]},
             "draft": draft, "allow_rewrite": allow_rewrite,
+            "album_review": album_review,
             "characters": {c["character_id"]: characters[c["character_id"]] for c, *_ in selected},
             "cards": [{"card": card, "quote": quote, "poster_sha256": digest_file(image),
                        "layout_sha256": digest_file(layout), "approval": approval}
@@ -159,7 +164,7 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
                   allow_rewrite: bool = False, resume: bool = False) -> dict:
     run, destination = run.resolve(), destination.resolve()
     book, characters, selected = _select(run, draft=draft, allow_rewrite=allow_rewrite)
-    snapshot = _snapshot(book, characters, selected, draft, allow_rewrite)
+    snapshot = _snapshot(book, characters, selected, draft, allow_rewrite, album_review=load_album_review(run))
     signature = fingerprint(snapshot)
     zip_name = "draft-review.zip" if draft else "export.zip"
     if destination == destination.parent:
@@ -214,7 +219,8 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
                 report = _ready_report(ready, zip_name, signature)
                 if not report:
                     raise ValueError("new export failed archive verification")
-            current = _snapshot(*_select(run, draft=draft, allow_rewrite=allow_rewrite), draft, allow_rewrite)
+            current = _snapshot(*_select(run, draft=draft, allow_rewrite=allow_rewrite), draft, allow_rewrite,
+                                album_review=load_album_review(run))
             if fingerprint(current) != signature:
                 raise ValueError("inputs changed while exporting; no final package was published")
             # Both absolute paths are checked before this Windows directory move.
@@ -243,7 +249,7 @@ def export_status(run: Path) -> dict:
         if digest_file(archive) != report["zip_sha256"]:
             return {"state": "corrupt", "input_fingerprint": report["input_fingerprint"]}
         snapshot = _snapshot(*_select(run, draft=report["draft"], allow_rewrite=row["snapshot"]["allow_rewrite"]),
-                             report["draft"], row["snapshot"]["allow_rewrite"])
+                             report["draft"], row["snapshot"]["allow_rewrite"], album_review=load_album_review(run))
         return {"state": "current" if fingerprint(snapshot) == report["input_fingerprint"] else "invalidated",
                 "draft": report["draft"], "input_fingerprint": report["input_fingerprint"]}
     except (ValueError, OSError, KeyError) as error:

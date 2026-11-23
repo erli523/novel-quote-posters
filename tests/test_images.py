@@ -125,6 +125,8 @@ def test_user_supplied_replacement_can_be_final_exported_after_simulated_review(
         row["status"] = "approved"
     for row in form["cards"]:
         row["visual_checks"] = dict.fromkeys(row["visual_checks"], "passed")
+    form["album"]["status"] = "approved"
+    form["album"]["checks"] = dict.fromkeys(form["album"]["checks"], "passed")
     apply_review(poster_run, form)
     report = export_bundle(poster_run, tmp_path / "final")
     assert all(a["image_kind"] == "user_provided" for a in report["assets"])
