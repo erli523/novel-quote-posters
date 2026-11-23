@@ -62,6 +62,7 @@ def main():
     command.add_argument("--run", type=Path, required=True)
     command.add_argument("--output", type=Path, required=True)
     command.add_argument("--quotes-only", action="store_true")
+    command.add_argument("--selected-only", action="store_true", help="with --quotes-only, show explicitly selected quotes")
     command = commands.add_parser("apply-review", help="validate and import actual human decisions")
     command.add_argument("record", type=Path)
     command.add_argument("--run", type=Path, required=True)
@@ -134,7 +135,8 @@ def main():
             report = apply_analysis_file(args.run, args.proposal)
             print(f"Validated {report['quotes']} semantic proposals; human review pending.")
         elif args.command == "review":
-            report = write_review_page(args.run, args.output, quotes_only=args.quotes_only)
+            report = write_review_page(args.run, args.output, quotes_only=args.quotes_only,
+                                       selected_only=args.selected_only)
             print(f"Review page: {len(report['quotes'])} quotes, {len(report['cards'])} cards; no approval granted.")
         elif args.command == "apply-review":
             report = apply_review(args.run, load_json(args.record))

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "df918260e805132445d118fc9bf558687b2666dfe4a7a19dfe13bc0341b1299c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "8dc38a3b9107b33a864b019c05515666c64f78cb8c06924aa9914b9f17461a26",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "7bec01fb94f744fc09f64870014cb8c872af9c26d1a39ae132471aeb8b28d05e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/image-recovery-real-novels.md",
+      "sha256": "687aad1adf7e4cd2f221c9de78c028b7d843711b28441d66d86de0d55f2c0063",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-novel-tests.md",
+      "sha256": "a9368ef68f8e0f558703e9d6aecf8613cdc2f7a3fa7918296ee94631f15b6a89",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "4ce5e0a5c237afe14668d484dcf54175ff5806bacb7d580cee8b74bd5badb5ae",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "524e20f1cd6401069e65a147e1fe8a3753d2d0cd1b80764caaba54039671259f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/review.py",
+      "sha256": "329b3e5ac8706e33af9fa9b173206432d1571664627aa96948efd918101369a8",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_review.py",
+      "sha256": "9f2be563081d7f13728e86203409eee83eef4ea8120f6e2dfa428b36b64a0a55",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration14-evidence.json",
+      "sha256": "f341b45a9bef5eef215eca017a82e9c39ef756514b9bb3e4b1a044688c0241f6",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": [],
+  "target_repository": "erli523/novel-quote-posters",
+  "target_visibility": "PUBLIC",
+  "authorization": "User authorized public milestone sync; complete real books and actual annotations remain local.",
+  "ai_content_review": "Reviewed precise changed documentation, source, simulated tests, and sanitized statistics. No private novels, credentials, local routing config, or raw tool logs.",
+  "reviewed_at": "2026-11-23T08:44:14.449083+00:00"
+}

@@ -43,6 +43,42 @@ def test_review_template_never_grants_approval_and_escapes_novel_html(poster_run
         apply_review(poster_run, form)
 
 
+def test_selected_review_partial_roundtrip_preserves_unselected_pending(poster_run, tmp_path):
+    quotes = load_json(poster_run / "quotes.json")
+    quotes[0]["selection"]["selected"] = True
+    quotes[1]["selection"]["selected"] = False
+    save_json(poster_run / "quotes.json", quotes)
+    record = write_review_page(poster_run, tmp_path / "selected.html", quotes_only=True, selected_only=True)
+    assert [q["quote_id"] for q in record["quotes"]] == [quotes[0]["quote_id"]]
+    assert record["quotes"][0]["status"] == "pending" and not record["attested"]
+    with pytest.raises(ValueError, match="attestation"):
+        apply_review(poster_run, record)
+    # A simulated signature tests partial import; this is not a real user approval.
+    record.update(reviewer="SIMULATED TEST REVIEWER", attested=True, reviewed_at="2026-11-23T00:00:00+00:00")
+    record["quotes"][0]["status"] = "approved"
+    assert apply_review(poster_run, record)["quotes_changed"] == 1
+    actual = load_json(poster_run / "quotes.json")
+    assert actual[0]["review"]["status"] == "approved"
+    assert actual[1]["review"]["status"] == "pending"
+    actual[0]["speaker"]["explanation"] = "Changed attribution needs new context review"
+    save_json(poster_run / "quotes.json", actual)
+    with pytest.raises(ValueError, match="invalidated by a content change"):
+        apply_review(poster_run, record)
+
+
+def test_selected_review_requires_quote_scope_and_explicit_true(poster_run, tmp_path):
+    page = tmp_path / "empty.html"
+    with pytest.raises(ValueError, match="requires quotes-only"):
+        write_review_page(poster_run, page, selected_only=True)
+    quotes = load_json(poster_run / "quotes.json")
+    for quote in quotes:
+        quote["selection"]["selected"] = "true"  # Not an explicit Boolean selection.
+    save_json(poster_run / "quotes.json", quotes)
+    with pytest.raises(ValueError, match="no explicitly selected"):
+        write_review_page(poster_run, page, quotes_only=True, selected_only=True)
+    assert not page.exists() and not page.with_suffix(".targets.json").exists()
+
+
 def test_review_roundtrip_is_idempotent_and_new_text_invalidates_old_form(poster_run):
     record = signed_test_record(poster_run, quotes_only=True)
     result = apply_review(poster_run, record)

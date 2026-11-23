@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "iteration": 14,
+  "contract": "docs/plans/image-recovery-real-novels.md",
+  "checks": {
+    "pytest_passed": 209,
+    "pytest_failed": 0,
+    "ruff": "passed",
+    "private_evidence_id": "20261123T084110Z-ee8504b0"
+  },
+  "complete_application_reading": {
+    "source_hash": "9394e9f0759e985d57cb8727198937b6b9cd37f1015654de1cbd28e1a1df537c",
+    "application_read_windows": 4,
+    "windows_total": 4,
+    "codepoints_covered": 22138,
+    "semantic_proposals": 26,
+    "characters": 10,
+    "selected_quotes": 6,
+    "all_review_quotes": 247,
+    "human_approvals": 0,
+    "exact_spans_all_valid": true
+  },
+  "analysis_replay_unchanged": true,
+  "prepared_cards": 6,
+  "actual_finished_posters": 0,
+  "real_book_image_limit": 0,
+  "real_book_image_calls": 0,
+  "native_images": {
+    "project_repair_written": true,
+    "runtime_recovery": "unverified_reload_required",
+    "actual_outputs": 0,
+    "main_calls_reserved": 3,
+    "main_call_limit": 10,
+    "remaining": 7
+  },
+  "implemented": [
+    "explicitly selected quote-only review pages",
+    "partial review preserves omitted candidates and stale-content checks"
+  ],
+  "limits": [
+    "Application judgements are not independent human gold or exhaustive extraction accuracy.",
+    "All real-book approvals remain pending.",
+    "No novel text, actual annotations, local runtime configuration or credentials republished.",
+    "No independent image API fallback or social publishing."
+  ]
+}

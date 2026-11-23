@@ -108,6 +108,7 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
                      "text_mode": quote["text_mode"], "quote_type": quote["quote_type"],
                      "speaker": character_label(speaker["character_id"], characters),
                      "speaker_status": speaker["status"], "speaker_evidence": speaker.get("evidence", []),
+                     "application_selected": quote.get("selection", {}).get("selected") is True,
                      "chapter": context["chapter"],
                      "context": book["text"][context["context_start"]:context["context_end"]],
                      "source_context": source_context, "context_policy_version": CONTEXT_POLICY_VERSION,
@@ -146,10 +147,16 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
             "task_contract": contract, "task_issues": issues}
 
 
-def write_review_page(run: Path, output: Path, *, quotes_only: bool = False):
+def write_review_page(run: Path, output: Path, *, quotes_only: bool = False, selected_only: bool = False):
+    if selected_only and not quotes_only:
+        raise ValueError("selected-only requires quotes-only; visual and album review must retain all cards")
     if output.exists():
         raise ValueError("review page exists; choose a new version")
     targets = review_targets(run, quotes_only)
+    if selected_only:
+        targets["quotes"] = [row for row in targets["quotes"] if row["application_selected"]]
+        if not targets["quotes"]:
+            raise ValueError("no explicitly selected quotes; review all candidates or select candidates first")
     view = json.loads(json.dumps(targets, ensure_ascii=False))
     characters = load_json(run / "characters.json")
     definition = targets["task_contract"]["definition"] if targets["task_contract"] else None
