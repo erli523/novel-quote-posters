@@ -11,6 +11,9 @@ from .storage import digest_file, load_json, save_bytes, sha256
 
 
 def evidence(book: dict, item: dict) -> dict:
+    if (not isinstance(item, dict) or type(item.get("start")) is not int or type(item.get("end")) is not int
+            or not isinstance(item.get("text"), str)):
+        raise ValueError("semantic evidence needs integer source coordinates and exact text")
     start, end = item["start"], item["end"]
     if not (0 <= start < end <= len(book["text"])) or book["text"][start:end] != item["text"]:
         raise ValueError("semantic evidence does not match source")

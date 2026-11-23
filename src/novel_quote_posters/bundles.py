@@ -28,7 +28,7 @@ def portable_quote(quote: dict) -> dict:
     value = _fields(quote, ["quote_id", "quote_exact", "display_text", "text_mode", "source", "quote_type"])
     value["speaker"] = _fields(quote["speaker"], ["status", "character_id", "explanation"])
     value["speaker"]["evidence"] = _evidence(quote["speaker"].get("evidence", []))
-    value["review"] = _fields(quote.get("review", {}), ["status", "reviewer_type", "reviewer", "reviewed_at", "note", "fingerprint"])
+    value["review"] = _fields(quote.get("review", {}), ["status", "reviewer_type", "reviewer", "reviewed_at", "note", "fingerprint", "context_policy_version", "context_fingerprint"])
     return value
 
 

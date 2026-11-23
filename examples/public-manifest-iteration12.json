@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "75c498ee481e94267b6a4a1979c634301c9734ae2b64e902bc97e328d088e0e0",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "84e3282d2d93ef97be136362f587e8a772ba760b76e7897ed7bf44ed8c80e2d0",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "d8be2ad0d33d75df6338ae081a53b84b3a6a5a55dd36a356c88de2becd78f70e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "06195ec5b1f452d60b4d9576279d17a1a0766670f58ff663ead8e2fba790e817",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "fe322a9886b2c168ea2b1492ed452135aa37dcd77c2d26b69531f8960194b7eb",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "a7b3157bcb59fbf2e3edaeca109a27b30b592f6f660e23bdff502615f8546b24",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "fixtures/README.md",
+      "sha256": "cd21987c809169ace091c6ebc4328ca85cceeb1757f78adaa17615250e2f548a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "fixtures/temporal_dialogue.txt",
+      "sha256": "fa7b9112b31c202ceb4125f2d0cd9faf6ff08ddc9216fd149a1d40a256f990f2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "fixtures/temporal_dialogue.application_analysis.json",
+      "sha256": "10659f1bf2812471514c82392c70702f1a0ee93a6b8ac6a636b8b1e897037fb3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "fixtures/temporal_dialogue.expected.json",
+      "sha256": "aa0c923705f74bbed6d2934f2f6a16eaa0c0cbbfbaa9d2a82046067d1b663be3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/analysis.py",
+      "sha256": "1f45e947e3a7b4b120946e5ae147dc38474e99a3f499c7c224323dce58593b66",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/bootstrap.py",
+      "sha256": "0190bae5859f6e21b411beb5b0d2d1ebad96cff8fd6940b9337b7c8d64d4c0e8",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/bundles.py",
+      "sha256": "4e82c836050675abf9daf42de0d5ff72a4eb28a56cc2ec715a4953a2f0072e3a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/export.py",
+      "sha256": "1a20288ffe04196f575a795ccef99f512d10ef5a85d293d40158baa9a9b5b650",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/review.py",
+      "sha256": "9d28062b0f0a84cfa2febdf9c47470d26f8fc540d207f68535080e38c1e49576",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/source_context.py",
+      "sha256": "9dead8ba49e2e4466c28ba3ce01a21541de905ed1ffa6026a3261e00a8e562de",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/status.py",
+      "sha256": "bd4bb4bc877526e328fc348884eea2ea8f53df4e12fba22eee524483d197b6dc",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_images.py",
+      "sha256": "d4d3bd32a7421aa179be1267bc0702aebdcffac5deb172bd67cd00dfafb43a88",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_temporal_dialogue.py",
+      "sha256": "bc588e31653218fd359e80a9a6a1aa4b47d7ed29d00b076eb57f1d6fd27ebe00",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration12-evidence.json",
+      "sha256": "a32011128ff64dc949e02cf0cb16620a39e61267d5abc143637d90c024faec31",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/image-recovery-real-novels.md",
+      "sha256": "1bd6c1fbb1ee6487de326ab8a71d2012a30d3d293f210298c18af02004b5e648",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": [],
+  "repository": "erli523/novel-quote-posters",
+  "visibility": "PUBLIC",
+  "publication_authority": "User authorized public milestones and requested image fault repair/full real novels",
+  "ai_content_review": "Code, documentation, self-authored fixtures and pending/sanitized summaries only; novel files, local routing config and diagnostics remain private",
+  "rights_basis": "Project-authored MIT material; source novel copies not republished",
+  "reviewed_at": "2026-11-23T07:55:44.151867+00:00"
+}

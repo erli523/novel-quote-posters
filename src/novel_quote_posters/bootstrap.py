@@ -23,7 +23,7 @@ def initialize_run(source: Path, run: Path, *, title: str | None = None,
         raise ValueError("V1 currently supports TXT and EPUB only; DOCX/PDF/OCR not implemented")
     if source.stat().st_size > MAX_INPUT:
         raise ValueError("input exceeds 100 MiB limit")
-    if not 0 <= overlap < size or image_limit <= 0:
+    if not 0 <= overlap < size or type(image_limit) is not int or image_limit < 0:
         raise ValueError("invalid chunk window or image budget")
     if run == run.parent or not run.name:
         raise ValueError("a named run directory is required")

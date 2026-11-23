@@ -16,6 +16,7 @@ from .quotes import check_display
 from .rendering import validate_tracked_render
 from .review_policy import VISUAL_POLICY_VERSION, visual_review_complete
 from .source import validate_source
+from .source_context import CONTEXT_POLICY_VERSION, SourceContext, context_review_complete
 from .storage import contained, digest_file, fingerprint, load_json, now, save_json, sha256
 from .workflow import Ledger
 
@@ -33,7 +34,8 @@ def review_fingerprint(card: dict, quote: dict, image_hash: str, layout_hash: st
 
 def quote_fingerprint(quote: dict, character: dict | None = None) -> str:
     import json
-    material = {"quote": {k: v for k, v in quote.items() if k != "review"},
+    material = {"context_policy_version": CONTEXT_POLICY_VERSION,
+                "quote": {k: v for k, v in quote.items() if k != "review"},
                 "speaker_identity": {k: character.get(k) for k in ["character_id", "name", "aliases"]}
                 if character else None}
     return sha256(json.dumps(material,
@@ -49,6 +51,7 @@ def _select(run: Path, *, draft: bool = False,
     characters = load_json(run / "characters.json")
     cards = load_json(run / "cards.json")
     contract = load_contract(run, book)
+    contexts = SourceContext(book) if not draft else None
     if not cards or len({c["card_id"] for c in cards}) != len(cards):
         raise ValueError("empty or duplicate card IDs")
     selected = []
@@ -92,6 +95,7 @@ def _select(run: Path, *, draft: bool = False,
             if (speaker_review.get("status") != "approved"
                     or speaker_review.get("reviewer_type") != "human"
                     or not speaker_review.get("reviewer")
+                    or not context_review_complete(speaker_review, contexts.target(quote)["fingerprint"])
                     or speaker_review.get("fingerprint") != quote_fingerprint(quote, characters[card["character_id"]])):
                 raise ValueError("speaker has not received human approval")
             if (review.get("status") != "approved" or review.get("reviewer_type") != "human"

@@ -18,6 +18,7 @@ from .quotes import check_display
 from .rendering import validate_tracked_render
 from .review_policy import VISUAL_CHECKS, VISUAL_POLICY_VERSION, visual_review_complete
 from .source import validate_source
+from .source_context import CONTEXT_POLICY_VERSION, SourceContext
 from .storage import contained, digest_file, load_json, now, save_json, sha256
 from .workflow import Ledger
 
@@ -96,10 +97,12 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
     with Ledger(run / ".state/ledger.sqlite") as ledger:
         issues.extend(allocation_summary(contract, ledger.budget())["allocation_issues"])
     rows = []
+    contexts = SourceContext(book)
     for quote in quotes:
         check_display(book, quote, allow_rewrite=True)
         context = quote["source"]
         speaker = quote["speaker"]
+        source_context = contexts.target(quote)
         rows.append({"quote_id": quote["quote_id"], "fingerprint": quote_fingerprint(quote, characters.get(speaker["character_id"])),
                      "quote_exact": quote["quote_exact"], "display_text": quote["display_text"],
                      "text_mode": quote["text_mode"], "quote_type": quote["quote_type"],
@@ -107,6 +110,8 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
                      "speaker_status": speaker["status"], "speaker_evidence": speaker.get("evidence", []),
                      "chapter": context["chapter"],
                      "context": book["text"][context["context_start"]:context["context_end"]],
+                     "source_context": source_context, "context_policy_version": CONTEXT_POLICY_VERSION,
+                     "context_fingerprint": source_context["fingerprint"],
                      "status": "pending", "note": ""})
     card_rows = []
     if not quotes_only:
@@ -155,6 +160,15 @@ def write_review_page(run: Path, output: Path, *, quotes_only: bool = False):
                                          if c["chapter_id"] in definition["chapter_ids"]] if definition["chapter_ids"] else ["全部章节"],
                             "quote_types": [{"dialogue": "对白", "monologue": "独白"}[k] for k in definition["quote_types"]]} if definition else None
     view["task_issue_labels"] = [task_issue_label(issue, definition, count) for issue in targets["task_issues"]]
+    book = load_json(run / "book.json")
+    validate_source(run, book)
+    if (book["source_hash"] != targets["source_hash"] or book["title"] != targets["book_title"] or any(
+            row["source_context"]["canonical_hash"] != book["canonical_hash"] for row in targets["quotes"])):
+        raise ValueError("source changed while preparing full-chapter review; regenerate page")
+    chapter_ids = {p["chapter_id"] for row in targets["quotes"] for p in row["source_context"]["passages"]}
+    view["source_chapters"] = {c["chapter_id"]: {"title": c["title"], "start": c["start"], "end": c["end"],
+                                "text": book["text"][c["start"]:c["end"]]}
+                               for c in book["chapters"] if c["chapter_id"] in chapter_ids}
     cards = {card["card_id"]: card for card in load_json(run / "cards.json")} if not quotes_only else {}
     for card in view["cards"]:
         source = cards[card["card_id"]]
@@ -208,6 +222,9 @@ def apply_review(run: Path, record: dict) -> dict:
                 raise ValueError("invalid review decision")
             if row["status"] == "pending":
                 continue
+            if (category == "quotes" and row["status"] == "approved" and any(
+                    row.get(k) != available[key][k] for k in ["source_context", "context_policy_version", "context_fingerprint"])):
+                raise ValueError("source context changed or missing; regenerate attribution review page")
             if category == "cards" and row["status"] == "approved" and available[key]["draft"]:
                 raise ValueError("approve a clean candidate, not a draft-labelled poster")
             if category == "cards":
@@ -228,6 +245,9 @@ def apply_review(run: Path, record: dict) -> dict:
             if category == "cards":
                 changes[category][key].update(visual_policy_version=VISUAL_POLICY_VERSION,
                     visual_checks=row.get("visual_checks", {}), view_hashes=row["view_hashes"], crop_box=row["crop_box"])
+            elif row["status"] == "approved":
+                changes[category][key].update(context_policy_version=CONTEXT_POLICY_VERSION,
+                    context_fingerprint=available[key]["context_fingerprint"])
     values = {}
     album_changed = False
     album = record.get("album")
@@ -303,6 +323,7 @@ figure{margin:0}figcaption{font-weight:600;margin:8px 0}.mobile-view{width:360px
 .album-strip{display:flex;gap:16px;overflow-x:auto;padding:12px 0}.album-strip figure{flex:0 0 130px}.album-strip img{width:120px;height:160px}
 dialog{max-width:90vw;max-height:90vh;overflow:auto;border:1px solid #64747c;border-radius:8px}
 dialog::backdrop{background:#12212ccc}#original-view img{max-width:none;max-height:none;width:auto;height:auto;display:block;margin-top:12px}
+#close-source{position:sticky;top:0;z-index:1}
 .notice{background:#fff2d6;padding:16px;border-radius:8px}.sticky{position:sticky;bottom:0;background:#f3f1eb;padding:16px;border-top:1px solid #ccc}
 </style><main><h1 id="title"></h1>
 <p class="notice">本页只在本地展示原文和图片，不联网，不会自动批准。请逐项核对说话人、原句、人物一致性、文字与手机可读性。图片点击后可查看原尺寸。测试底图不能作为真实生图验收。</p>
@@ -314,6 +335,7 @@ dialog::backdrop{background:#12212ccc}#original-view img{max-width:none;max-heig
 <div class="sticky"><label><input id="attest" type="checkbox"> 我已亲自核对所作出的审核决定</label>
 <button id="download">下载审核记录</button><p id="message" role="status"></p></div></main>
 <dialog id="image-dialog" aria-label="原尺寸图片"><button id="close-dialog">关闭原图</button><div id="original-view"></div></dialog>
+<dialog id="source-dialog" aria-label="完整章节"><button id="close-source">关闭章节</button><h2 id="source-title"></h2><p>以下为本地规范正文整章；仅供核对上下文，不代表全部都是台词。</p><pre id="source-text"></pre></dialog>
 <script>"use strict";const review=__REVIEW_DATA__;
 document.getElementById('title').textContent='《'+review.book_title+'》审核';
 function element(tag,text,parent){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(parent)parent.append(el);return el;}
@@ -328,6 +350,9 @@ for(const issue of review.task_issue_labels)element('p','待处理：'+issue,doc
 function openOriginal(source,description){const view=document.getElementById('original-view');view.replaceChildren();
  const image=element('img',undefined,view);image.src=source;image.alt=description;document.getElementById('image-dialog').showModal();}
 document.getElementById('close-dialog').onclick=()=>document.getElementById('image-dialog').close();
+function openChapter(id){const chapter=review.source_chapters[id];document.getElementById('source-title').textContent=chapter.title;
+ document.getElementById('source-text').textContent=chapter.text;const dialog=document.getElementById('source-dialog');dialog.showModal();dialog.scrollTop=0;}
+document.getElementById('close-source').onclick=()=>document.getElementById('source-dialog').close();
 function decision(row,article){const label=element('label','审核决定 ',article);const select=element('select',undefined,label);
  for(const [value,text] of [['pending','待审核'],['approved','通过'],['rejected','退回']]){const option=element('option',text,select);option.value=value;}
  select.onchange=()=>row.status=select.value;
@@ -338,8 +363,15 @@ for(const row of review.quotes){const a=element('article',undefined,document.get
  element('small',row.chapter+' · '+(typeNames[row.quote_type]||'待分类'),a);
  element('blockquote',row.display_text,a);element('p','拟归属：'+row.speaker+' · '+(statusNames[row.speaker_status]||'待核对')+' · '+(row.text_mode==='rewrite'?'用户改写':'原文片段'),a);
  if(row.text_mode==='rewrite')element('pre','原始依据：'+row.quote_exact,a);
- const details=element('details',undefined,a);element('summary','查看上下文与归属证据',details);element('pre',row.context,details);
- element('pre',row.speaker_evidence.map(e=>e.text).join(String.fromCharCode(10)),details);element('small','记录编号：'+row.quote_id,details);decision(row,a);}
+ const details=element('details',undefined,a);element('summary','查看完整段落与归属证据',details);
+ element('p','下列为原句及证据所在完整段落，并各保留相邻段。片段按原文顺序显示，省略处另列；这些上下文不是一条拼接引语。',details);
+ const source=row.source_context;let previous=null;
+ for(const passage of source.passages){if(previous!==null&&passage.start>previous)element('p','……此处省略 '+(passage.start-previous)+' 字，可查看整章……',details);
+  element('small',passage.chapter+' · 段落 '+passage.paragraph_ids.join('、')+' · 正文位置 ['+passage.start+','+passage.end+')',details);
+  element('pre',passage.text,details);const button=element('button','查看整章：'+passage.chapter,details);button.type='button';button.onclick=()=>openChapter(passage.chapter_id);previous=passage.end;}
+ element('p','AI 归属说明（待本人核对）：'+(source.speaker_explanation||'未提供'),details);
+ for(const item of row.speaker_evidence)element('pre','证据 ['+item.start+','+item.end+')：'+item.text,details);
+ element('small','记录编号：'+row.quote_id,details);decision(row,a);}
 for(const row of review.cards){const a=element('article',undefined,document.getElementById('cards'));
  element('h3',row.character+' · '+row.card_id,a);
  const origins={generated:'工具生成',user_provided:'用户提供',test_fixture:'测试底图',unknown:'来源未登记'};
@@ -379,7 +411,7 @@ document.getElementById('download').onclick=()=>{const name=document.getElementB
  for(const card of review.cards){if(card.status==='approved'&&(card.draft||Object.values(card.visual_checks).some(v=>v!=='passed')||(card.image_kind==='generated'&&!card.reference_usable))){document.getElementById('message').textContent=card.card_id+' 尚未满足批准条件，请检查草稿标签、基准图和逐项视觉判断。';return;}}
  if(review.album&&review.album.status==='approved'&&(review.cards.some(c=>c.draft)||Object.values(review.album.checks).some(v=>v!=='passed'))){document.getElementById('message').textContent='整组尚未满足批准条件，请检查草稿标签和整组判断。';return;}
  const result=JSON.parse(JSON.stringify(review));result.reviewer=name;result.attested=true;result.reviewed_at=new Date().toISOString();
- for(const card of result.cards)delete card.view_data;delete result.visual_check_labels;delete result.album_check_labels;delete result.task_summary;delete result.task_issue_labels;
+ for(const card of result.cards)delete card.view_data;delete result.visual_check_labels;delete result.album_check_labels;delete result.task_summary;delete result.task_issue_labels;delete result.source_chapters;
  const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));
  const link=document.createElement('a');link.href=url;link.download='review-record.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
  document.getElementById('message').textContent='审核记录已下载；导入后只对相同版本有效。';};

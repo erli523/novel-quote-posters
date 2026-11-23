@@ -131,6 +131,14 @@ def test_user_supplied_replacement_can_be_final_exported_after_simulated_review(
     report = export_bundle(poster_run, tmp_path / "final")
     assert all(a["image_kind"] == "user_provided" for a in report["assets"])
     assert images.budget_summary(poster_run)["reserved_calls"] == 0
+    reviewed_quotes = load_json(poster_run / "quotes.json")
+    old_scope = load_json(poster_run / "quotes.json")
+    old_scope[0]["review"].pop("context_policy_version")
+    save_json(poster_run / "quotes.json", old_scope)
+    with pytest.raises(ValueError, match="speaker has not received human approval"):
+        export_bundle(poster_run, tmp_path / "old-context-must-not-publish")
+    assert not (tmp_path / "old-context-must-not-publish").exists()
+    save_json(poster_run / "quotes.json", reviewed_quotes)
     # Existing content approvals cannot conceal a newly imported over-quota legacy fact.
     with Ledger(poster_run / ".state/ledger.sqlite") as ledger:
         ledger.reserve("SIMULATED_IMPORTED_UNKNOWN", "historical-unknown")

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "iteration": 12,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {
+      "passed": 182,
+      "failed": 0
+    },
+    "ruff": "passed",
+    "private_evidence_id": "20261123T072831Z-ff642723"
+  },
+  "implemented": [
+    "exact complete source paragraphs and same-chapter neighbors for quotation and attribution evidence",
+    "ordered merged passages with explicit omitted ranges; cross-chapter passages remain separate",
+    "local full-chapter viewer and visible AI attribution explanation",
+    "context policy 1 binds semantic approvals to actual materials; old approvals are not silently upgraded",
+    "formal export and status recheck context scope; portable package excludes new paragraph/full-chapter data",
+    "full-chapter materialization refuses a source/index change after review targets were prepared",
+    "zero-image-budget local ingest and identical-input resume"
+  ],
+  "actual_application_corpus": {
+    "scope": "self_authored_fiction_not_independent_human_gold",
+    "source_hash": "fa7b9112b31c202ceb4125f2d0cd9faf6ff08ddc9216fd149a1d40a256f990f2",
+    "chapters": 3,
+    "canonical_codepoints": 769,
+    "chunk_size": 160,
+    "overlap": 48,
+    "windows_read_and_summarized": 7,
+    "authored_cases": 11,
+    "source_exact_cases": 11,
+    "cases_requiring_cross_window_evidence": 1,
+    "all_quotes_have_complete_window": true,
+    "human_review": "pending",
+    "semantic_recall_and_general_accuracy": "not_measured",
+    "initial_wrong_occurrence_preserved": true,
+    "corrected_clean_run_cases": 11,
+    "image_budget_limit": 0,
+    "image_reservations": 0
+  },
+  "browser_checks": {
+    "complete_paragraphs_and_gap_label_observed": true,
+    "gap_codepoints": 133,
+    "full_chapter_opened": true,
+    "horizontal_overflow": false,
+    "unsigned_download_blocked": true,
+    "console_errors": 0,
+    "initial_dialog_scroll_issue_preserved_and_fixed": true,
+    "corrected_dialog_scroll_top": 0,
+    "browser_checked_html_bytes_preserved_after_source_guard": true,
+    "actual_approvals": 0
+  },
+  "real_main_demo": {
+    "book_cards_and_call_facts_unchanged": true,
+    "awaiting_image": 3,
+    "budget_limit": 10,
+    "reserved": 2,
+    "remaining": 8,
+    "new_image_calls": 0,
+    "snapshot_scope": "iteration12 QA before later user-requested native probe v3"
+  },
+  "limits": [
+    "an exact source span does not establish its intended occurrence or correct speaker",
+    "authored expectations and application readings are not independent human validation",
+    "the deliberate wrong-speaker regression remains pending until a simulated test review; it is not an automatic semantic rejection claim",
+    "context fingerprints cannot authenticate reviewer identity or prove that a person read the material",
+    "real generated images, reference editing, handoff and human acceptance remain incomplete",
+    "no API fallback, private novel upload or automatic social publishing"
+  ],
+  "subsequent_user_requested_diagnostics": {
+    "actual_reserved_calls": 3,
+    "remaining": 7,
+    "native_probe_v3": "immediate_http404_no_image",
+    "project_official_provider_override": "written_locally_runtime_success_unverified",
+    "real_novel_originals_downloaded": 3,
+    "full_book_index_and_semantic_tests": "in_progress_not_completed",
+    "contract": "docs/plans/image-recovery-real-novels.md"
+  }
+}

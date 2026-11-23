@@ -10,6 +10,7 @@ from .images import budget_summary, validate_character_reference, validate_image
 from .rendering import validate_tracked_render
 from .review_policy import visual_review_complete
 from .source import validate_source
+from .source_context import SourceContext, context_review_complete
 from .storage import contained, digest_file, load_json
 
 
@@ -40,6 +41,7 @@ def run_status(run: Path) -> dict:
     issues = selection_issues(contract, cards, quotes) if contract else ["explicit task contract missing"]
     budget = budget_summary(run)
     issues.extend(budget["allocation_issues"])
+    contexts = SourceContext(book)
     rows, album_rows = [], []
     for card in cards:
         row = {"card_id": card["card_id"], "state": "awaiting_image"}
@@ -71,6 +73,7 @@ def run_status(run: Path) -> dict:
                                 validate_character_reference(run, characters[card["character_id"]], required=True)))
                             and visual.get("fingerprint") == current and bool(visual.get("reviewer"))
                             and semantic.get("status") == "approved" and semantic.get("reviewer_type") == "human"
+                            and context_review_complete(semantic, contexts.target(quote)["fingerprint"])
                             and semantic.get("fingerprint") == quote_fingerprint(quote, characters.get(card["character_id"]))
                             and quote["speaker"]["character_id"] == card["character_id"]
                             and quote["speaker"]["status"] in {"explicit", "context_inferred"})
