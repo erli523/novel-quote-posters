@@ -9,7 +9,7 @@ from PIL import Image
 
 from .albums import album_review_complete, load_album_review, selection_target
 from .bundles import build_payload, verify_archive, write_archive
-from .contracts import load_contract, selection_issues
+from .contracts import allocation_summary, load_contract, selection_issues
 from .documents import recover_documents
 from .images import validate_character_reference, validate_image_asset
 from .quotes import check_display
@@ -105,6 +105,8 @@ def _select(run: Path, *, draft: bool = False,
     if not draft:
         contract = load_contract(run, book, required=True)
         issues = selection_issues(contract, cards, quotes)
+        with Ledger(run / ".state/ledger.sqlite") as ledger:
+            issues.extend(allocation_summary(contract, ledger.budget())["allocation_issues"])
         if issues:
             raise ValueError("task contract violated: " + "; ".join(issues))
         if not album_review_complete(load_album_review(run), selection_target(book, selected, draft, contract)):

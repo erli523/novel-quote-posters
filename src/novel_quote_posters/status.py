@@ -38,6 +38,8 @@ def run_status(run: Path) -> dict:
     cards = load_json(run / "cards.json") if (run / "cards.json").exists() else []
     contract = load_contract(run, book)
     issues = selection_issues(contract, cards, quotes) if contract else ["explicit task contract missing"]
+    budget = budget_summary(run)
+    issues.extend(budget["allocation_issues"])
     rows, album_rows = [], []
     for card in cards:
         row = {"card_id": card["card_id"], "state": "awaiting_image"}
@@ -85,7 +87,7 @@ def run_status(run: Path) -> dict:
             "chunks_application_processed": sum(w.get("semantic_status") == "application_processed" for w in windows),
             "index_ranges_complete": not gap and covered == len(book["text"]),
             "semantic_quality_claim": "requires_actual_review", "candidate_count": len(quotes),
-            "card_counts": counts, "cards": rows, "budget": budget_summary(run),
+            "card_counts": counts, "cards": rows, "budget": budget,
             "task_contract": {"state": "configured" if contract else "missing", "issues": issues,
                               "fingerprint": contract["fingerprint"] if contract else None,
                               "requested": contract["definition"]["target_count"] if contract else None,

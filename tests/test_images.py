@@ -131,6 +131,12 @@ def test_user_supplied_replacement_can_be_final_exported_after_simulated_review(
     report = export_bundle(poster_run, tmp_path / "final")
     assert all(a["image_kind"] == "user_provided" for a in report["assets"])
     assert images.budget_summary(poster_run)["reserved_calls"] == 0
+    # Existing content approvals cannot conceal a newly imported over-quota legacy fact.
+    with Ledger(poster_run / ".state/ledger.sqlite") as ledger:
+        ledger.reserve("SIMULATED_IMPORTED_UNKNOWN", "historical-unknown")
+    with pytest.raises(ValueError, match="task contract violated: image allocation exceeded: unclassified"):
+        export_bundle(poster_run, tmp_path / "must-not-publish")
+    assert not (tmp_path / "must-not-publish").exists()
 
 
 def test_selected_cards_report_shortfall_without_inventing_quotes(poster_run):

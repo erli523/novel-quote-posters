@@ -1,5 +1,6 @@
 """Explicit per-run intent, independent of current cards and without granting approval."""
 
+import copy
 import math
 import re
 from pathlib import Path
@@ -10,17 +11,65 @@ from .source import validate_source
 from .storage import fingerprint, load_json, now, save_json
 from .workflow import Ledger
 
+ALLOCATION_BUCKETS = ("reference", "background", "edit", "alternative", "retry", "unclassified", "unallocated")
+LIVE_BUCKETS = ALLOCATION_BUCKETS[:5]
+
+
+def default_allocation(limit: int) -> dict:
+    """Planning suggestion only; never transfers capacity after a failed call."""
+    result = dict.fromkeys(ALLOCATION_BUCKETS, 0)
+    for bucket in ("reference", "background", "background", "background", "edit", "retry", "alternative"):
+        if sum(result.values()) < limit:
+            result[bucket] += 1
+    result["background"] += max(0, limit-sum(result.values()))
+    return result
+
+
+def call_bucket(payload: dict | None) -> str:
+    request = payload.get("request") if isinstance(payload, dict) else None
+    if (not isinstance(request, dict) or request.get("tool") != "image_gen.imagegen"
+            or request.get("kind") not in {"reference", "background", "edit"}):
+        return "unclassified"
+    if request.get("retry_of"):
+        return "retry"
+    # Legacy reason strings also described capability rechecks. Their prose is not a category.
+    if request.get("purpose") == "alternative" or (payload.get("schema_version") == 2 and request.get("new_candidate_reason")):
+        return "alternative"
+    return request["kind"]
+
+
+def allocation_summary(contract: dict | None, budget: dict) -> dict:
+    used = dict.fromkeys(ALLOCATION_BUCKETS, 0)
+    for call in budget["calls"]:
+        used[call_bucket(call["request"])] += 1
+    definition = contract["definition"] if contract else {}
+    allocation = definition.get("image_call_allocation")
+    issues = []
+    if allocation is None:
+        issues.append("explicit image call allocation missing; upgrade task contract before new calls/final approval")
+    rows = {key: {"limit": allocation[key] if allocation else None, "used": used[key],
+                  "remaining": max(0, allocation[key]-used[key]) if allocation else 0}
+            for key in ALLOCATION_BUCKETS}
+    if allocation:
+        issues.extend("image allocation exceeded: " + key for key in ALLOCATION_BUCKETS if used[key] > allocation[key])
+    limit = min(budget["limit"], definition.get("image_call_limit", budget["limit"]))
+    if budget["reserved_calls"] > limit:
+        issues.append("task image call total exceeded")
+    return {"allocation": rows, "allocation_issues": issues,
+            "usable_remaining": min(max(0, limit-budget["reserved_calls"]),
+                                    sum(rows[key]["remaining"] for key in LIVE_BUCKETS)) if not issues else 0}
+
 
 def default_definition(book: dict, task_id: str, *, count: int = 10, characters: list | None = None,
                        styles: list | None = None, image_limit: int = 10) -> dict:
-    return {"schema_version": 1, "task_id": task_id, "source_hash": book["source_hash"],
+    return {"schema_version": 2, "task_id": task_id, "source_hash": book["source_hash"],
             "canonical_hash": book["canonical_hash"], "target_count": count,
             "character_ids": characters or [], "chapter_ids": [], "quote_types": ["dialogue", "monologue"],
             "style_ids": styles or ["mist_cinema"], "min_distinct_styles": 1, "allow_rewrite": False,
             "min_quote_chars": 12, "max_quote_chars": 100, "candidate_buffer_ratio": 0.3,
             "output": {"width": 1080, "height": 1440, "format": "PNG", "color_space": "sRGB",
                        "cover_policy": "first_card_no_extra_cover"},
-            "image_call_limit": image_limit, "retry_limit_per_asset": 1,
+            "image_call_limit": image_limit, "image_call_allocation": default_allocation(image_limit), "retry_limit_per_asset": 1,
             "theme": "", "forbidden_elements": [], "input_rights_note": "",
             "allowed_destinations": ["local", "image_gen.imagegen"], "allow_source_upload": False,
             "execution_notes": "应用端协调；未知结果先对账；工具不可用或预算耗尽停相应步骤；无自动社交发布"}
@@ -28,7 +77,10 @@ def default_definition(book: dict, task_id: str, *, count: int = 10, characters:
 
 def validate_definition(value: dict, book: dict, characters: dict | None = None):
     expected = set(default_definition(book, "template"))
-    if not isinstance(value, dict) or set(value) != expected or value["schema_version"] != 1:
+    if isinstance(value, dict) and type(value.get("schema_version")) is int and value["schema_version"] == 1:
+        expected.remove("image_call_allocation")
+    if (not isinstance(value, dict) or set(value) != expected or type(value["schema_version"]) is not int
+            or value["schema_version"] not in {1, 2}):
         raise ValueError("invalid task contract fields/schema")
     if value["source_hash"] != book["source_hash"] or value["canonical_hash"] != book["canonical_hash"]:
         raise ValueError("task contract targets another source version")
@@ -42,6 +94,12 @@ def validate_definition(value: dict, book: dict, characters: dict | None = None)
             raise ValueError("task contract needs a positive integer " + name)
     if type(value["image_call_limit"]) is not int or value["image_call_limit"] < 0:
         raise ValueError("image call limit must be a nonnegative integer")
+    if value["schema_version"] == 2:
+        allocation = value["image_call_allocation"]
+        if (not isinstance(allocation, dict) or set(allocation) != set(ALLOCATION_BUCKETS)
+                or any(type(v) is not int or v < 0 for v in allocation.values())
+                or sum(allocation.values()) != value["image_call_limit"]):
+            raise ValueError("image allocation must have exact nonnegative integer buckets summing to total limit")
     if value["min_quote_chars"] > value["max_quote_chars"]:
         raise ValueError("invalid quote length range")
     for name in ["character_ids", "chapter_ids", "quote_types", "style_ids", "forbidden_elements", "allowed_destinations"]:
@@ -96,10 +154,16 @@ def contract_template(run: Path) -> dict:
     characters = load_json(run / "characters.json")
     current = load_contract(run, book)
     with Ledger(run / ".state/ledger.sqlite") as ledger:
-        limit = ledger.budget()["limit"]
+        budget = ledger.budget()
+    definition = copy.deepcopy(current["definition"]) if current else default_definition(book, run.name, image_limit=budget["limit"])
+    if definition["schema_version"] == 1 or (not current and budget["reserved_calls"]):
+        usage = allocation_summary(current, budget)["allocation"]
+        allocation = {k: row["used"] for k, row in usage.items()}
+        allocation["unallocated"] = max(0, definition["image_call_limit"]-budget["reserved_calls"])
+        definition.update(schema_version=2, image_call_allocation=allocation)
     return {"schema_version": 1, "expected_fingerprint": _base(book, characters, current),
-            "editor": "", "reason": "", "definition": current["definition"] if current else
-            default_definition(book, run.name, image_limit=limit),
+            "editor": "", "reason": "", "definition": definition,
+            "observed_allocation": allocation_summary(current, budget),
             "available_characters": {k: v["name"] for k, v in characters.items()},
             "available_chapters": [{k: c[k] for k in ["chapter_id", "title"]} for c in book["chapters"]]}
 
@@ -119,10 +183,14 @@ def apply_contract(run: Path, request: dict) -> dict:
         return {"fingerprint": current["fingerprint"], "version": current["version"], "reused": True, "image_tool_calls": 0}
     if request.get("expected_fingerprint") != _base(book, characters, current):
         raise ValueError("contract template stale; prepare a fresh template")
+    if definition["schema_version"] != 2:
+        raise ValueError("new contract revisions require explicit image call allocation schema 2")
     with Ledger(run / ".state/ledger.sqlite") as ledger:
         budget = ledger.budget()
     if not budget["reserved_calls"] <= definition["image_call_limit"] <= budget["limit"]:
         raise ValueError("contract limit cannot erase spent calls or expand the existing budget")
+    if issues := allocation_summary({"definition": definition}, budget)["allocation_issues"]:
+        raise ValueError("; ".join(issues))
     version = current["version"] + 1 if current else 1
     record = {"schema_version": 1, "version": version, "definition": definition,
               "fingerprint": fingerprint({"version": version, "definition": definition}),
@@ -137,6 +205,8 @@ def apply_contract(run: Path, request: dict) -> dict:
         latest = ledger.budget()
         if not latest["reserved_calls"] <= definition["image_call_limit"] <= latest["limit"]:
             raise ValueError("budget changed while applying task contract")
+        if issues := allocation_summary({"definition": definition}, latest)["allocation_issues"]:
+            raise ValueError("budget changed while applying task contract: " + "; ".join(issues))
 
     transaction = commit_documents(run, {"task-contract.json": record}, reason="task_contract:" + request_hash,
         expected={"book.json": book, "characters.json": characters, "task-contract.json": current}, guard=check_budget)

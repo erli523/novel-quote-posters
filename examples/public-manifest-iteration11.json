@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "014dd4ffc2c0c3964e241062e9061861e29e80b8c8af5a645a4fa19e41c2da47",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "50d0c6cc084c95aa673f53676d9a8fe4982955a6f2673832fefc3bd718a8f98e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/engineering-review.md",
+      "sha256": "0656c940c262b31c1243b4ba2a42559fe8211b27a45ddf8c3952e66b68803033",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "5a03bd73580b01db6236a53417377e5c2405aade802c39d9a742557688361a68",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "5a8f03f3a4e77622e6bf84bf388734a00fd2f0e28c86bcb3c246dedfbc0d680b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "e4ce9ebefa8b9cd862fe666ce7cdab5bd19132ff3908663ecbc06fd938264698",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "17771aa3246484a2467dfc39efca2c43343541a4e20b7868c1d87d1b517b7f57",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/task-contract.md",
+      "sha256": "3d3ee2f8badefaca603bbd9a8d0059098de9db457661cafafd795a1739fffeb0",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/contracts.py",
+      "sha256": "2c104e9e12027605f48f1a93a1e9ccfd77b8ee9e58aef04f40702ff3a39ba2d1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/export.py",
+      "sha256": "6d09b94700e8b3ea2cd5f8d00807acb0d7bbbdf17a47d57e8065b73c57aa8ba1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/images.py",
+      "sha256": "4b6a2cfea7eeb78751d5547b8985016c843f3a776cecfc0fae7b9028c61d41cf",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/review.py",
+      "sha256": "8ae777e7a9a6f3362f0e0f75ad1fc35ebde1bb7926a5b6ca80df38d32c99bf40",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/status.py",
+      "sha256": "c617ea82da4e447a69aecbff8d2292cfda5d2c5d46b1a58d4028e4764f4aed55",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_contracts.py",
+      "sha256": "738c950e1ab5bad7f452a472e175613f006797d022eb4969d7023d58d77f2581",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_images.py",
+      "sha256": "83fff245f11da864361559b32a6f4b7362234b0e2ce8f9acf94d6ed878ac6a77",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_call_allocation.py",
+      "sha256": "114e276a84c2a7f073af98a019902e7aea4586c051b0445f3542e26af90ada58",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration11-evidence.json",
+      "sha256": "dfa1c80a7fd6078e7b83b151b0de3e65db95ced74cc84f42ff6cbda101aa0748",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": [],
+  "repository": "erli523/novel-quote-posters",
+  "visibility": "PUBLIC",
+  "publication_authority": "User authorized public development milestones; docs/plans/v1.md",
+  "ai_content_review": "Each changed file reviewed; general code, project documentation and self-authored/simulated QA summaries only. No private run, original tool payload, novel upload or binaries.",
+  "rights_basis": "Project-authored code/docs under MIT; fictional software fixtures; no third-party media added",
+  "reviewed_at": "2026-11-23T07:03:34.659829+00:00"
+}

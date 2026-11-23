@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 from .albums import ALBUM_CHECKS, album_target
-from .contracts import load_contract, selection_issues
+from .contracts import allocation_summary, load_contract, selection_issues
 from .documents import commit_documents, recover_documents
 from .export import quote_fingerprint, review_fingerprint
 from .images import validate_character_reference
@@ -41,6 +41,10 @@ def task_issue_label(issue: str, definition: dict | None, card_count: int) -> st
         return key + "：本次任务只允许原文，请恢复原句或明确修改政策。"
     if "text length" in issue:
         return key + f"：文字长度须为 {definition['min_quote_chars']}～{definition['max_quote_chars']} 字。"
+    if "allocation missing" in issue:
+        return "尚未设置分项调用额度，请明确分配后再新增调用或批准成品。"
+    if "allocation exceeded" in issue or "call total exceeded" in issue:
+        return "已有调用超过任务额度，请核对台账并明确修订契约。"
     return "任务要求尚有待处理项，请核对配置。"
 
 def character_label(identity: str | None, characters: dict) -> str:
@@ -89,6 +93,8 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
     contract_hash = contract["fingerprint"] if contract else None
     current_cards = load_json(run / "cards.json") if (run / "cards.json").exists() else []
     issues = selection_issues(contract, current_cards, {q["quote_id"]: q for q in quotes}) if contract else ["explicit task contract missing"]
+    with Ledger(run / ".state/ledger.sqlite") as ledger:
+        issues.extend(allocation_summary(contract, ledger.budget())["allocation_issues"])
     rows = []
     for quote in quotes:
         check_display(book, quote, allow_rewrite=True)
@@ -266,9 +272,15 @@ def apply_review(run: Path, record: dict) -> dict:
     history = run / "reviews" / f"{record_hash}.json"
     with Ledger(run / ".state/ledger.sqlite") as ledger, ledger.db:
         ledger.db.execute("UPDATE config SET value=value WHERE key='limit'")
+        approving = any(row.get("status") == "approved" for row in record.get("cards", [])) or bool(
+            record.get("album") and record["album"].get("status") == "approved")
         if not history.exists():
             save_json(history, {"record": record, "imported_at": now()})
-    transaction = commit_documents(run, values, reason="human_review", expected=snapshot) if values else None
+    def check_budget(ledger):
+        if approving and (issues := allocation_summary(load_contract(run), ledger.budget())["allocation_issues"]):
+            raise ValueError("task contract blocks approval: " + "; ".join(issues))
+
+    transaction = commit_documents(run, values, reason="human_review", expected=snapshot, guard=check_budget) if values else None
     return {"record_hash": record_hash, "transaction": transaction,
             "quotes_changed": len(changes["quotes"]), "cards_changed": len(changes["cards"]),
             "album_changed": album_changed}

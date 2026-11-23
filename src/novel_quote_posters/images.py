@@ -8,7 +8,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from .contracts import load_contract, selection_issues
+from .contracts import allocation_summary, call_bucket, load_contract, selection_issues
 from .documents import commit_documents, recover_documents
 from .quotes import check_display
 from .source import validate_source
@@ -29,6 +29,8 @@ def plan_image(run: Path, request: dict) -> dict:
         raise ValueError("V1 only records the approved application image tool")
     if not isinstance(request.get("prompt"), str) or not request["prompt"].strip():
         raise ValueError("image prompt is empty")
+    if request.get("purpose") not in {None, "primary", "alternative"}:
+        raise ValueError("unknown image request purpose")
     book = load_json(run / "book.json")
     validate_source(run, book)
     characters = load_json(run / "characters.json")
@@ -43,7 +45,7 @@ def plan_image(run: Path, request: dict) -> dict:
             picture.verify()
         reference_hashes[relative] = digest_file(path)
     initial_contract = load_contract(run, book)
-    payload = {"schema_version": 1, "request": request, "source_hash": book["source_hash"],
+    payload = {"schema_version": 2, "request": request, "source_hash": book["source_hash"],
                "task_contract_fingerprint": initial_contract["fingerprint"] if initial_contract else None,
                "character_snapshot": character, "reference_hashes": reference_hashes}
     input_hash = fingerprint(payload)
@@ -65,7 +67,7 @@ def plan_image(run: Path, request: dict) -> dict:
             definition = contract["definition"]
             if request["character_id"] not in definition["character_ids"] or TOOL not in definition["allowed_destinations"]:
                 raise ValueError("image request outside task contract character/destination scope")
-            if budget["reserved_calls"] >= definition["image_call_limit"]:
+            if budget["reserved_calls"] >= min(budget["limit"], definition["image_call_limit"]):
                 raise ValueError("task contract image budget exhausted")
         if not existing and request.get("retry_of"):
             parent = next((c for c in budget["calls"] if c["call_id"] == request["retry_of"]), None)
@@ -88,6 +90,21 @@ def plan_image(run: Path, request: dict) -> dict:
                 raise ValueError("reconcile the existing asset call before planning another")
             if related and not request.get("new_candidate_reason"):
                 raise ValueError("a new candidate needs an explicit reason or bounded retry_of")
+        if not existing:
+            summary = allocation_summary(contract, budget)
+            if summary["allocation_issues"]:
+                raise ValueError("; ".join(summary["allocation_issues"]))
+            bucket = call_bucket(payload)
+            if summary["allocation"][bucket]["remaining"] <= 0:
+                raise ValueError("image allocation exhausted: " + bucket + "; revise contract explicitly, no automatic borrowing")
+        if existing and existing["request"] and existing["request"].get("schema_version") in {1, 2}:
+            ignored = {"task_contract_fingerprint", "schema_version"}
+            previous = {k: v for k, v in existing["request"].items() if k not in ignored}
+            current = {k: v for k, v in payload.items() if k not in ignored}
+            if previous == current:
+                # A policy revision never turns an old operation into a fresh reservation.
+                input_hash = existing["input_hash"]
+                snapshot = run / ".state" / "image-requests" / f"{input_hash}.json"
         result = ledger.reserve(identity, input_hash, request=payload)
         remaining = ledger.budget()["remaining"]
         if contract:
@@ -119,9 +136,11 @@ def budget_summary(run: Path) -> dict:
         effective_limit = min(data["limit"], contract["definition"]["image_call_limit"]) if contract else data["limit"]
         # Normal status output intentionally excludes prompts, raw responses and private paths.
         return {**{k: v for k, v in data.items() if k != "calls"},
+                **allocation_summary(contract, data),
                 "ledger_limit": data["limit"], "limit": effective_limit,
                 "remaining": max(0, effective_limit-data["reserved_calls"]),
-                "calls": [{k: c[k] for k in ["call_id", "status", "input_hash", "output"]}
+                "calls": [{**{k: c[k] for k in ["call_id", "status", "input_hash", "output"]},
+                           "allocation_bucket": call_bucket(c["request"])}
                           for c in data["calls"]]}
 
 

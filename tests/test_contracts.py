@@ -29,6 +29,8 @@ def test_legacy_template_does_not_infer_target_from_existing_cards_and_preserves
     assert form["definition"]["character_ids"] == []
     form["definition"].update(character_ids=["lin_che"], target_count=5, image_call_limit=3,
                                input_rights_note="Self-authored fictional test source")
+    form["definition"]["image_call_allocation"] = dict.fromkeys(contracts.ALLOCATION_BUCKETS, 0)
+    form["definition"]["image_call_allocation"].update(unclassified=1, reference=1, background=1)
     result = contracts.apply_contract(poster_run, form)
     assert result["version"] == 1 and contracts.apply_contract(poster_run, form)["reused"]
     status = run_status(poster_run)
@@ -40,9 +42,12 @@ def test_legacy_template_does_not_infer_target_from_existing_cards_and_preserves
 def test_contract_budget_cannot_expand_erase_calls_or_race_with_new_reservations(poster_run, monkeypatch):
     form = request(poster_run)
     form["definition"]["image_call_limit"] = 11
+    form["definition"]["image_call_allocation"]["unallocated"] = 1
     with pytest.raises(ValueError, match="expand the existing budget"):
         contracts.apply_contract(poster_run, form)
     form["definition"]["image_call_limit"] = 1
+    form["definition"]["image_call_allocation"] = dict.fromkeys(contracts.ALLOCATION_BUCKETS, 0)
+    form["definition"]["image_call_allocation"]["reference"] = 1
     actual = contracts.commit_documents
     before = load_json(poster_run / "task-contract.json")
 
@@ -121,6 +126,7 @@ def test_card_preparation_does_not_overwrite_a_concurrently_created_album(poster
 def test_rewrite_flag_does_not_override_task_policy_and_zero_budget_stops_new_calls(poster_run):
     form = request(poster_run)
     form["definition"].update(allow_rewrite=False, image_call_limit=0)
+    form["definition"]["image_call_allocation"] = dict.fromkeys(contracts.ALLOCATION_BUCKETS, 0)
     contracts.apply_contract(poster_run, form)
     from novel_quote_posters.edits import apply_edits, edit_targets
     edit = edit_targets(poster_run)

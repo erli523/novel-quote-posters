@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "iteration": 11,
+  "contract": "docs/plans/v1.md",
+  "checks": {"pytest": {"passed": 166, "failed": 0}, "ruff": "passed", "private_evidence_id": "20261123T065939Z-ccc744ec"},
+  "implemented": [
+    "task definition schema 2 with exact nonnegative partitions summing to the existing total limit",
+    "reference, background, edit, alternative, retry, unclassified and unallocated accounting",
+    "total and category reservations checked together under the ledger writer lock",
+    "failures and unknown outcomes consume capacity; no automatic borrowing or free retries",
+    "contract revisions cannot erase category usage and recheck concurrent reservations",
+    "new request schema 2 distinguishes alternatives without reinterpreting legacy free-text reasons",
+    "old operations reconcile across contract/request-format revisions without new reservations",
+    "formal approval and export reject missing or exceeded allocations",
+    "legacy definition schema 1 in schema 4 archives retains selection-only verification"
+  ],
+  "actual_main_run": {
+    "contract_version": 2,
+    "definition_schema": 2,
+    "call_facts_fingerprint_unchanged": true,
+    "book_and_cards_bytes_unchanged": true,
+    "limit": 10,
+    "reserved": 2,
+    "remaining": 8,
+    "usable_remaining": 8,
+    "allocation_limits": {"reference": 2, "background": 6, "edit": 1, "alternative": 0, "retry": 0, "unclassified": 1, "unallocated": 0},
+    "allocation_used": {"reference": 1, "background": 0, "edit": 0, "alternative": 0, "retry": 0, "unclassified": 1, "unallocated": 0},
+    "unknown_outcomes_needing_reconciliation": 0,
+    "awaiting_image": 3,
+    "new_actual_image_calls": 0,
+    "actual_generated_images": 0,
+    "actual_human_approvals": 0
+  },
+  "actual_local_qa": {
+    "scope": "self_authored_fiction_SIMULATED_reservations_only",
+    "category_exhaustion_stopped_with_total_remaining": 5,
+    "retry_consumed_separate_partition": true,
+    "explicit_reallocation_allowed_next_reservation": true,
+    "old_operation_reconciled_without_duplicate": true,
+    "final_simulated_reservations": 3,
+    "actual_service_invocations": 0,
+    "partial_failures_preserved": ["initial legacy reason classification assertion", "analysis proposal rejected because QA chunk configuration differed"],
+    "corrected_qa_completed": true
+  },
+  "parallel_connection_test": {"remaining_reference_slots": 1, "attempts": 2, "reservations": 1, "rejections": 1},
+  "limits": [
+    "ledger and source declarations are operator attestations, not authenticated provider billing",
+    "unclassified purpose is distinct from an unknown tool outcome",
+    "remaining capacity is not evidence that the unavailable native image tool has recovered",
+    "no real generated art, reference editing, file handoff or human acceptance completed",
+    "no API fallback or automatic social publishing enabled"
+  ]
+}
