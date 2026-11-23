@@ -11,13 +11,14 @@ from .storage import digest_file, save_json
 # Normalized boxes are scaled separately for each export size, never stretched bitmaps.
 STYLES = {
     "mist_cinema": {"bg": "#080f18", "fg": "#f5f0e5", "accent": "#d7b576",
-                        "image": (.51, 0, 1, 1), "panel": (0, 0, .53, 1), "text": (.085, .28, .46, .72)},
+                        "image": (.06, .06, .94, .67), "panel": (0, .67, 1, 1),
+                        "text": (.09, .70, .91, .86), "image_fit": "cover", "image_anchor": (.5, .05)},
     "archive_paper": {"bg": "#eee4d0", "fg": "#312d29", "accent": "#86684c",
                           "image": (.08, .06, .92, .56), "panel": (0, .56, 1, 1), "text": (.09, .63, .91, .84)},
     "dark_stage": {"bg": "#0c0b10", "fg": "#fff2e1", "accent": "#d97962",
-                       "image": (0, .05, .48, .95), "panel": (.48, 0, 1, 1), "text": (.55, .24, .91, .75)},
+                       "image": (.24, .06, .76, .61), "panel": (0, .61, 1, 1), "text": (.15, .64, .85, .84)},
     "ink_whitespace": {"bg": "#f4f0e4", "fg": "#263b38", "accent": "#9a493c",
-                           "image": (.42, .38, .94, .9), "panel": (0, 0, .41, 1), "text": (.09, .2, .39, .76)},
+                           "image": (.28, .39, .94, .87), "panel": (0, 0, 1, .38), "text": (.09, .17, .91, .37)},
     "modern_editorial": {"bg": "#f2eedf", "fg": "#181a1d", "accent": "#bd442b",
                              "image": (.08, .43, .92, .89), "panel": (0, 0, 1, .42), "text": (.08, .16, .92, .40)},
     "warm_memory": {"bg": "#e9d8bf", "fg": "#392e29", "accent": "#8a5a3b",
@@ -25,6 +26,45 @@ STYLES = {
 }
 CLOSING = set("，。！？；：、）》」』】〉…,.!?;:%")
 OPENING = set("（《「『【〈(")
+
+
+def fit_artwork(source: Image.Image, bounds: tuple, *, mode: str = "auto",
+                max_crop: float = .22, anchor: tuple = (.5, .25)) -> tuple:
+    """Preserve aspect ratio and disclose cropping; never infer where a face is."""
+    if not isinstance(mode, str) or mode not in {"auto", "cover", "contain"}:
+        raise ValueError("unknown image fit mode")
+    if (not isinstance(max_crop, (int, float)) or isinstance(max_crop, bool)
+            or not math.isfinite(max_crop) or not 0 <= max_crop < 1):
+        raise ValueError("image max_crop must be between zero and one")
+    if (not isinstance(anchor, (tuple, list)) or len(anchor) != 2
+            or any(not isinstance(v, (int, float)) or isinstance(v, bool)
+                   or not math.isfinite(v) or not 0 <= v <= 1 for v in anchor)):
+        raise ValueError("image anchor must contain two normalized coordinates")
+    left, top, right, bottom = bounds
+    width, height = right-left, bottom-top
+    if width <= 0 or height <= 0:
+        raise ValueError("image frame must have positive dimensions")
+    sw, sh = source.size
+    scale = max(width/sw, height/sh)
+    retained = width*height/(sw*sh*scale*scale)
+    applied = "contain" if mode == "auto" and 1-retained > max_crop else (
+        "cover" if mode == "auto" else mode)
+    if applied == "contain":
+        picture = ImageOps.contain(source, (width, height), Image.Resampling.LANCZOS)
+        x, y = left+(width-picture.width)//2, top+(height-picture.height)//2
+        crop, retained = [0, 0, sw, sh], 1.0
+    else:
+        cw, ch = width/scale, height/scale
+        x0, y0 = (sw-cw)*anchor[0], (sh-ch)*anchor[1]
+        crop = [x0, y0, x0+cw, y0+ch]
+        picture = ImageOps.fit(source, (width, height), Image.Resampling.LANCZOS,
+                               centering=tuple(anchor))
+        x, y = left, top
+    return picture, (x, y), {"requested": mode, "applied": applied, "source_size": [sw, sh],
+        "frame_box": list(bounds), "paste_box": [x, y, x+picture.width, y+picture.height],
+        "source_crop_box": crop, "retained_source_area": retained,
+        "max_crop": max_crop, "crop_anchor": list(anchor), "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"}
 
 
 def glyphs(font_path: Path, text: str) -> None:
@@ -84,7 +124,8 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
     # Long text receives more space rather than a smaller-than-contract font.
     if len(text) > 70 and not overrides:
         if style_id == "mist_cinema":
-            style["text"] = (.085, .25, .49, .82)
+            style.update(image=(.08, .06, .92, .50), panel=(0, .50, 1, 1),
+                         text=(.09, .54, .91, .86), image_fit="auto")
         elif style_id == "archive_paper":
             style["text"] = (.09, .60, .91, .86)
         elif style_id == "modern_editorial":
@@ -93,7 +134,11 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
         elif style_id == "warm_memory":
             style.update(panel=(.065, .49, .935, .94), text=(.1, .55, .9, .85))
         elif style_id == "ink_whitespace":
-            style["text"] = (.09, .16, .39, .84)
+            style.update(image=(.28, .56, .94, .87), panel=(0, 0, 1, .53),
+                         text=(.09, .15, .91, .51))
+        elif style_id == "dark_stage":
+            style.update(image=(.24, .06, .76, .47), panel=(0, .47, 1, 1),
+                         text=(.10, .50, .90, .86))
     fg, accent = style["fg"], style["accent"]
     scale = width / 1080
 
@@ -105,15 +150,19 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
     with Image.open(background) as source:
         source = ImageOps.exif_transpose(source).convert("RGB")
         bounds = box("image")
-        fitted = ImageOps.fit(source, (bounds[2]-bounds[0], bounds[3]-bounds[1]), centering=(.5, .35))
-        canvas.paste(fitted, bounds[:2])
+        if not (0 <= bounds[0] < bounds[2] <= width and 0 <= bounds[1] < bounds[3] <= height):
+            raise ValueError("image frame is outside canvas")
+        fitted, position, image_fit = fit_artwork(source, bounds,
+            mode=style.get("image_fit", "auto"), max_crop=style.get("max_crop", .22),
+            anchor=style.get("image_anchor", (.5, .25)))
+        canvas.paste(fitted, position)
     draw = ImageDraw.Draw(canvas)
     draw.rectangle(box("panel"), fill=style["bg"])
     bounds = box("text")
     if not (0 <= bounds[0] < bounds[2] <= width and 0 <= bounds[1] < bounds[3] <= height):
         raise ValueError("text box is outside canvas")
     font, lines, step = fit(text, font_path, bounds[2]-bounds[0], bounds[3]-bounds[1],
-                            max(36, round(36 * scale)), round(76 * scale))
+                            max(36, round(36 * scale)), round(64 * scale))
     glyphs(font_path, character + title + chapter + "待审核用户改写人物语录")
     records = []
     for index, line in enumerate(lines):
@@ -157,6 +206,6 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
               "output_sha256": digest_file(output), "text": text, "character": character,
               "title": title, "draft": draft, "rewrite": rewrite, "font_size": font.size,
               "text_box": bounds, "lines": records, "style": style,
-              "visual_review": "pending", "preview": preview.name}
+              "visual_review": "pending", "preview": preview.name, "image_fit": image_fit}
     save_json(output.with_suffix(".layout.json"), report)
     return report

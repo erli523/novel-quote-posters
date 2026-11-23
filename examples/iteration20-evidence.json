@@ -1,0 +1,559 @@
+{
+  "schema_version": 1,
+  "iteration": 20,
+  "date": "2026-11-23",
+  "timezone": "Asia/Shanghai",
+  "task_id": "visual-proportion-v1",
+  "contract_version": 1,
+  "main_contract_version": 5,
+  "authorization": "User requested autonomous novel-to-quote-to-image iteration and proportion improvement; same existing budget and human-review boundary.",
+  "code_changed": true,
+  "tests": {
+    "targeted": 47,
+    "final_full_suite": 229,
+    "lint": "passed",
+    "snapshot_code_matches_final": true
+  },
+  "image_calls_added": 0,
+  "budget": {
+    "occupied": 10,
+    "limit": 10,
+    "remaining": 0,
+    "successful": 5,
+    "old_failures": 5,
+    "unknown": 0
+  },
+  "design": {
+    "default_fit": "auto",
+    "default_max_crop_area": 0.22,
+    "excessive_crop_fallback": "contain with template background",
+    "explicit_cover_exception": "Short cinema layout uses wide half-body crop and upper anchor; actual pixels checked, lower body crop disclosed. Long cinema text uses auto.",
+    "source_aspect_preserved": true,
+    "face_detection": "not_performed",
+    "font_max": 64,
+    "font_min": 36
+  },
+  "actual_comparisons": [
+    {
+      "card_id": "card001",
+      "old_retained_area": 0.4900000000000001,
+      "new_retained_area": 0.6939473684210526,
+      "old_quote_line_lengths": [
+        5,
+        5,
+        5,
+        4
+      ],
+      "new_quote_line_lengths": [
+        13,
+        6
+      ],
+      "area_scope": "source transform before panels/header/footer; no automatic face detection"
+    },
+    {
+      "card_id": "card002",
+      "old_retained_area": 0.84,
+      "new_retained_area": 0.8407407407407408,
+      "old_quote_line_lengths": [
+        12,
+        11
+      ],
+      "new_quote_line_lengths": [
+        13,
+        10
+      ],
+      "area_scope": "source transform before panels/header/footer; no automatic face detection"
+    },
+    {
+      "card_id": "card003",
+      "old_retained_area": 0.75,
+      "new_retained_area": 0.9691444600280507,
+      "old_quote_line_lengths": [
+        4,
+        4,
+        3,
+        4,
+        4,
+        4
+      ],
+      "new_quote_line_lengths": [
+        13,
+        10
+      ],
+      "area_scope": "source transform before panels/header/footer; no automatic face detection"
+    }
+  ],
+  "actual_assets": [
+    {
+      "id": "card001",
+      "sha256": "437d99d436dc158883d41b93d4a8970275309e0e946fa42c14521375f2925bd7",
+      "image_fit": {
+        "requested": "cover",
+        "applied": "cover",
+        "source_size": [
+          1086,
+          1448
+        ],
+        "frame_box": [
+          65,
+          86,
+          1015,
+          965
+        ],
+        "paste_box": [
+          65,
+          86,
+          1015,
+          965
+        ],
+        "source_crop_box": [
+          0.0,
+          22.158210526315788,
+          1086.0,
+          1026.9940000000001
+        ],
+        "retained_source_area": 0.6939473684210526,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.05
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        6
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "card002",
+      "sha256": "c51296a04bff201481d8de0b2187973a5df4ebcb7fafea1e3a745f7e470076ac",
+      "image_fit": {
+        "requested": "auto",
+        "applied": "cover",
+        "source_size": [
+          1536,
+          1024
+        ],
+        "frame_box": [
+          86,
+          86,
+          994,
+          806
+        ],
+        "paste_box": [
+          86,
+          86,
+          994,
+          806
+        ],
+        "source_crop_box": [
+          122.31111111111113,
+          0.0,
+          1413.6888888888889,
+          1024.0
+        ],
+        "retained_source_area": 0.8407407407407408,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.25
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        10
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "card003",
+      "sha256": "691dc77309965f5bf0bbe8b2ed4ea8a38facac247c9a166517a0f84659dcb690",
+      "image_fit": {
+        "requested": "auto",
+        "applied": "cover",
+        "source_size": [
+          1254,
+          1254
+        ],
+        "frame_box": [
+          302,
+          562,
+          1015,
+          1253
+        ],
+        "paste_box": [
+          302,
+          562,
+          1015,
+          1253
+        ],
+        "source_crop_box": [
+          0.0,
+          9.673211781206135,
+          1254.0,
+          1224.9803646563817
+        ],
+        "retained_source_area": 0.9691444600280507,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.25
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        10
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "mist_cinema",
+      "sha256": "1dabc07a3a0cd30120b8e3c50e6ce5bec1220e58ab6fd16e708e851a4dab8c9d",
+      "image_fit": {
+        "requested": "cover",
+        "applied": "cover",
+        "source_size": [
+          1086,
+          1448
+        ],
+        "frame_box": [
+          65,
+          86,
+          1015,
+          965
+        ],
+        "paste_box": [
+          65,
+          86,
+          1015,
+          965
+        ],
+        "source_crop_box": [
+          0.0,
+          22.158210526315788,
+          1086.0,
+          1026.9940000000001
+        ],
+        "retained_source_area": 0.6939473684210526,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.05
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        6
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "archive_paper",
+      "sha256": "f97c0558cf054e3af0ce300d84c9ee209f02fbcda2744383a96c107475315a5b",
+      "image_fit": {
+        "requested": "auto",
+        "applied": "cover",
+        "source_size": [
+          1536,
+          1024
+        ],
+        "frame_box": [
+          86,
+          86,
+          994,
+          806
+        ],
+        "paste_box": [
+          86,
+          86,
+          994,
+          806
+        ],
+        "source_crop_box": [
+          122.31111111111113,
+          0.0,
+          1413.6888888888889,
+          1024.0
+        ],
+        "retained_source_area": 0.8407407407407408,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.25
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        6
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "dark_stage",
+      "sha256": "b8c8a4b9923ba81c79288abf57b4d18ef8dbf5d95c7b870b786a7fb9c691a1b2",
+      "image_fit": {
+        "requested": "auto",
+        "applied": "cover",
+        "source_size": [
+          1086,
+          1448
+        ],
+        "frame_box": [
+          259,
+          86,
+          821,
+          878
+        ],
+        "paste_box": [
+          259,
+          86,
+          821,
+          878
+        ],
+        "source_crop_box": [
+          29.252525252525288,
+          5.684341886080802e-14,
+          1056.7474747474748,
+          1447.9999999999998
+        ],
+        "retained_source_area": 0.9461279461279459,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.25
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        11,
+        8
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "ink_whitespace",
+      "sha256": "6eedab2c94a698c9d8d5832c7ccff63e764cffbc0ebcdc85e57dbe9ab9f2e9c5",
+      "image_fit": {
+        "requested": "auto",
+        "applied": "cover",
+        "source_size": [
+          1254,
+          1254
+        ],
+        "frame_box": [
+          302,
+          562,
+          1015,
+          1253
+        ],
+        "paste_box": [
+          302,
+          562,
+          1015,
+          1253
+        ],
+        "source_crop_box": [
+          0.0,
+          9.673211781206135,
+          1254.0,
+          1224.9803646563817
+        ],
+        "retained_source_area": 0.9691444600280507,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.25
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        6
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "modern_editorial",
+      "sha256": "60b737eb2ef47d5efbe3f4b33270f297cfaae143e66550d91195480cd1ac8ba2",
+      "image_fit": {
+        "requested": "auto",
+        "applied": "cover",
+        "source_size": [
+          1536,
+          1024
+        ],
+        "frame_box": [
+          86,
+          619,
+          994,
+          1282
+        ],
+        "paste_box": [
+          86,
+          619,
+          994,
+          1282
+        ],
+        "source_crop_box": [
+          66.79939668174961,
+          0.0,
+          1469.2006033182504,
+          1024.0
+        ],
+        "retained_source_area": 0.9130216189039718,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.25
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        6
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    },
+    {
+      "id": "warm_memory",
+      "sha256": "0ec11be470084e4a6588ecee07c1e32f04b8b0bb279ad9fe82c055d8bb89446c",
+      "image_fit": {
+        "requested": "auto",
+        "applied": "cover",
+        "source_size": [
+          1536,
+          1024
+        ],
+        "frame_box": [
+          0,
+          0,
+          1080,
+          922
+        ],
+        "paste_box": [
+          0,
+          0,
+          1080,
+          922
+        ],
+        "source_crop_box": [
+          168.26030368763554,
+          0.0,
+          1367.7396963123645,
+          1024.0
+        ],
+        "retained_source_area": 0.7809110629067245,
+        "max_crop": 0.22,
+        "crop_anchor": [
+          0.5,
+          0.25
+        ],
+        "face_detection": "not_performed",
+        "coverage_scope": "image transform before opaque text panels, header and footer"
+      },
+      "font_size": 64,
+      "line_lengths": [
+        13,
+        6
+      ],
+      "text_equal": true,
+      "source_aspect_preserved": true,
+      "text_safe_area": true,
+      "human_review": "pending"
+    }
+  ],
+  "samples": {
+    "main_cards": 3,
+    "same_quote_styles": 6,
+    "six_style_version": 5
+  },
+  "recovery": {
+    "clean_render_reused": 3,
+    "review_targets_current": true,
+    "formal_export_without_human_approval": "rejected"
+  },
+  "semantic_scene_review": {
+    "exact_quote_unchanged": true,
+    "speaker_approval": "pending",
+    "cards_checked": 3,
+    "third_scene": "thematic mountain-path illustration; original speaking scene at night with coat on chair; no claim of literal scene reconstruction"
+  },
+  "local_zip": {
+    "main_draft_files": 17,
+    "integrity": "passed",
+    "review_handoff_files": 34,
+    "handoff_sha256": "8085efaa100d29d6da59f63d6386c89768cb1dbd4e94059e8faf821b31126976",
+    "client_download": "not_observed"
+  },
+  "ai_visual_review": {
+    "full_posters": 9,
+    "phone_previews": 9,
+    "crop_simulations": 9,
+    "style_pairs": 15,
+    "human_approval": false
+  },
+  "human_approvals": 0,
+  "full_V1_acceptance": "not_achieved",
+  "private_logs_images_and_novels_published": false,
+  "limitations": [
+    "Transform source retention is before opaque panels; actual pixels separately inspected.",
+    "Square crop still loses attribution; full 3:4 only.",
+    "Ink face stylization/scar and small auxiliary labels require human visual judgment.",
+    "Some quote line breaks still split clauses or words; next iteration will improve punctuation-aware rhythm.",
+    "Long-novel semantic reading and actual client download remain incomplete."
+  ],
+  "reviewer_type": "AI",
+  "human_privacy_review": "pending",
+  "validation_followup": {
+    "non_string_mode_rejected": true,
+    "all_nine_decoded_pixels_unchanged": true,
+    "encoded_file_bytes": "New sRGB profile creation metadata differs; actual new file hashes retained, no claim of byte equality.",
+    "review_targets_regenerated_for_current_code": true
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "1be6774ef4d453e1163492d42b112b09174afa8be725bbcf00cd6d501881203e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/layout.py",
+      "sha256": "b95bdad7ed0bf6a34adf686105658f5f26d191bb9033a8d8d710a6e71fba66b9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/bundles.py",
+      "sha256": "35b1b8cca7dd3f928795046ddd9d32eecc1a65d7fe790d92fa50a588251d3db8",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_layout.py",
+      "sha256": "0684fcff6448ce70f6f2d1b73227c710137c20681fd36f89eccdf6a51f210b41",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/visual-proportion-v1.md",
+      "sha256": "7ad942fc930a8ba0725e02232e7727d102ef9e2d21554fe49f20eec90da3c0eb",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "ff56d2aea1a5da2f5c56440dc69b650a6b23e59183d61d39869a3c2ab7078d1b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "41ca060bbe7f9cb53fbe0a2ceb6bcf6aea55e05ea97933dcf74ea954885079b7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "312ac58259ae0a4186f5df6ea88e10c008fbe1296fed3b971ce305a4d5ca8b46",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-image-demo.md",
+      "sha256": "57c3e84a64fdae540cf14242d5d0e02242fc9390e4d380ad61e436bb0ef916bb",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "c826ea63db0ba682d0177ffbd4fb100e0b705c5ba0ee9e04afba3e590d088c5e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration20-evidence.json",
+      "sha256": "5ee52356e3fc2038f20625154ae4ba9fdabf1bde76ded910e8edc01083ba7976",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}
