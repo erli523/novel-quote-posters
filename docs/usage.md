@@ -32,6 +32,8 @@ TXT 支持严格解码 UTF-8/BOM、UTF-16/BOM、GB18030，可用 --encoding 指�
 
 该样本分析只适配原样的自写样本。程序检查源哈希、窗口哈希、原句与证据位置，去重并保留原始提案字节快照；不会把 AI 归属标为人工批准。可分批提交：保留其他窗口的已处理状态、其他候选和人物；同 ID 人物在新提案中应提供更新后的完整档案。相同原句的实质分析未变时保留既有审核。加工覆盖与精彩句召回是不同指标。数量不足要报告原因，不编句补足。
 
+分析输入只读取一次，其精确字节与 SHA-256 固定到私有快照；不会边分析边重新读取已经变化的文件。重分析保留同一来源片段的 display_text/text_mode，以及已有实际参考图链接/版本。更换参考图请通过 image-import/set-reference，语义提案不能偷偷改实际文件引用。来源或语义改变仍需重审。提交时比较原文档版本，并发修改会被保留并报告冲突。
+
 ## 3. 真实生图与卡片
 
 先按 [每次运行的任务契约](task-contract.md) 生成并填写 contract-template，再 apply-contract；明确张数、人物/风格、原文政策、来源权利和预算。prepare-cards 不传数量/风格时采用该契约，默认不扩大权限。没有明确契约不能预留新生图或批准正式成品，旧运行可先保留待审资料。
@@ -53,6 +55,15 @@ cards.json 是数组，每项示例：
 ```
 
 上例用于说明旧草稿数据格式。正式流程用 image-import/attach-image 自动填入 image_asset_id、来源种类及路径，不能只手填 image_kind=generated。路径须在 run 内。poster 可省略；render 会为 card_id 与输入内容生成稳定版本文件名，并回填 cards.json，不覆盖旧图。来源登记仍需对照真实工具轨迹，不能独立证明图像内容真实。`styles` 命令打印当前布局参数；单卡可提供 layout_overrides 覆盖色板和归一化坐标，须重新排版审阅。
+
+初次候选不足时，在应用端提交更多已核验候选，再续加卡片：
+
+```powershell
+.venv\Scripts\python -m novel_quote_posters.cli apply-analysis runs/my-demo/updated-analysis.json --run runs/my-demo
+.venv\Scripts\python -m novel_quote_posters.cli prepare-cards --run runs/my-demo --append
+```
+
+旧条目和资产保留，只填目标缺口；给新卡片准备真实图片并 attach-image 后再 render。新增条目会使整组审核失效；内容仍匹配的旧单卡记录可保留。重复续加不重复编号，不调用生图。详见任务契约中的计数器和恢复说明。
 
 ## 4. 排版与导出
 

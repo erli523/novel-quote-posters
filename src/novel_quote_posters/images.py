@@ -1,5 +1,6 @@
 """Application-tool reservations and provenance import, without making image API calls."""
 
+import copy
 import math
 import re
 import uuid
@@ -175,7 +176,8 @@ def register_image(run: Path, source: Path, receipt: dict) -> dict:
         elif load_json(receipt_path) != receipt:
             raise ValueError("image receipt damaged")
         assets_path = run / "image-assets.json"
-        assets = load_json(assets_path) if assets_path.exists() else {}
+        before_assets = load_json(assets_path) if assets_path.exists() else None
+        assets = copy.deepcopy(before_assets) if before_assets is not None else {}
         record = {"asset_id": asset_id, "path": target.relative_to(run).as_posix(),
                   "sha256": source_hash, "source_kind": kind, "character_id": receipt["character_id"],
                   "width": size[0], "height": size[1], "format": image_format,
@@ -190,7 +192,8 @@ def register_image(run: Path, source: Path, receipt: dict) -> dict:
         ledger.put("image:" + asset_id, target)
         if asset_id not in assets:
             assets[asset_id] = record
-            commit_documents(run, {"image-assets.json": assets}, reason="image_registered")
+            commit_documents(run, {"image-assets.json": assets}, reason="image_registered",
+                             expected={"image-assets.json": before_assets, "characters.json": characters})
         if call:
             ledger.resolve_call(receipt["call_id"], "succeeded", "image:" + asset_id,
                                 details={"receipt_sha256": record["receipt_sha256"]})
@@ -257,14 +260,42 @@ def import_legacy_failures(run: Path, path: Path) -> dict:
         return {"imported": len(rows), "budget": budget_summary(run)}
 
 
-def prepare_cards(run: Path, *, count: int | None = None, style_id: str | None = None) -> dict:
+def _last_card_number(run: Path, cards: list, sequence: dict | None) -> int:
+    def maximum(rows):
+        return max((int(match[1]) for row in rows
+                    if (match := re.fullmatch(r"card([0-9]+)", row["card_id"]))), default=0)
+    floor = maximum(cards)
+    if sequence is not None:
+        if (not isinstance(sequence, dict) or sequence.get("schema_version") != 1 or type(sequence.get("last_number")) is not int
+                or sequence["last_number"] < floor):
+            raise ValueError("card sequence damaged or behind existing IDs")
+        return sequence["last_number"]
+    # Legacy initialization accounts for tracked IDs even if a card was later removed.
+    for path in (run / ".state/transactions").glob("*.json"):
+        transaction = load_json(path)
+        for phase in ["before", "after"]:
+            state = transaction.get(phase, {})
+            floor = max(floor, maximum(state.get("cards.json") or []))
+            prior = state.get("card-sequence.json")
+            if prior:
+                if prior.get("schema_version") != 1 or type(prior.get("last_number")) is not int:
+                    raise ValueError("historical card sequence damaged")
+                floor = max(floor, prior["last_number"])
+    return floor
+
+
+def prepare_cards(run: Path, *, count: int | None = None, style_id: str | None = None,
+                  append: bool = False) -> dict:
     from .layout import STYLES
     recover_documents(run)
-    if (run / "cards.json").exists():
+    before_cards = load_json(run / "cards.json") if (run / "cards.json").exists() else None
+    if before_cards is not None and not append:
         raise ValueError("cards already exist; update their stable IDs rather than replacing them")
     book = load_json(run / "book.json")
     validate_source(run, book)
     contract = load_contract(run, book)
+    if append and contract is None:
+        raise ValueError("append requires an explicit task contract")
     count = count if count is not None else contract["definition"]["target_count"] if contract else 10
     style_id = style_id or (contract["definition"]["style_ids"][0] if contract else "mist_cinema")
     if count <= 0 or style_id not in STYLES:
@@ -273,6 +304,16 @@ def prepare_cards(run: Path, *, count: int | None = None, style_id: str | None =
         raise ValueError("prepare count/style differs from task contract; change the contract explicitly")
     quotes = load_json(run / "quotes.json")
     characters = load_json(run / "characters.json")
+    cards = copy.deepcopy(before_cards) if before_cards is not None else []
+    if len({c["card_id"] for c in cards}) != len(cards) or any(not re.fullmatch(r"[A-Za-z0-9_-]+", c["card_id"]) for c in cards):
+        raise ValueError("invalid/duplicate existing card IDs")
+    if len(cards) > count:
+        raise ValueError("existing cards exceed target; append never deletes cards")
+    sequence_path = run / "card-sequence.json"
+    before_sequence = load_json(sequence_path) if sequence_path.exists() else None
+    number = _last_card_number(run, cards, before_sequence)
+    if before_cards is None and number > 0:
+        raise ValueError("tracked card IDs exist but cards.json is missing; preserve history and restore the card document")
     selected = [q for q in quotes if q.get("selection", {}).get("selected")
                 and q["speaker"]["status"] in {"explicit", "context_inferred"}
                 and q["speaker"]["character_id"] in characters]
@@ -281,10 +322,13 @@ def prepare_cards(run: Path, *, count: int | None = None, style_id: str | None =
         selected = [q for q in selected if not selection_issues(contract, [
             {"card_id": "candidate", "quote_id": q["quote_id"], "character_id": q["speaker"]["character_id"],
              "style_id": style_id}], {q["quote_id"]: q}, check_count=False)]
-    cards = []
-    for quote in selected[:count]:
+    for quote in selected:
         check_display(book, quote, allow_rewrite=bool(contract and contract["definition"]["allow_rewrite"]))
-        cards.append({"card_id": f"card{len(cards)+1:03d}", "quote_id": quote["quote_id"],
+    used_quotes = {card["quote_id"] for card in cards}
+    fresh = [q for q in selected if q["quote_id"] not in used_quotes][:count-len(cards)]
+    for quote in fresh:
+        number += 1
+        cards.append({"card_id": f"card{number:03d}", "quote_id": quote["quote_id"],
                       "character_id": quote["speaker"]["character_id"], "style_id": style_id,
                       "image_kind": "pending", "review": {"status": "pending"}})
     buffer_target = math.ceil(count*(1+contract["definition"]["candidate_buffer_ratio"])) if contract else count
@@ -293,17 +337,28 @@ def prepare_cards(run: Path, *, count: int | None = None, style_id: str | None =
               "candidate_buffer_shortfall": max(0, buffer_target-len(selected)),
               "task_contract_fingerprint": contract["fingerprint"] if contract else None,
               "reason": "only source-verified, application-selected quotes; no invented fillers"}
-    commit_documents(run, {"preparation-report.json": report, **({"cards.json": cards} if cards else {})},
-                     reason="selected_quotes_to_cards", expected={"task-contract.json": contract,
-                         "book.json": book, "quotes.json": quotes, "characters.json": characters, "cards.json": None})
-    return report
+    previous_report = load_json(run / "preparation-report.json") if (run / "preparation-report.json").exists() else None
+    sequence = {"schema_version": 1, "last_number": number}
+    changes = {}
+    if report != previous_report:
+        changes["preparation-report.json"] = report
+    if cards and cards != before_cards:
+        changes["cards.json"] = cards
+    if sequence != before_sequence:
+        changes["card-sequence.json"] = sequence
+    transaction = commit_documents(run, changes, reason="append_selected_cards" if append else "selected_quotes_to_cards",
+        expected={"task-contract.json": contract, "book.json": book, "quotes.json": quotes,
+                  "characters.json": characters, "cards.json": before_cards, "card-sequence.json": before_sequence,
+                  "preparation-report.json": previous_report}) if changes else None
+    return {**report, "added": len(fresh), "reused": not changes, "transaction": transaction}
 
 
 def attach_image(run: Path, asset_id: str, card_id: str) -> dict:
     recover_documents(run)
     assets = load_json(run / "image-assets.json")
     asset = assets[asset_id]
-    cards = load_json(run / "cards.json")
+    before_cards = load_json(run / "cards.json")
+    cards = copy.deepcopy(before_cards)
     card = next((c for c in cards if c["card_id"] == card_id), None)
     if card is None:
         raise ValueError("unknown card ID")
@@ -314,20 +369,24 @@ def attach_image(run: Path, asset_id: str, card_id: str) -> dict:
         return card
     card.update(background=asset["path"], image_kind=asset["source_kind"], image_asset_id=asset_id,
                 review={"status": "pending", "reason": "background_changed"})
-    commit_documents(run, {"cards.json": cards}, reason="attach_image_to_card")
+    commit_documents(run, {"cards.json": cards}, reason="attach_image_to_card",
+                     expected={"cards.json": before_cards, "image-assets.json": assets})
     return card
 
 
 def set_reference(run: Path, asset_id: str, character_id: str) -> dict:
     recover_documents(run)
-    asset = load_json(run / "image-assets.json")[asset_id]
+    assets = load_json(run / "image-assets.json")
+    asset = assets[asset_id]
     validate_image_asset(run, {"background": asset["path"], "image_kind": asset["source_kind"],
                                "image_asset_id": asset_id, "character_id": character_id}, required=True)
-    characters = load_json(run / "characters.json")
+    before_characters = load_json(run / "characters.json")
+    characters = copy.deepcopy(before_characters)
     character = characters[character_id]
     if character.get("reference_asset_id") == asset_id:
         return character
     character.update(reference_image=asset["path"], reference_asset_id=asset_id,
                      visual_anchor_version=character.get("visual_anchor_version", 0)+1)
-    commit_documents(run, {"characters.json": characters}, reason="character_reference_changed")
+    commit_documents(run, {"characters.json": characters}, reason="character_reference_changed",
+                     expected={"characters.json": before_characters, "image-assets.json": assets})
     return character

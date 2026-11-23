@@ -1,7 +1,13 @@
 """Validate application-side semantic analysis without granting it human approval."""
 
+import copy
+import json
+from pathlib import Path
+
+from .documents import commit_documents, recover_documents
 from .quotes import make_quote
-from .storage import sha256
+from .source import validate_source
+from .storage import digest_file, load_json, save_bytes, sha256
 
 
 def evidence(book: dict, item: dict) -> dict:
@@ -66,3 +72,55 @@ def apply_analysis(book: dict, windows: list[dict], proposal: dict) -> tuple[lis
     updated = [{**w, "semantic_status": "application_processed" if w["chunk_id"] in processed
                 else w.get("semantic_status", "pending")} for w in windows]
     return quotes, characters, updated
+
+
+def apply_analysis_file(run: Path, path: Path) -> dict:
+    """Merge a fixed proposal snapshot, preserving explicit display edits and references."""
+    recover_documents(run)
+    names = ["book.json", "chunks.json", "quotes.json", "characters.json", "analysis-report.json"]
+    before = {name: load_json(run / name) if (run / name).exists() else None for name in names}
+    if any(before[name] is None for name in ["book.json", "chunks.json", "quotes.json"]):
+        raise ValueError("an indexed run is required before applying semantic analysis")
+    book = before["book.json"]
+    validate_source(run, book)
+    raw = path.read_bytes()
+    proposal_hash = sha256(raw)
+    proposal = json.loads(raw.decode("utf-8"))
+    quotes, proposed_characters, updated = apply_analysis(book, before["chunks.json"], proposal)
+    snapshot = run / "analysis" / (proposal_hash + ".json")
+    if snapshot.exists() and digest_file(snapshot) != proposal_hash:
+        raise ValueError("analysis snapshot checksum mismatch")
+    if not snapshot.exists():
+        save_bytes(snapshot, raw)
+    existing = {q["quote_id"]: copy.deepcopy(q) for q in before["quotes.json"]}
+    for quote in quotes:
+        previous = existing.get(quote["quote_id"])
+        if previous and previous["source"] == quote["source"] and previous["quote_exact"] == quote["quote_exact"]:
+            for key in ["display_text", "text_mode"]:
+                quote[key] = previous[key]
+        if previous and {k: v for k, v in previous.items() if k != "review"} == {
+                k: v for k, v in quote.items() if k != "review"}:
+            quote["review"] = previous["review"]
+        existing[quote["quote_id"]] = quote
+    characters = copy.deepcopy(before["characters.json"] or {})
+    for identity, value in proposed_characters.items():
+        character = copy.deepcopy(value)
+        previous = characters.get(identity, {})
+        for key in ["reference_image", "reference_asset_id", "visual_anchor_version"]:
+            if key in previous:
+                if key != "visual_anchor_version" and character.get(key) and character[key] != previous[key]:
+                    raise ValueError("reference images are managed by set-reference, not semantic proposals")
+                character[key] = previous[key]
+            elif key != "visual_anchor_version" and character.get(key):
+                raise ValueError("new references require actual image registration and set-reference")
+        characters[identity] = character
+    report = {"source_hash": book["source_hash"], "proposal_hash": proposal_hash,
+              "semantic_chunks_processed": sum(w["semantic_status"] == "application_processed" for w in updated),
+              "chunks_total": len(updated), "quotes": len(quotes),
+              "human_review": "pending", "reviewer_type": "application_assistant"}
+    proposed = {"quotes.json": list(existing.values()), "characters.json": characters,
+                "chunks.json": updated, "analysis-report.json": report}
+    changes = {name: value for name, value in proposed.items() if value != before[name]}
+    validate_source(run, book)
+    transaction = commit_documents(run, changes, reason="application_analysis", expected=before) if changes else None
+    return {**report, "transaction": transaction, "reused": not changes}

@@ -61,6 +61,20 @@ def save_json(path: Path, value) -> None:
         Path(temporary).unlink(missing_ok=True)
 
 
+def save_bytes(path: Path, value: bytes) -> None:
+    """Persist exact already-read input bytes; no second read of a mutable source."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=".writing-", dir=path.parent)
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(value)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
+
+
 def contained(root: Path, relative: str) -> Path:
     target = (root / relative).resolve()
     if not target.is_relative_to(root.resolve()):

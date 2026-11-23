@@ -1,14 +1,13 @@
 """Deterministic helpers for the application coordinator. No embedded image API."""
 
 import argparse
-import shutil
 from pathlib import Path
 
-from .analysis import apply_analysis
+from .analysis import apply_analysis_file
 from .bootstrap import initialize_run
 from .bundles import verify_archive
 from .contracts import apply_contract, contract_template
-from .documents import commit_documents, recover_documents
+from .documents import recover_documents
 from .edits import apply_edits, edit_targets
 from .export import export_bundle
 from .images import (
@@ -24,9 +23,8 @@ from .images import (
 from .layout import STYLES
 from .rendering import render_cards
 from .review import apply_review, write_review_page
-from .source import validate_source
 from .status import run_status
-from .storage import digest_file, load_json, save_json
+from .storage import load_json, save_json
 
 
 def main():
@@ -107,6 +105,7 @@ def main():
         elif name == "prepare-cards":
             command.add_argument("--count", type=int)
             command.add_argument("--style")
+            command.add_argument("--append", action="store_true", help="fill shortfall without replacing existing cards")
         elif name in {"attach-image", "set-reference"}:
             command.add_argument("asset_id")
             command.add_argument("--card" if name == "attach-image" else "--character", required=True)
@@ -132,36 +131,8 @@ def main():
                                    allow_rewrite=args.allow_rewrite, resume=args.resume)
             print(f"Exported {len(report['assets'])} cards; draft={report['draft']}")
         elif args.command == "apply-analysis":
-            book = load_json(args.run / "book.json")
-            validate_source(args.run, book)
-            windows = load_json(args.run / "chunks.json")
-            proposal = load_json(args.proposal)
-            quotes, characters, updated = apply_analysis(book, windows, proposal)
-            snapshot = args.run / "analysis" / (digest_file(args.proposal) + ".json")
-            if not snapshot.exists():
-                snapshot.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(args.proposal, snapshot)
-            elif digest_file(snapshot) != digest_file(args.proposal):
-                raise ValueError("analysis snapshot checksum mismatch")
-            existing = {q["quote_id"]: q for q in load_json(args.run / "quotes.json")}
-            for quote in quotes:
-                previous = existing.get(quote["quote_id"])
-                if previous and {k: v for k, v in previous.items() if k != "review"} == {
-                        k: v for k, v in quote.items() if k != "review"}:
-                    quote["review"] = previous["review"]
-                existing[quote["quote_id"]] = quote
-            old_characters = load_json(args.run / "characters.json") if (args.run / "characters.json").exists() else {}
-            report = {
-                "source_hash": book["source_hash"], "proposal_hash": digest_file(args.proposal),
-                "semantic_chunks_processed": sum(w["semantic_status"] == "application_processed"
-                                                  for w in updated),
-                "chunks_total": len(updated), "quotes": len(quotes),
-                "human_review": "pending", "reviewer_type": "application_assistant"}
-            commit_documents(args.run, {"quotes.json": list(existing.values()),
-                                       "characters.json": {**old_characters, **characters},
-                                       "chunks.json": updated, "analysis-report.json": report},
-                             reason="application_analysis")
-            print(f"Validated {len(quotes)} semantic proposals; human review pending.")
+            report = apply_analysis_file(args.run, args.proposal)
+            print(f"Validated {report['quotes']} semantic proposals; human review pending.")
         elif args.command == "review":
             report = write_review_page(args.run, args.output, quotes_only=args.quotes_only)
             print(f"Review page: {len(report['quotes'])} quotes, {len(report['cards'])} cards; no approval granted.")
@@ -184,7 +155,7 @@ def main():
             elif args.command == "import-call-log":
                 report = import_legacy_failures(args.run, args.file)
             elif args.command == "prepare-cards":
-                report = prepare_cards(args.run, count=args.count, style_id=args.style)
+                report = prepare_cards(args.run, count=args.count, style_id=args.style, append=args.append)
             elif args.command == "attach-image":
                 report = attach_image(args.run, args.asset_id, args.card)
             elif args.command == "set-reference":

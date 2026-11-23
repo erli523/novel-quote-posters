@@ -93,7 +93,8 @@ def test_contract_filters_candidates_and_records_quantity_and_buffer_shortfalls(
     report = prepare_cards(poster_run)
     assert (report["requested"], report["prepared"], report["shortfall"]) == (2, 1, 1)
     assert report["candidate_buffer_target"] == 3 and report["candidate_buffer_shortfall"] == 2
-    assert load_json(poster_run / "preparation-report.json") == report
+    assert load_json(poster_run / "preparation-report.json") == {
+        k: v for k, v in report.items() if k not in {"added", "reused", "transaction"}}
 
 
 def test_card_preparation_does_not_overwrite_a_concurrently_created_album(poster_run, monkeypatch):

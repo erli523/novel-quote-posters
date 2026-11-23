@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "iteration": 10,
+  "contract": "docs/plans/v1.md",
+  "checks": {"pytest": {"passed": 152, "failed": 0}, "ruff": "passed", "private_evidence_id": "20261123T052544Z-340a6d61"},
+  "implemented": [
+    "explicit append fills remaining card entries without replacing existing objects or assets",
+    "atomic monotonic card sequence with legacy tracked-ID initialization",
+    "unchanged append is idempotent and does not add document transactions",
+    "semantic proposals use exact single-read byte snapshots",
+    "reanalysis preserves display edits and actual reference links",
+    "analysis, image registration/attachment/reference and render pointer updates reject stale document snapshots",
+    "mid-composition input changes cannot produce a reusable tracked result"
+  ],
+  "actual_application_qa": {
+    "scope": "self_authored_fiction_and_explicit_synthetic_software_fixture",
+    "initial_card_entries": 1,
+    "target_card_entries": 3,
+    "appended_entries": 2,
+    "repeated_append_added": 0,
+    "repeated_append_new_transaction": false,
+    "original_card_image_and_pending_review_preserved": true,
+    "final_states": {"draft_ready_test_fixture": 1, "awaiting_image": 2},
+    "same_input_ingest_checkpoint_resume": "completed",
+    "immutable_ingest_seal": "matched",
+    "actual_generated_images": 0,
+    "actual_human_approvals": 0
+  },
+  "actual_parallel_connection_tests": {
+    "operations": ["append", "image_registry"],
+    "old_snapshot_competing_writes": "one_commit_one_conflict",
+    "retry_after_fresh_read": "no_duplicate_cards_or_lost_registry_entries",
+    "native_image_calls": 0
+  },
+  "real_main_demo": {"awaiting_image": 3, "budget_limit": 10, "reserved": 2, "remaining": 8, "new_image_calls": 0},
+  "limits": [
+    "prepared card entries are not completed posters or actual generated images",
+    "synthetic pictures and simulated test receipts/approvals do not satisfy product visual acceptance",
+    "cooperative snapshot checks do not authenticate identity or prevent arbitrary external filesystem writes",
+    "actual image generation, reference editing, handoff and real human acceptance remain incomplete",
+    "no external API fallback or automatic social publishing enabled"
+  ]
+}

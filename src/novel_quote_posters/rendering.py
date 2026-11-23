@@ -1,5 +1,6 @@
 """Incremental, recoverable composition. This module never calls an image service."""
 
+import copy
 import importlib.metadata
 import re
 from pathlib import Path
@@ -71,9 +72,13 @@ def render_cards(run: Path, font: Path, *, card_id: str | None = None, width: in
     recover_documents(run)
     book = load_json(run / "book.json")
     validate_source(run, book)
-    quotes = {q["quote_id"]: q for q in load_json(run / "quotes.json")}
+    quote_values = load_json(run / "quotes.json")
+    quotes = {q["quote_id"]: q for q in quote_values}
     characters = load_json(run / "characters.json")
     cards = load_json(run / "cards.json")
+    expected = {"book.json": book, "quotes.json": quote_values, "characters.json": characters,
+                "cards.json": copy.deepcopy(cards), **{name: load_json(run / name) if (run / name).exists() else None
+                 for name in ["image-assets.json", "task-contract.json"]}}
     if len({c["card_id"] for c in cards}) != len(cards):
         raise ValueError("duplicate card IDs")
     selected = [c for c in cards if card_id is None or c["card_id"] == card_id]
@@ -128,6 +133,10 @@ def render_cards(run: Path, font: Path, *, card_id: str | None = None, width: in
                                         rewrite=quote["text_mode"] == "rewrite",
                                         overrides=card.get("layout_overrides"))
                 preview = output.with_name(output.stem + "-preview.png")
+                validate_source(run, book)
+                if fingerprint(render_inputs(run, book, quote, character, card, font, width, height, draft,
+                                              source_checked=True)) != signature:
+                    raise ValueError("render inputs changed during composition; untracked output retained for inspection")
                 report.update(input_fingerprint=signature, preview_sha256=digest_file(preview),
                               render_options={"font": str(font.resolve()), "width": width,
                                               "height": height, "draft": draft})
@@ -142,7 +151,8 @@ def render_cards(run: Path, font: Path, *, card_id: str | None = None, width: in
             if changed:
                 card["poster"] = relative
                 card["review"] = {"status": "pending", "reason": "render_version_changed"}
-                commit_documents(run, {"cards.json": cards}, reason="render_card_completed")
+                commit_documents(run, {"cards.json": cards}, reason="render_card_completed", expected=expected)
+                expected["cards.json"] = copy.deepcopy(cards)
             results.append({"card_id": identity, "poster": relative, "reused": reused,
                             "input_fingerprint": signature})
     return {"cards": results, "rendered": sum(not r["reused"] for r in results),
