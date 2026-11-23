@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "4f38f7f30c6dbd495b20d239bb27356c738d193b9c88e0b476db7c08e6e56437",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-generation-diagnosis.md",
+      "sha256": "6dc335e45e0ee59c7a0304f0be99e95a5d0413e5aa5f268974c9f441f6f10bd4",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "5528efcaeb905a4fc3e130f24a9ce0180c66be8e1424c56e50347d87f9fa2aab",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "99aa8b449a68b3bc4e496d9493f605dab8d22ca611b346ae4773b9573a6e284c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "7cf7e60ec99495e2c69ca97985fcdb993cef458ce066193d306409676e9a34e6",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/image-recovery-real-novels.md",
+      "sha256": "e5276bbe824428464d1b056892a60b518aadc973e1dcb9d285f31cb9c8833e69",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration18-evidence.json",
+      "sha256": "7359e42c4474e219db8eeb7691752a093ba2e9b20d9f3ae441f46621973cd5c7",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

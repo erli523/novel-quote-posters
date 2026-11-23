@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "iteration": 18,
+  "includes_prior_iteration17_failure": true,
+  "actual_native_calls_total": 5,
+  "all_terminal": "tool_unavailable",
+  "last_failure_elapsed_ms": 72,
+  "new_chat_effective_startup_provider": "cc-switch-official",
+  "project_config_intent": "openai",
+  "separate_local_config_read": {
+    "effective_provider": "cc-switch-official",
+    "provider_origin": "user",
+    "project_layer_empty": true,
+    "project_trusted": true
+  },
+  "upstream_current_source": {
+    "url": "https://github.com/openai/codex/blob/main/codex-rs/config/src/loader/mod.rs",
+    "project_provider_keys_denied": true,
+    "installed_source_equivalence": "not_verified"
+  },
+  "native_calls_this_chat": 0,
+  "allocation_changes_this_chat": 0,
+  "main_contract_version": 4,
+  "budget": {
+    "limit": 10,
+    "occupied": 5,
+    "remaining": 5,
+    "unknown": 0,
+    "allocation": {
+      "reference": 4,
+      "background": 4,
+      "edit": 1,
+      "unclassified": 1
+    }
+  },
+  "images": 0,
+  "human_approvals": 0,
+  "code_changed": false,
+  "local_suite_rerun": false,
+  "completion": "not_achieved",
+  "global_provider_changed": false,
+  "independent_api_enabled": false,
+  "private_raw_evidence_published": false,
+  "human_privacy_review": "pending"
+}
