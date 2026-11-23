@@ -123,6 +123,8 @@ def test_user_supplied_replacement_can_be_final_exported_after_simulated_review(
     form.update(reviewer="SIMULATED_TEST_REVIEWER", attested=True, reviewed_at="2026-11-22T00:00:00Z")
     for row in form["quotes"] + form["cards"]:
         row["status"] = "approved"
+    for row in form["cards"]:
+        row["visual_checks"] = dict.fromkeys(row["visual_checks"], "passed")
     apply_review(poster_run, form)
     report = export_bundle(poster_run, tmp_path / "final")
     assert all(a["image_kind"] == "user_provided" for a in report["assets"])
@@ -147,3 +149,25 @@ def test_legacy_call_counts_are_preserved_and_never_reset(poster_run, tmp_path):
     images.import_legacy_failures(poster_run, log)
     status = images.budget_summary(poster_run)
     assert status["reserved_calls"] == 1 and status["remaining"] == 9
+
+
+def test_generated_candidate_cannot_be_approved_using_a_test_baseline(poster_run, chinese_font):
+    # All provider output and human decisions in this test are simulated.
+    save_json(poster_run / "cards.json", load_json(poster_run / "cards.json")[:1])
+    plan = images.plan_image(poster_run, {**request(), "kind": "background"})
+    asset = images.register_image(poster_run, poster_run / "test-only-1.png", simulated_receipt(poster_run, plan))
+    images.attach_image(poster_run, asset["asset_id"], "card001")
+    baseline = images.register_image(poster_run, poster_run / "test-only-2.png", {
+        "source_kind": "test_fixture", "character_id": "lin_che",
+        "image_sha256": digest_file(poster_run / "test-only-2.png"), "source_note": "SIMULATED TEST BASELINE"})
+    images.set_reference(poster_run, baseline["asset_id"], "lin_che")
+    render_cards(poster_run, chinese_font, draft=False)
+    form = review_targets(poster_run)
+    form.update(reviewer="SIMULATED_TEST_REVIEWER", attested=True, reviewed_at="2026-11-23T00:00:00Z")
+    for row in form["cards"]:
+        row["status"] = "approved"
+        row["visual_checks"] = dict.fromkeys(row["visual_checks"], "passed")
+    with pytest.raises(ValueError, match="non-test baseline"):
+        apply_review(poster_run, form)
+    assert load_json(poster_run / "cards.json")[0]["review"]["status"] == "pending"
+    assert images.budget_summary(poster_run)["reserved_calls"] == 1

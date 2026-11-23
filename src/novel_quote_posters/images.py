@@ -198,6 +198,21 @@ def validate_image_asset(run: Path, card: dict, *, required: bool = False) -> di
     return asset
 
 
+def validate_character_reference(run: Path, character: dict, *, required: bool = False) -> dict | None:
+    """Check the baseline's own provenance, rather than trusting a reference filename."""
+    identity, path = character.get("reference_asset_id"), character.get("reference_image")
+    if not identity or not path:
+        if required:
+            raise ValueError("generated character needs a registered baseline reference for visual comparison")
+        return None
+    asset = load_json(run / "image-assets.json")[identity]
+    result = validate_image_asset(run, {"background": path, "image_asset_id": identity,
+        "image_kind": asset["source_kind"], "character_id": character["character_id"]}, required=True)
+    if required and result["source_kind"] not in {"generated", "user_provided"}:
+        raise ValueError("test fixtures cannot be the baseline reference for a generated final card")
+    return result
+
+
 def import_legacy_failures(run: Path, path: Path) -> dict:
     """Preserve prior conservative call counts; never infer success without an asset."""
     recover_documents(run)

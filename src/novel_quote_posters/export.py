@@ -9,9 +9,10 @@ from PIL import Image
 
 from .bundles import build_payload, verify_archive, write_archive
 from .documents import recover_documents
-from .images import validate_image_asset
+from .images import validate_character_reference, validate_image_asset
 from .quotes import check_display
 from .rendering import validate_tracked_render
+from .review_policy import VISUAL_POLICY_VERSION, visual_review_complete
 from .source import validate_source
 from .storage import contained, digest_file, fingerprint, load_json, now, save_json, sha256
 from .workflow import Ledger
@@ -19,7 +20,8 @@ from .workflow import Ledger
 
 def review_fingerprint(card: dict, quote: dict, image_hash: str, layout_hash: str) -> str:
     import json
-    material = {"card": {k: v for k, v in card.items() if k != "review"},
+    material = {"visual_policy_version": VISUAL_POLICY_VERSION,
+                "card": {k: v for k, v in card.items() if k != "review"},
                 "quote": {k: v for k, v in quote.items() if k != "review"},
                 "image_hash": image_hash, "layout_hash": layout_hash}
     return sha256(json.dumps(material, ensure_ascii=False, sort_keys=True).encode())
@@ -89,6 +91,10 @@ def _select(run: Path, *, draft: bool = False,
             if (review.get("status") != "approved" or review.get("reviewer_type") != "human"
                     or review.get("fingerprint") != fingerprint or not review.get("reviewer")):
                 raise ValueError("human visual approval missing or invalidated")
+            if not visual_review_complete(review):
+                raise ValueError("human visual checklist missing or incomplete")
+            if image_asset["source_kind"] == "generated":
+                validate_character_reference(run, characters[card["character_id"]], required=True)
         selected.append((card, quote, image, layout_path, fingerprint))
     return book, characters, selected
 

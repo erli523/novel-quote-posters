@@ -4,8 +4,9 @@ from pathlib import Path
 
 from .documents import recover_documents
 from .export import export_status, quote_fingerprint, review_fingerprint
-from .images import budget_summary, validate_image_asset
+from .images import budget_summary, validate_character_reference, validate_image_asset
 from .rendering import validate_tracked_render
+from .review_policy import visual_review_complete
 from .source import validate_source
 from .storage import contained, digest_file, load_json
 
@@ -56,6 +57,9 @@ def run_status(run: Path) -> dict:
                 visual = card.get("review", {})
                 semantic = quote.get("review", {})
                 approved = (visual.get("status") == "approved" and visual.get("reviewer_type") == "human"
+                            and visual_review_complete(visual)
+                            and (card.get("image_kind") != "generated" or bool(
+                                validate_character_reference(run, characters[card["character_id"]], required=True)))
                             and visual.get("fingerprint") == current and bool(visual.get("reviewer"))
                             and semantic.get("status") == "approved" and semantic.get("reviewer_type") == "human"
                             and semantic.get("fingerprint") == quote_fingerprint(quote, characters.get(card["character_id"]))

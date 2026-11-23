@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "iteration": 6,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {"passed": 103, "failed": 0},
+    "ruff": "passed",
+    "private_evidence_id": "20261123T035323Z-a1d288f7"
+  },
+  "implemented": [
+    "offline baseline, full poster, mobile and explicitly simulated crop views",
+    "source-classified character traits and evidence in the review page",
+    "view hashes and exact crop coordinates",
+    "five pending visual judgments required for final approval",
+    "review schema 2 and explicit refusal of older forms",
+    "original-size scrollable image dialog",
+    "registered non-test reference required for generated final candidates",
+    "speaker/card mismatch prevents misleading re-render"
+  ],
+  "actual_browser_verification": {
+    "asset_scope": "clearly_labeled_synthetic_test_fixture_without_person_art",
+    "cards": 1,
+    "source_quotes_pending": 8,
+    "view_types": ["reference", "full", "mobile", "center_square_simulation"],
+    "mobile_natural_and_display_size": [360, 480],
+    "poster_natural_and_display_size": [1080, 1440],
+    "unsigned_download": "blocked",
+    "console_errors": 0,
+    "actual_human_approvals": 0,
+    "fixed_issue": "old max-height toggle still scaled image width; dialog now preserves natural dimensions"
+  },
+  "real_image_work": {
+    "new_calls": 0,
+    "total_calls": 2,
+    "outcome": "both HTTP 404",
+    "actual_images": 0,
+    "awaiting_image_cards": 3,
+    "budget_limit": 10,
+    "reserved": 2,
+    "remaining": 8,
+    "external_api_fallback_enabled": false
+  },
+  "acceptance_index": "docs/milestones/acceptance-status.md",
+  "limits": [
+    "view hashes prove byte identity, not human judgment or image quality",
+    "crop simulation does not claim a platform requirement",
+    "synthetic UI materials and simulated approvals do not satisfy real image or human acceptance",
+    "all product stage gates remain incomplete"
+  ]
+}

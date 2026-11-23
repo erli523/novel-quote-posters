@@ -77,7 +77,7 @@ def build_payload(run: Path, folder: Path, book: dict, characters: dict, selecte
                         layout_report=f"layouts/{filename}.json", source_review_fingerprint=approval_hash,
                         background={"sha256": report["background_sha256"], "included": False,
                                     "available_in": "original_run"})
-        portable["review"] = _fields(card.get("review", {}), ["status", "reviewer_type", "reviewer", "reviewed_at", "note", "fingerprint"])
+        portable["review"] = _fields(card.get("review", {}), ["status", "reviewer_type", "reviewer", "reviewed_at", "note", "fingerprint", "visual_policy_version", "visual_checks", "view_hashes", "crop_box"])
         cards.append(portable)
         quotes[quote["quote_id"]] = portable_quote(quote)
         asset = validate_image_asset(run, card)

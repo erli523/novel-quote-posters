@@ -4,6 +4,8 @@
 
 **开发中，尚未通过产品验收。** 以 [需求](docs/requirements.md)、[工程规则](rules.md)、[28 项验收标准](docs/acceptance.md) 和 [开发契约](docs/plans/v1.md) 为依据。当前迭代状态见 [开发记录](docs/milestones/progress.md)。
 
+[实际验收状态表](docs/milestones/acceptance-status.md) 分别列出已运行的程序证据和仍待真实图片/人工检查的缺口。离线视觉审核支持基准对照、手机图、裁切模拟和逐项判断；默认不授予任何批准。
+
 不需要独立图片 API Key；本地脚本不能直接调用应用端内置生图。用户小说与原始运行数据不进入公开仓库。参考图的几何人物只是布局示意，真实演示须提供工具来源记录。
 
 ## 开发环境

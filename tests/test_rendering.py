@@ -71,3 +71,17 @@ def test_incomplete_or_corrupted_render_is_versioned_not_overwritten(poster_run,
     result = rendering.render_cards(poster_run, chinese_font, card_id="card001")
     assert result["rendered"] == 1 and result["cards"][0]["poster"] != card["poster"]
     assert old.read_bytes() == b"damaged image"
+
+
+def test_reassigned_speaker_cannot_silently_render_with_previous_character(poster_run, chinese_font):
+    rendering.render_cards(poster_run, chinese_font)
+    cards = load_json(poster_run / "cards.json")
+    old_hashes = [digest_file(poster_run / card["poster"]) for card in cards]
+    quotes = load_json(poster_run / "quotes.json")
+    quotes[0]["speaker"]["character_id"] = "different_person"
+    save_json(poster_run / "quotes.json", quotes)
+    with pytest.raises(ValueError, match="speaker changed"):
+        rendering.render_cards(poster_run, chinese_font)
+    assert [digest_file(poster_run / card["poster"]) for card in cards] == old_hashes
+    with Ledger(poster_run / ".state/ledger.sqlite") as ledger:
+        assert ledger.budget()["calls"] == []

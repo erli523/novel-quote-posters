@@ -6,7 +6,7 @@ from pathlib import Path
 
 from . import layout
 from .documents import commit_documents, recover_documents
-from .images import validate_image_asset
+from .images import validate_character_reference, validate_image_asset
 from .quotes import check_display
 from .source import validate_source
 from .storage import contained, digest_file, fingerprint, load_json, save_json
@@ -17,9 +17,14 @@ def render_inputs(run: Path, book: dict, quote: dict, character: dict, card: dic
                   font: Path, width: int, height: int, draft: bool,
                   *, source_checked: bool = False) -> dict:
     check_display(book, quote, allow_rewrite=True)
+    if (quote["speaker"]["character_id"] != card["character_id"]
+            or quote["speaker"]["status"] not in {"explicit", "context_inferred"}
+            or quote["quote_type"] not in {"dialogue", "monologue"}):
+        raise ValueError("card speaker changed or is uncertain; reconcile the character and imagery before rendering")
     if not source_checked:
         validate_source(run, book)
     image_asset = validate_image_asset(run, card)
+    reference_asset = validate_character_reference(run, character)
     references = {}
     if character.get("reference_image"):
         reference = contained(run, character["reference_image"])
@@ -30,7 +35,7 @@ def render_inputs(run: Path, book: dict, quote: dict, character: dict, card: dic
             "source": {k: book[k] for k in ["source_hash", "canonical_hash", "title", "parser_version"]},
             "quote": {k: v for k, v in quote.items() if k != "review"},
             "character": character, "references": references,
-            "image_asset": image_asset,
+            "image_asset": image_asset, "reference_asset": reference_asset,
             "card": {k: v for k, v in card.items() if k not in {"poster", "review"}},
             "background_sha256": digest_file(contained(run, card["background"])),
             "font_sha256": digest_file(font), "width": width, "height": height, "draft": draft}

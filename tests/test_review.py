@@ -1,4 +1,9 @@
+import base64
+import io
+import json
+
 import pytest
+from PIL import Image
 
 from novel_quote_posters.rendering import render_cards
 from novel_quote_posters.review import (
@@ -17,6 +22,8 @@ def signed_test_record(run, *, quotes_only=False):
                 reviewed_at="2026-11-22T00:00:00+00:00")
     for row in form["quotes"] + form["cards"]:
         row["status"] = "approved"
+    for row in form["cards"]:
+        row["visual_checks"] = dict.fromkeys(row["visual_checks"], "passed")
     return form
 
 
@@ -100,3 +107,53 @@ def test_same_name_characters_are_distinguishable_to_the_human_reviewer():
                   "elder": {"name": "林澈", "aliases": ["林澈", "林先生"]}}
     assert character_label("young", characters) == "林澈（阿澈）"
     assert character_label("elder", characters) == "林澈（林先生）"
+
+
+def test_visual_views_include_baseline_mobile_and_explicit_crop_without_granting_approval(poster_run, chinese_font, tmp_path):
+    characters = load_json(poster_run / "characters.json")
+    characters["lin_che"].update(reference_image="test-only-1.png", traits=[
+        {"kind": "design_choice", "value": "SYNTHETIC TEST BASELINE", "evidence": []}])
+    save_json(poster_run / "characters.json", characters)
+    render_cards(poster_run, chinese_font, draft=False)
+    page = tmp_path / "comparison.html"
+    targets = write_review_page(poster_run, page)
+    html = page.read_text(encoding="utf-8")
+    view = json.loads(html.split('const review=', 1)[1].split(';\n', 1)[0])
+    row = view["cards"][0]
+    assert set(row["view_hashes"]) == {"reference", "full", "mobile", "center_square_simulation"}
+    assert all(value == "pending" for value in row["visual_checks"].values())
+    assert targets["cards"][0]["status"] == "pending" and not targets["attested"]
+    for key, size in [("full", (1080, 1440)), ("mobile", (360, 480)), ("center_square_simulation", (1080, 1080))]:
+        raw = base64.b64decode(row["view_data"][key].split(',', 1)[1])
+        with Image.open(io.BytesIO(raw)) as image:
+            assert image.size == size
+    assert row["crop_box"] == [0, 180, 1080, 1260]
+    assert "非平台规则" in html and "SYNTHETIC TEST BASELINE" in html
+
+
+def test_incomplete_checklist_and_changed_view_never_apply_partial_approval(poster_run, chinese_font):
+    render_cards(poster_run, chinese_font, draft=False)
+    record = signed_test_record(poster_run)
+    original = (poster_run / "quotes.json").read_bytes()
+    record["cards"][0]["visual_checks"]["text_exact"] = "pending"
+    with pytest.raises(ValueError, match="checklist"):
+        apply_review(poster_run, record)
+    assert (poster_run / "quotes.json").read_bytes() == original
+    record["cards"][0]["visual_checks"]["text_exact"] = "passed"
+    record["cards"][0]["view_hashes"]["mobile"] = "altered"
+    with pytest.raises(ValueError, match="views"):
+        apply_review(poster_run, record)
+    assert (poster_run / "quotes.json").read_bytes() == original
+
+
+def test_damaged_mobile_preview_and_old_review_schema_are_rejected(poster_run, chinese_font):
+    render_cards(poster_run, chinese_font)
+    form = review_targets(poster_run)
+    form["schema_version"] = 1
+    with pytest.raises(ValueError, match="regenerate"):
+        apply_review(poster_run, form)
+    card = load_json(poster_run / "cards.json")[0]
+    image = poster_run / card["poster"]
+    image.with_name(image.stem + "-preview.png").write_bytes(b"damaged")
+    with pytest.raises(ValueError, match="mobile preview"):
+        review_targets(poster_run)
