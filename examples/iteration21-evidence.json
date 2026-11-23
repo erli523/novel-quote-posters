@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "iteration": 21,
+  "date": "2026-11-23",
+  "timezone": "Asia/Shanghai",
+  "task_id": "reading-rhythm-v1",
+  "contract_version": 1,
+  "main_contract_version": 5,
+  "previous_goal_turn": "progress",
+  "authorization": "Continue autonomous full novel-to-quote-to-image iteration; no routine chat-choice questions.",
+  "tests": {
+    "full_suite": 256,
+    "lint": "passed",
+    "current_code_hashes_match_checked_snapshot": true,
+    "layout_targeted_after_fixes": 55
+  },
+  "image_calls_added": 0,
+  "budget": {
+    "limit": 10,
+    "occupied": 10,
+    "remaining": 0,
+    "old_failures": 5,
+    "successes": 5,
+    "unknown": 0
+  },
+  "actual_main_cards": 3,
+  "same_quote_six_styles_version": 6,
+  "same_quote_six_styles": 6,
+  "source_and_imagery": {
+    "original_quotes_unchanged": true,
+    "deterministic_source_slices_equal": 3,
+    "background_hashes_unchanged": true,
+    "speaker_approval": "pending",
+    "third_scene": "Thematic illustration; not a literal reconstruction of the night-time speaking scene."
+  },
+  "reading_policy": {
+    "id": "punctuation-first-1",
+    "preferred_clause_min_width_fraction": 0.5,
+    "capacity_fallback_recorded": true,
+    "ascii_words_that_fit_kept_whole": true,
+    "explicit_paragraphs_preserved": true,
+    "footer_px": 36,
+    "footer_at_360w_px": 12,
+    "chapter_label_px": 30,
+    "long_header_policy": "reject explicitly; no silent truncation",
+    "body_min_px": 36,
+    "body_max_px": 64,
+    "claim_limit": "Heuristic line breaking, not general Chinese word segmentation or semantic understanding."
+  },
+  "actual_cards": [
+    {
+      "id": "card001",
+      "sha256": "fc42baee84269a65162daef9100282655077afb2bb0d1772e1952ad39af9955d",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "card002",
+      "sha256": "079df34369a50051266133f7ddcb277801ec3898ba4d1a6d1c2cd4556091b40f",
+      "font_size": 63,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "card003",
+      "sha256": "c134f974b9703398d92ae44d090b478b6c533a130b5d37655e0e0759507bbed6",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "mist_cinema",
+      "sha256": "7c0c3265e53cabb0f60ca3027b13936b5ad003b3802aa541f03b83e44127715f",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "archive_paper",
+      "sha256": "a29fb16476e20e6fec031cead84dd08ef755c3a00ebfac8fda2cb4e94a0e015e",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "dark_stage",
+      "sha256": "d197f84c16e7c1cc9a3945b26ecbaa37eebf71eef7478c65fc168512d58e4409",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "ink_whitespace",
+      "sha256": "cfe649098fe2efe30873dfb74886a80967bb4526a432f98447b92e713a85f751",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "modern_editorial",
+      "sha256": "5fab4581edbfbd9575cc3a52b8e0ebc8cd6b49624a43a20c6466906c4eaa19e3",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    },
+    {
+      "id": "warm_memory",
+      "sha256": "ac10e3a25005c72ed5c0fca9e473f038e3bdb15a677a1db09d5d5f710b76c614",
+      "font_size": 64,
+      "capacity_fallback": false,
+      "footer_px": 36,
+      "human_review": "pending"
+    }
+  ],
+  "matrix": {
+    "cases": 24,
+    "rendered_layout_probes": 18,
+    "expected_capacity_rejections": 6,
+    "lengths": [
+      "short",
+      70,
+      100,
+      "overcapacity"
+    ],
+    "texts": "self-authored layout probes; explicitly not novel quotations",
+    "capacity_fallback_count": 1
+  },
+  "real_artifact_checks": {
+    "pixel_views_full": 9,
+    "phone_views": 9,
+    "matrix_phone_views": 18,
+    "square_crop_simulations": 9,
+    "old_visual_targets_invalidated": 3,
+    "draft_render_reused": 3,
+    "clean_render_reused": 3,
+    "export_resumed": true,
+    "formal_export_without_human_approval": "rejected",
+    "local_zip_files": 17,
+    "zip_copy_extract_hashes": "passed",
+    "review_handoff_files": 38,
+    "review_handoff_sha256": "085badf321ab085d596801d59825efdc3156bcf3b4a9eda89fffc15ea3127a01"
+  },
+  "metadata": {
+    "image_fit_and_auxiliary_fields_nested_whitelisted": true,
+    "renderer_version": 3
+  },
+  "browser_validation": {
+    "status": "blocked",
+    "reason": "Local file scheme rejected by browser security policy; no workaround attempted.",
+    "script_syntax_and_resource_checks": "passed separately",
+    "actual_client_download": "not_observed",
+    "static_embedded_pngs_checked": {
+      "main": 12,
+      "six_styles": 19
+    },
+    "static_review_data_defaults": "pending; no attestation; no browser execution claim"
+  },
+  "human_approvals": 0,
+  "full_V1_acceptance": "not_achieved",
+  "private_images_configs_logs_and_real_novels_published": false,
+  "limitations": [
+    "Square crops still remove attribution; deliver full 3:4 only.",
+    "Ink face stylization and weak eyebrow scar still require real human judgment.",
+    "AI and deterministic layout checks do not replace named human semantic/visual approval.",
+    "Long-novel semantic reading remains incomplete."
+  ],
+  "reviewer_type": "AI",
+  "human_privacy_review": "pending"
+}

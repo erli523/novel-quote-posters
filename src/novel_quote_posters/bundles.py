@@ -63,7 +63,16 @@ def build_payload(run: Path, folder: Path, book: dict, characters: dict, selecte
         original = load_json(report_path)
         report = _fields(original, ["schema_version", "style_id", "width", "height", "font_sha256",
             "background_sha256", "output_sha256", "text", "character", "title", "draft", "rewrite",
-            "font_size", "text_box", "visual_review", "input_fingerprint", "image_fit"])
+            "font_size", "text_box", "visual_review", "input_fingerprint",
+            "line_break_policy", "line_break_fallback"])
+        if "image_fit" in original:
+            report["image_fit"] = _fields(original["image_fit"], ["requested", "applied", "source_size",
+                "frame_box", "paste_box", "source_crop_box", "retained_source_area", "max_crop",
+                "crop_anchor", "face_detection", "coverage_scope"])
+        if "auxiliary_text" in original:
+            report["auxiliary_text"] = {name: _fields(original["auxiliary_text"][name],
+                ["text", "font_size", "bbox"]) for name in ["footer", "header", "labels"]
+                if name in original["auxiliary_text"]}
         report["lines"] = [_fields(line, ["text", "xy", "bbox"]) for line in original["lines"]]
         report["style"] = _fields(original["style"], ["bg", "fg", "accent", "image", "panel", "text"])
         # Physical font paths are runtime locators; the font hash and layout survive export.

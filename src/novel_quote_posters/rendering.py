@@ -30,7 +30,7 @@ def render_inputs(run: Path, book: dict, quote: dict, character: dict, card: dic
     if character.get("reference_image"):
         reference = contained(run, character["reference_image"])
         references[character["reference_image"]] = digest_file(reference)
-    return {"renderer_version": 2, "renderer_code": {
+    return {"renderer_version": 3, "renderer_code": {
                 "layout": digest_file(Path(layout.__file__)), "rendering": digest_file(Path(__file__))},
             "packages": {p: importlib.metadata.version(p) for p in ["Pillow", "fonttools"]},
             "source": {k: book[k] for k in ["source_hash", "canonical_hash", "title", "parser_version"]},

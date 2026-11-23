@@ -24,8 +24,21 @@ STYLES = {
     "warm_memory": {"bg": "#e9d8bf", "fg": "#392e29", "accent": "#8a5a3b",
                         "image": (0, 0, 1, .64), "panel": (.065, .54, .935, .94), "text": (.1, .6, .9, .81)},
 }
-CLOSING = set("，。！？；：、）》」』】〉…,.!?;:%")
-OPENING = set("（《「『【〈(")
+CLOSING = set("，。！？；：、）》」』】〉…,.!?;:%”’)]}")
+OPENING = set("（《「『【〈(“‘[{")
+CLAUSE_END = set("，。！？；：")
+CLOSING_QUOTES = set("”’」』）》】〉)]}")
+
+
+def _clause_boundary(text: str, end: int) -> bool:
+    index = end-1
+    while index >= 0 and text[index] in CLOSING_QUOTES:
+        index -= 1
+    return index >= 0 and text[index] in CLAUSE_END
+
+
+def _inside_ascii_word(text: str, end: int) -> bool:
+    return all(char.isascii() and char.isalnum() for char in text[end-1:end+1])
 
 
 def fit_artwork(source: Image.Image, bounds: tuple, *, mode: str = "auto",
@@ -78,39 +91,55 @@ def glyphs(font_path: Path, text: str) -> None:
         raise ValueError("font has no glyphs for: " + " ".join(missing))
 
 
-def wrap(text: str, font: ImageFont.FreeTypeFont, width: int) -> list[str]:
+def wrap(text: str, font: ImageFont.FreeTypeFont, width: int, *, prefer_clauses: bool = True) -> list[str]:
     lines = []
     for paragraph in text.split("\n"):
-        line = ""
-        for char in paragraph:
-            if font.getlength(line + char) > width:
-                if not line:
-                    raise ValueError("textbox cannot fit one glyph")
-                # Move preceding glyph with closing punctuation; never let a line start with it.
-                carry = ""
-                while line and (char in CLOSING or line[-1] in OPENING):
-                    carry = line[-1] + carry
-                    line = line[:-1]
-                    if char in CLOSING:
-                        break
-                if not line:
+        if not paragraph:
+            lines.append("")
+        start = 0
+        while start < len(paragraph):
+            end = start
+            while end < len(paragraph) and font.getlength(paragraph[start:end+1]) <= width:
+                end += 1
+            if end == start:
+                raise ValueError("textbox cannot fit one glyph")
+            if end < len(paragraph):
+                legal = [i for i in range(start+1, end+1)
+                         if paragraph[i-1] not in OPENING and paragraph[i] not in CLOSING]
+                if not legal:
                     raise ValueError("textbox too narrow for punctuation")
-                lines.append(line)
-                line = carry
-            line += char
-        lines.append(line)
+                end = legal[-1]
+                clauses = [i for i in legal if prefer_clauses and _clause_boundary(paragraph, i)
+                           and font.getlength(paragraph[start:i]) >= width*.5]
+                if prefer_clauses and clauses:
+                    end = clauses[-1]
+                elif _inside_ascii_word(paragraph, end):
+                    word_start, word_end = end, end
+                    while word_start > start and paragraph[word_start-1].isascii() and paragraph[word_start-1].isalnum():
+                        word_start -= 1
+                    while word_end < len(paragraph) and paragraph[word_end].isascii() and paragraph[word_end].isalnum():
+                        word_end += 1
+                    if word_start > start and font.getlength(paragraph[word_start:word_end]) <= width:
+                        end = word_start
+            lines.append(paragraph[start:end])
+            start = end
     return lines
 
 
 def fit(text: str, font_path: Path, width: int, height: int, minimum: int, maximum: int):
     glyphs(font_path, text)
-    for size in range(maximum, minimum - 1, -1):
-        font = ImageFont.truetype(str(font_path), size)
-        lines = wrap(text, font, width)
-        ascent, descent = font.getmetrics()
-        step = math.ceil((ascent + descent) * 1.32)
-        if len(lines) * step <= height and all(font.getlength(line) <= width for line in lines):
-            return font, lines, step
+    for prefer_clauses in [True, False]:
+        for size in range(maximum, minimum - 1, -1):
+            font = ImageFont.truetype(str(font_path), size)
+            try:
+                lines = wrap(text, font, width, prefer_clauses=prefer_clauses)
+            except ValueError:
+                # A punctuation cluster may fit at a smaller permitted font size.
+                continue
+            ascent, descent = font.getmetrics()
+            step = math.ceil((ascent + descent) * 1.32)
+            if len(lines) * step <= height and all(font.getlength(line) <= width for line in lines):
+                return font, lines, step
     raise ValueError("text exceeds template capacity at minimum font size; choose another layout")
 
 
@@ -172,15 +201,17 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
             raise ValueError("glyph bounds exceed text box")
         draw.text(xy, line, font=font, fill=fg, anchor="lt")
         records.append({"text": line, "xy": xy, "bbox": actual})
-    small = ImageFont.truetype(str(font_path), round(27 * scale))
+    footer_font = ImageFont.truetype(str(font_path), round(36 * scale))
+    small = ImageFont.truetype(str(font_path), round(30 * scale))
     label_x, label_y = round(.09 * width), round(.9 * height)
     footer = f"{character} · 《{title}》"
-    if small.getlength(footer) > .82 * width:
+    if footer_font.getlength(footer) > .82 * width:
         raise ValueError("attribution footer too long")
     draw.rectangle((0, label_y - 35*scale, width, height), fill=style["bg"])
     draw.line((label_x, label_y-28*scale, width-label_x, label_y-28*scale), fill=accent, width=2)
-    draw.text((label_x, label_y), footer, font=small, fill=fg, anchor="lt")
-    header = chapter[:30]
+    footer_box = draw.textbbox((label_x, label_y), footer, font=footer_font, anchor="lt")
+    draw.text((label_x, label_y), footer, font=footer_font, fill=fg, anchor="lt")
+    header = chapter
     if small.getlength(header) > .82 * width:
         raise ValueError("chapter title too long; supply a shorter display title")
     header_xy = (label_x, round(.09*height))
@@ -188,6 +219,8 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
     draw.rectangle((header_box[0]-8, header_box[1]-8, header_box[2]+8, header_box[3]+8),
                    fill=style["bg"])
     draw.text(header_xy, header, font=small, fill=accent, anchor="lt")
+    auxiliary = {"footer": {"text": footer, "font_size": footer_font.size, "bbox": footer_box},
+                 "header": {"text": header, "font_size": small.size, "bbox": header_box}}
     labels = []
     if draft:
         labels.append("待审核")
@@ -195,7 +228,14 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
         labels.append("用户改写")
     if labels:
         label = " · ".join(labels)
-        draw.text((label_x, round(.95*height)), label, font=small, fill=accent, anchor="lt")
+        label_xy = (label_x, round(.95*height))
+        draw.text(label_xy, label, font=small, fill=accent, anchor="lt")
+        auxiliary["labels"] = {"text": label, "font_size": small.size,
+                               "bbox": draw.textbbox(label_xy, label, font=small, anchor="lt")}
+    for item in auxiliary.values():
+        left, top, right, bottom = item["bbox"]
+        if not (0 <= left <= right <= width and 0 <= top <= bottom <= height):
+            raise ValueError("auxiliary text exceeds canvas")
     output.parent.mkdir(parents=True, exist_ok=True)
     icc = ImageCms.ImageCmsProfile(ImageCms.createProfile("sRGB")).tobytes()
     canvas.save(output, icc_profile=icc)
@@ -206,6 +246,8 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
               "output_sha256": digest_file(output), "text": text, "character": character,
               "title": title, "draft": draft, "rewrite": rewrite, "font_size": font.size,
               "text_box": bounds, "lines": records, "style": style,
-              "visual_review": "pending", "preview": preview.name, "image_fit": image_fit}
+              "visual_review": "pending", "preview": preview.name, "image_fit": image_fit,
+              "line_break_policy": "punctuation-first-1", "auxiliary_text": auxiliary,
+              "line_break_fallback": lines != wrap(text, font, bounds[2]-bounds[0])}
     save_json(output.with_suffix(".layout.json"), report)
     return report

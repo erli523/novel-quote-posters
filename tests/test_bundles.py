@@ -23,6 +23,8 @@ def test_archive_is_portable_deterministic_and_inventory_covers_every_payload(po
             assert card["layout_report"] in archive.namelist()
             report = json.loads(archive.read(card["layout_report"]))
             assert "font" not in report["render_options"]
+            assert report["line_break_policy"] == "punctuation-first-1"
+            assert report["auxiliary_text"]["footer"]["font_size"] == 36
             assert card["background"]["available_in"] == "original_run"
         assert {row["path"] for row in result["files"]} | {"manifest.json"} == set(archive.namelist())
         assert "book.json" not in archive.namelist()
@@ -76,6 +78,9 @@ def test_unrelated_or_runtime_data_is_not_exported(poster_run, chinese_font, tmp
         layout = poster_run / card["poster"]
         report = load_json(layout.with_suffix(".layout.json"))
         report["runtime_secret"] = "UNEXPECTED_LAYOUT_PRIVATE_MARKER"
+        report["image_fit"]["runtime_secret"] = "NESTED_IMAGE_PRIVATE_MARKER"
+        report["auxiliary_text"]["runtime_secret"] = "NESTED_LABELS_PRIVATE_MARKER"
+        report["auxiliary_text"]["footer"]["font_path"] = "NESTED_FONT_PRIVATE_MARKER"
         save_json(layout.with_suffix(".layout.json"), report)
     output = tmp_path / "output"
     export.export_bundle(poster_run, output, draft=True)

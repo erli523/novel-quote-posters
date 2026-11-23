@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "05c15a2b9e5fc0a1b4fdfc283a27750e03199c8d21929899f77d348bb8aeda71",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/layout.py",
+      "sha256": "31f80b2304de56157bc4cef32b6e75e3d33a1f5daa82ab5be449e848b52c07bb",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/rendering.py",
+      "sha256": "20fda4629ee5b484842560d73bbe398ee2a7bdc936f01b8335f68a9cda98acf4",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/bundles.py",
+      "sha256": "b38902643fe6ea4e4238eca7e61dde9b31f57b7b84412c993cd0e262fa25bf2a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_layout.py",
+      "sha256": "9c7e7fc94e6d6219eb307af66924ab8887514309e5af20519d58e4f25a2d5d4b",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_bundles.py",
+      "sha256": "bbf7a9a5b9b690e4e5f2e2ef1564d7c236c04650e64e46ca5056e43026825fee",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/reading-rhythm-v1.md",
+      "sha256": "d3cc701737ac3ce3e65c26553a3d4e640de25a6d3089d3d7d58c60741f62147a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "ed62893cd5a9bd9338327317d0c41c4e01a3faa2df863ee6611888540db2bc0f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "abc8ea98ec080d59fed7c7e24357dfd40e171407132345253102e4e45e434921",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "62a9ac3731da312b77100ad208d88ad99b770c3a12c6dda030f29c87d71f30da",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-image-demo.md",
+      "sha256": "902854330dddb8863391a66ebc4291976547ff28391bbd574003b9ad0adc08b3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "4d03971aee7adbc4139e24da743404ca3c90ae657c28205d22e3f34bcb70f1a8",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration21-evidence.json",
+      "sha256": "a918daea77fe979581d568e01bcbd3cfa22b14b6a2e4ba7a1e550a4ef6a519ef",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

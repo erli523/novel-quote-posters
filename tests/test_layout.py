@@ -1,7 +1,16 @@
 import pytest
-from PIL import Image
+from PIL import Image, ImageFont
 
-from novel_quote_posters.layout import STYLES, compose, fit, fit_artwork, glyphs
+from novel_quote_posters.layout import (
+    CLOSING,
+    OPENING,
+    STYLES,
+    compose,
+    fit,
+    fit_artwork,
+    glyphs,
+    wrap,
+)
 
 
 @pytest.mark.parametrize("style", STYLES)
@@ -80,3 +89,103 @@ def test_explicit_cover_and_anchor_remain_available_without_hiding_crop():
 def test_invalid_image_fit_parameters_are_rejected(options):
     with pytest.raises(ValueError):
         fit_artwork(Image.new("RGB", (100, 200)), (0, 0, 100, 100), **options)
+
+
+def test_quote_uses_clause_boundary_without_changing_a_character(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 64)
+    text = "山不会替你走路，但它会告诉你，路还在。"
+    lines = wrap(text, font, int(font.getlength("路"*13))+1)
+    assert lines == ["山不会替你走路，", "但它会告诉你，路还在。"]
+    assert "".join(lines) == text
+
+
+def test_fit_can_reduce_size_to_keep_two_whole_clauses(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 64)
+    text = "有些告别没有声音，却会在往后的每一场雨里响起。"
+    fitted, lines, _ = fit(text, chinese_font, int(font.getlength("路"*13))+1, 302, 36, 64)
+    assert fitted.size < 64
+    assert lines == ["有些告别没有声音，", "却会在往后的每一场雨里响起。"]
+
+
+def test_quote_and_bracket_clusters_never_start_generated_lines(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 48)
+    text = "“他说（路还在！）”甲说：“好。”"
+    lines = wrap(text, font, int(font.getlength("路"*6))+1)
+    assert "".join(lines) == text
+    assert all(line[0] not in CLOSING and line[-1] not in OPENING for line in lines)
+
+
+def test_punctuation_cluster_too_wide_at_large_size_can_fit_at_permitted_smaller_size(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 64)
+    width = int(font.getlength("路！"))
+    with pytest.raises(ValueError, match="punctuation"):
+        wrap("路！”", font, width)
+    fitted, lines, _ = fit("路！”", chinese_font, width, 160, 36, 64)
+    assert 36 <= fitted.size < 64 and lines == ["路！”"]
+
+
+def test_ascii_word_that_fits_is_kept_whole_with_spaces_preserved(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 48)
+    text = "这是 OpenAI 的资料"
+    width = int(font.getlength("这是 Open"))
+    lines = wrap(text, font, width)
+    assert "".join(lines) == text
+    assert any("OpenAI" in line for line in lines)
+    assert all(font.getlength(line) <= width for line in lines)
+
+
+def test_long_ascii_word_falls_back_to_lossless_character_wrap(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 48)
+    text = "VeryLongUnbrokenWord"
+    width = int(font.getlength("MMMM"))
+    lines = wrap(text, font, width)
+    assert len(lines) > 1 and "".join(lines) == text
+    assert all(font.getlength(line) <= width for line in lines)
+
+
+def test_explicit_paragraph_and_blank_line_are_preserved(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 48)
+    assert wrap("第一段\n\n第二段", font, 900) == ["第一段", "", "第二段"]
+
+
+def test_auxiliary_text_is_recorded_at_readable_size_and_header_is_not_truncated(tmp_path, chinese_font):
+    source = tmp_path / "synthetic.png"
+    Image.new("RGB", (600, 900), "gray").save(source)
+    chapter = "Chapter " + "A"*32
+    report = compose(source, tmp_path / "poster.png", text="路还在。", character="林澈",
+                     title="雾山来信", chapter=chapter, font_path=chinese_font)
+    assert report["auxiliary_text"]["header"]["text"] == chapter
+    assert report["auxiliary_text"]["footer"]["font_size"] == 36
+    assert report["line_break_policy"] == "punctuation-first-1"
+    for label in report["auxiliary_text"].values():
+        left, top, right, bottom = label["bbox"]
+        assert 0 <= left <= right <= 1080 and 0 <= top <= bottom <= 1440
+
+
+def test_overlong_header_is_rejected_instead_of_silently_truncated(tmp_path, chinese_font):
+    source = tmp_path / "synthetic.png"
+    Image.new("RGB", (600, 900), "gray").save(source)
+    with pytest.raises(ValueError, match="chapter title too long"):
+        compose(source, tmp_path / "poster.png", text="路还在。", character="林澈",
+                title="雾山来信", chapter="超长"*40, font_path=chinese_font)
+
+
+@pytest.mark.parametrize("style", STYLES)
+@pytest.mark.parametrize("length", [70, 100])
+def test_punctuated_boundary_lengths_remain_lossless_and_within_capacity(tmp_path, chinese_font, style, length):
+    source = tmp_path / "synthetic.png"
+    Image.new("RGB", (600, 900), "gray").save(source)
+    text = ("路还在，灯也还在。"*12)[:length]
+    report = compose(source, tmp_path / "poster.png", text=text, character="林澈", title="雾山来信",
+                     chapter="第一章 山路", font_path=chinese_font, style_id=style)
+    assert "".join(line["text"] for line in report["lines"]) == text
+    assert report["font_size"] >= 36
+
+
+@pytest.mark.parametrize("style", STYLES)
+def test_overcapacity_punctuated_text_is_explicitly_rejected(tmp_path, chinese_font, style):
+    source = tmp_path / "synthetic.png"
+    Image.new("RGB", (600, 900), "gray").save(source)
+    with pytest.raises(ValueError, match="capacity"):
+        compose(source, tmp_path / "poster.png", text="路还在，灯也还在。"*34, character="林澈",
+                title="雾山来信", chapter="第一章 山路", font_path=chinese_font, style_id=style)
