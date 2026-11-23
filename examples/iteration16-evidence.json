@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "iteration": 16,
+  "contract": "docs/plans/image-recovery-real-novels.md",
+  "actual_native_validation": {
+    "first_real_post_configuration_call": true,
+    "tool": "image_gen.imagegen",
+    "actual_error": "immediate HTTP404",
+    "elapsed_ms": 127,
+    "actual_images": 0,
+    "effective_provider": "unverified",
+    "model": "unavailable",
+    "terminal_status": "tool_unavailable"
+  },
+  "budget": {
+    "reserved": 4,
+    "limit": 10,
+    "remaining": 6,
+    "unknown_outcomes": 0,
+    "allocation": {
+      "reference": 3,
+      "background": 5,
+      "edit": 1,
+      "unclassified": 1,
+      "alternative": 0,
+      "retry": 0,
+      "unallocated": 0
+    },
+    "original_three_calls_preserved": true
+  },
+  "main_task_contract_version": 3,
+  "source_character_quote_card_bytes_unchanged": true,
+  "selected_main_quote_review_rows": 3,
+  "real_human_approvals": 0,
+  "last_local_code_check": {
+    "pytest_passed": 220,
+    "ruff": "passed",
+    "private_evidence_id": "20261123T090054Z-48b56cf1",
+    "all_code_test_script_fixture_hashes_still_match": true,
+    "local_suite_rerun_this_turn": false
+  },
+  "completion": "not_achieved",
+  "remaining": [
+    "native generation/edit/persistent handoff",
+    "three independently generated final backgrounds and character baseline",
+    "six actual styles and real visual reviews",
+    "actual final album delivery and human approval"
+  ],
+  "limits": [
+    "A different native tool failure did not prove image-route failure; this iteration added actual image verification.",
+    "Local config does not prove the active runtime provider.",
+    "No independent API, credentials, complete book text, raw prompts or private annotations published."
+  ]
+}

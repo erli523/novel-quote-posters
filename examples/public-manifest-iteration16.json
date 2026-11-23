@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "98a21b301259adaad6cbdb01fe5ff46736eb0c279d4c5aecdc1907d059b7cc75",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-generation-diagnosis.md",
+      "sha256": "58693a049bfa3d8a514201ee417d64873942718a8787b6375d39eaa0274cbe30",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "72f668de5591d67ffaadf1b0505d09748080dbf288d013836a34370874074525",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "85d34454208b1ae0170a3fbdfc69ecf480f36bccd46c083a9400e83842043b50",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "cdb933711f577168e345fe2bfd786355d12bbb30d07e593831bad01fcdba1aa9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/image-recovery-real-novels.md",
+      "sha256": "d63241df0cbea31322e212698b7f244215f3b451e055213faa03ce322d92c851",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration16-evidence.json",
+      "sha256": "e3af6530790e40fa73a316c16c67e417c50259838f20fe01d230d857cf0eb8d4",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": [],
+  "target_repository": "erli523/novel-quote-posters",
+  "target_visibility": "PUBLIC",
+  "authorization": "Standing user authorization for public milestones; only sanitized outcome metadata and documentation.",
+  "ai_content_review": "Reviewed seven precise payloads; no raw prompt, novel text, real annotations, local route addresses, runtime config or credentials included.",
+  "reviewed_at": "2026-11-23T12:47:30.336535+00:00"
+}
