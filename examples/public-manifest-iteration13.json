@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "bc7f112373a82aa95a3a6f0bea3dd604bb941bfb0f2471898fa3864de9776942",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "fc6d584cd42222d921c11229a3cc4c5db1973addfc57aadcf54ffd78452999a3",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "af1c1db9e14b73a0cf6a48bb105f2914a506b6f75581335c3e71dcd97610b8b5",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "678ff4b1da3a4863f961aa968bf2fd02d577d69a405c99ac9feb13249f238365",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/image-recovery-real-novels.md",
+      "sha256": "88e63b1b2ef19ed12f7135d657cceaeacec08cbaf263d4e8017767aacbf6b66d",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "893b3a2f3863bd0db7dfdba0c1b5b6d438e0b11404cc5bec03f52ab9bc29ce01",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "934793ec1cf68d58c58ed34fa34c1ebbbc94ae34224f55e522e4b9da667f75d5",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-generation-diagnosis.md",
+      "sha256": "830eae8752e8ea1e705d19e86918905aaf2b04a75f15bb48fd188fcc9509ed71",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-novel-tests.md",
+      "sha256": "21eee67deaf1d301eeada706b5e8f7dd3e3fbd9acdf89e068dffdbb144e367ed",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/ingest.py",
+      "sha256": "4cf77941c70f271d642a301e4ac7f7c2469a136d510fcb170db4964b324a9370",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/quotes.py",
+      "sha256": "39a1ada39691c6501a3f7be84cf75d8d7c3dd68f6494ffe0abcf83658ee2a154",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/source.py",
+      "sha256": "7c7c029a846af1dbc2c0eee697cef60669eb862fefef53a5653e6ed6a0319a82",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/public_domain.py",
+      "sha256": "099a7b1a1c040ddfe8e96bd67cd35d617be97708b88f927f22fbc949efbccb5a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "scripts/public_manifest.py",
+      "sha256": "076079937ce6e75479ddb27855e9fb4181fe47c595a7b34c3944decf9f5c8db5",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_public_domain.py",
+      "sha256": "47bab419f471184238a8bf9de2c554823798c3958f57d8f05dbb0d7e87271600",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_public_manifest.py",
+      "sha256": "633c2d80022ce70bad4e26771796dd05f4a7704e2faa79a75260455ddbb3e020",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration13-evidence.json",
+      "sha256": "ae28bc19f800bb05fc0fa277fd34ca3a2b48ef33158e2c8b4963bf83c784f820",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/real-novel-sources.json",
+      "sha256": "39f0a143aaef1a6dadd8deab0758c164b4299aff4fb0bb5b3e4c98563acce550",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/public-manifest-iteration12-correction.json",
+      "sha256": "be784496e99cad821c9f29909e759af98daa9ed8782ba61e9a8f3ee00cec55fb",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": [],
+  "repository": "erli523/novel-quote-posters",
+  "visibility": "PUBLIC",
+  "publication_authority": "User authorized public milestones and actual native-image diagnosis/complete real-novel testing",
+  "ai_content_review": "General code/docs/self-authored test data and metadata-only source inventory; no novel body, local config, credentials or raw diagnostics published",
+  "rights_basis": "Project-authored code/docs/tests under MIT; no downloaded literary text redistributed",
+  "reviewed_at": "2026-11-23T08:31:22.458000+00:00"
+}

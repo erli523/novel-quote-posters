@@ -1,9 +1,20 @@
 """Mechanical candidate discovery and exact source checks; semantics stay reviewable."""
 
+from bisect import bisect_left, bisect_right
+
 from .storage import sha256
 
 
-def locate(book: dict, text: str, start: int | None = None) -> dict:
+class QuoteIndex:
+    """Per-operation lookup index; never globally cache mutable book dictionaries."""
+    def __init__(self, book: dict):
+        self.book = book
+        self.chapter_starts = [c["start"] for c in book["chapters"]]
+        self.paragraph_starts = [p["start"] for p in book["paragraphs"]]
+        self.paragraph_ends = [p["end"] for p in book["paragraphs"]]
+
+
+def locate(book: dict, text: str, start: int | None = None, *, index: QuoteIndex | None = None) -> dict:
     if not text:
         raise ValueError("empty quote")
     if start is None:
@@ -14,14 +25,20 @@ def locate(book: dict, text: str, start: int | None = None) -> dict:
         if len(positions) != 1:
             raise ValueError(f"quote has {len(positions)} exact occurrences; specify start")
         start = positions[0]
+    if type(start) is not int:
+        raise ValueError("quote start must be an integer codepoint position")
     end = start + len(text)
     if start < 0 or book["text"][start:end] != text:
         raise ValueError("quote is not an exact continuous source span")
-    chapter = next(c for c in book["chapters"] if c["start"] <= start < c["end"])
+    index = index or QuoteIndex(book)
+    if index.book is not book:
+        raise ValueError("quote lookup index belongs to another book")
+    chapter = book["chapters"][bisect_right(index.chapter_starts, start)-1]
     if end > chapter["end"]:
         raise ValueError("quote crosses chapter boundary")
-    paragraphs = [p["paragraph_id"] for p in book["paragraphs"]
-                  if p["start"] < end and start < p["end"]]
+    first = bisect_right(index.paragraph_ends, start)
+    last = bisect_left(index.paragraph_starts, end)
+    paragraphs = [p["paragraph_id"] for p in book["paragraphs"][first:last]]
     return {"source_hash": book["source_hash"], "canonical_hash": book["canonical_hash"],
             "start": start, "end": end, "chapter_id": chapter["chapter_id"],
             "chapter": chapter["title"], "paragraph_ids": paragraphs,
@@ -44,8 +61,8 @@ def verify(book: dict, quote: dict) -> bool:
         return False
 
 
-def make_quote(book: dict, text: str, start: int | None = None) -> dict:
-    source = locate(book, text, start)
+def make_quote(book: dict, text: str, start: int | None = None, *, index: QuoteIndex | None = None) -> dict:
+    source = locate(book, text, start, index=index)
     quote_id = "q_" + sha256(f'{book["source_hash"]}:{source["start"]}:{source["end"]}'.encode())[:16]
     return {"quote_id": quote_id, "quote_exact": text, "display_text": text,
             "text_mode": "original", "source": source, "exact_verified": True,
@@ -57,6 +74,7 @@ def make_quote(book: dict, text: str, start: int | None = None) -> dict:
 def candidates(book: dict) -> tuple[list[dict], list[dict]]:
     """Match Chinese quote pairs, including multiline; leave attribution unapproved."""
     result, issues, stack = [], [], []
+    lookup = QuoteIndex(book)
     pairs = {"“": "”", "「": "」", "『": "』"}
     for chapter in book["chapters"]:
         stack.clear()
@@ -68,7 +86,7 @@ def candidates(book: dict) -> tuple[list[dict], list[dict]]:
                 if stack and stack[-1][1] == char:
                     start, _ = stack.pop()
                     if not stack and index > start + 1:
-                        result.append(make_quote(book, book["text"][start+1:index], start+1))
+                        result.append(make_quote(book, book["text"][start+1:index], start+1, index=lookup))
                 else:
                     issues.append({"type": "unmatched_close", "offset": index})
         issues.extend({"type": "unclosed_quote", "offset": start} for start, _ in stack)

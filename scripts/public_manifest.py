@@ -24,7 +24,10 @@ def inspect(root: Path, names: list[str]) -> dict:
             raise ValueError(f"not a permitted public file: {relative}")
         if path.suffix.lower() in {".zip", ".png", ".jpg", ".epub", ".pdf"}:
             raise ValueError("binary/archives need separate metadata and content review")
-        text = path.read_text(encoding="utf-8")
+        raw = path.read_bytes()
+        if b"\r" in raw:
+            raise ValueError(f"public text must use LF before hashing; Git would change CRLF bytes: {relative}")
+        text = raw.decode("utf-8")
         matches = [pattern for pattern in PATTERNS if re.search(pattern, text)]
         if matches:
             findings.append({"path": relative, "patterns": matches})

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-23T08:27:34.422625+00:00",
+  "scope": "Source inventory and actual structure checks, not a book redistribution or authenticity/rights certification",
+  "sources": [
+    {
+      "title": "阿Q正传",
+      "edition": "GITenberg mirror of Project Gutenberg",
+      "source_catalog": "https://www.gutenberg.org/ebooks/25332",
+      "download_url": "https://raw.githubusercontent.com/GITenberg/----_25332/master/25332-0.txt",
+      "git_blob_sha": "94d860b8ee5d8c8c11fe391c9093fb49533f048f",
+      "original_sha256": "175509eb01377c94f451e5636710618096691f0b484f9db580d68be6469afd64",
+      "original_bytes": 99976,
+      "body_sha256": "9403604d4c169c5e31c5b89730e12cf5c65cc1711e7c492a8a6fd1024851d00f",
+      "chapter_sequence_matches": true,
+      "expected_chapters": 9,
+      "recognized_chapters": 9,
+      "missing_or_unrecognized_chapter_numbers": [],
+      "duplicate_chapter_numbers": [],
+      "text_republished_in_this_repository": false
+    },
+    {
+      "title": "儒林外史",
+      "edition": "GITenberg mirror of Project Gutenberg",
+      "source_catalog": "https://www.gutenberg.org/ebooks/24032",
+      "download_url": "https://raw.githubusercontent.com/GITenberg/----_24032/master/24032-0.txt",
+      "git_blob_sha": "4c8de35cedef56d71d14fc6a0c52b9157532e5d4",
+      "original_sha256": "2e3fc99cca1f12cae0b20197e0a96a644eca8176eeacc056faa6367c1bf01d40",
+      "original_bytes": 853621,
+      "body_sha256": "62b780298edba4085b0a0d79080f96906a43536b109cd8c9945456f358d700b7",
+      "chapter_sequence_matches": false,
+      "expected_chapters": 56,
+      "recognized_chapters": 41,
+      "missing_or_unrecognized_chapter_numbers": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "duplicate_chapter_numbers": [
+        21
+      ],
+      "text_republished_in_this_repository": false
+    },
+    {
+      "title": "红楼梦",
+      "edition": "GITenberg mirror of Project Gutenberg",
+      "source_catalog": "https://www.gutenberg.org/ebooks/24264",
+      "download_url": "https://raw.githubusercontent.com/GITenberg/---_24264/master/24264-0.txt",
+      "git_blob_sha": "4f75f649a922cb1d3576b40e5ccd15baf367b594",
+      "original_sha256": "20c795971786fd8eb2a00d35a1194b6dd3074b2afb4f4cd5a82ba3e10fe5dfaa",
+      "original_bytes": 2663312,
+      "body_sha256": "c233903e44eb345e4a5433813f0a68c79f9cad967f2e7b881c6da973ef7ba524",
+      "chapter_sequence_matches": true,
+      "expected_chapters": 120,
+      "recognized_chapters": 120,
+      "missing_or_unrecognized_chapter_numbers": [],
+      "duplicate_chapter_numbers": [],
+      "text_republished_in_this_repository": false
+    },
+    {
+      "title": "阿Q正传",
+      "edition": "Wikisource transcluded proofread pages",
+      "source_url": "https://zh.wikisource.org/wiki/阿Q正傳",
+      "pageid": 8047,
+      "revid": 2633268,
+      "original_response_sha256": "a6d5696e6e4bc820068d896a374f5489f13b9521c53805f42efc71108ca8b456",
+      "body_sha256": "9394e9f0759e985d57cb8727198937b6b9cd37f1015654de1cbd28e1a1df537c",
+      "body_codepoints": 22138,
+      "chapter_sequence_matches": true,
+      "story_chapters": 9,
+      "transcluded_page_start": 380,
+      "transcluded_page_end": 437,
+      "all_58_pages_observed": true,
+      "square_placeholders": 0,
+      "unclosed_quote_diagnostics": 3,
+      "transcription_accuracy": "not_human_verified",
+      "text_republished_in_this_repository": false
+    }
+  ]
+}

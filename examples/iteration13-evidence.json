@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "iteration": 13,
+  "contract": "docs/plans/image-recovery-real-novels.md",
+  "checks": {
+    "pytest": {
+      "passed": 207,
+      "failed": 0
+    },
+    "ruff": "passed",
+    "private_evidence_id": "20261123T081716Z-1d383a15"
+  },
+  "implemented": [
+    "ingest-2 fullwidth heading indentation and heading/body boundary checks",
+    "adjacent empty repeated-heading diagnostics without deleting source text",
+    "recorded ingest-1 validation compatibility",
+    "per-operation binary quote coordinate lookup",
+    "explicit lossless Gutenberg body range preparation and complete declared chapter audits",
+    "explicit Wikisource rendered-body preparation with page chrome/scripts excluded",
+    "public LF text gate and correction of prior CRLF publication hashes"
+  ],
+  "image_diagnostics": {
+    "native_probe_v3": "immediate_http404_no_output",
+    "active_local_provider_route_mismatch_observed": true,
+    "official_active_provider_image_routing_source_reviewed": true,
+    "project_scoped_official_provider_repair_written": true,
+    "global_config_modified_by_this_work": false,
+    "runtime_recovery": "not_verified_reload_required",
+    "actual_image_outputs": 0,
+    "reserved_total": 3,
+    "total_limit": 10,
+    "remaining": 7,
+    "API_fallback_enabled": false
+  },
+  "actual_complete_input_machine_tests": [
+    {
+      "slug": "aq-zhengzhuan",
+      "expected_chapters": 9,
+      "body_codepoints": 27150,
+      "state": "complete_machine_ingest_and_exact_span_checks",
+      "original_sha256": "175509eb01377c94f451e5636710618096691f0b484f9db580d68be6469afd64",
+      "body_sha256": "9403604d4c169c5e31c5b89730e12cf5c65cc1711e7c492a8a6fd1024851d00f",
+      "semantic_application_processed": 0,
+      "human_approvals": 0,
+      "image_calls": 0,
+      "story_chapters": 9,
+      "chunks": 5,
+      "candidate_count": 268,
+      "checked_candidate_spans": 268,
+      "machine_coverage_ratio": 1.0,
+      "same_config_resume": true,
+      "original_mapping_spans_verified": true,
+      "ingest_seconds": 0.179537599964533,
+      "missing_or_unrecognized_chapters": [],
+      "duplicated_chapter_numbers": []
+    },
+    {
+      "slug": "rulin-waishi",
+      "expected_chapters": 56,
+      "body_codepoints": 278760,
+      "state": "rejected_declared_chapter_sequence",
+      "original_sha256": "2e3fc99cca1f12cae0b20197e0a96a644eca8176eeacc056faa6367c1bf01d40",
+      "body_sha256": "62b780298edba4085b0a0d79080f96906a43536b109cd8c9945456f358d700b7",
+      "semantic_application_processed": 0,
+      "human_approvals": 0,
+      "image_calls": 0,
+      "missing_or_unrecognized_chapters": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "duplicated_chapter_numbers": [
+        21
+      ]
+    },
+    {
+      "slug": "honglou-meng",
+      "expected_chapters": 120,
+      "body_codepoints": 906154,
+      "state": "complete_machine_ingest_and_exact_span_checks",
+      "original_sha256": "20c795971786fd8eb2a00d35a1194b6dd3074b2afb4f4cd5a82ba3e10fe5dfaa",
+      "body_sha256": "c233903e44eb345e4a5433813f0a68c79f9cad967f2e7b881c6da973ef7ba524",
+      "semantic_application_processed": 0,
+      "human_approvals": 0,
+      "image_calls": 0,
+      "story_chapters": 120,
+      "chunks": 159,
+      "candidate_count": 297,
+      "checked_candidate_spans": 297,
+      "machine_coverage_ratio": 1.0,
+      "same_config_resume": true,
+      "original_mapping_spans_verified": true,
+      "ingest_seconds": 0.6046059000073001,
+      "missing_or_unrecognized_chapters": [],
+      "duplicated_chapter_numbers": []
+    }
+  ],
+  "clean_aq_source": {
+    "source_revision": 2633268,
+    "transcluded_pages": 58,
+    "all_declared_pages_present": true,
+    "chapters": 9,
+    "body_codepoints": 22138,
+    "windows": 4,
+    "candidate_spans_verified": 244,
+    "square_placeholders": 0,
+    "unclosed_quote_diagnostics": 3,
+    "source_replay": "identical",
+    "application_semantic_processed_windows": 0,
+    "human_approvals": 0,
+    "image_calls": 0
+  },
+  "source_quality": "Known missing glyphs/unbalanced delimiters retained and reported; transcription accuracy and quote recall not measured.",
+  "prior_publication_correction": {
+    "target_commit": "886e99fe9d3784d3913af4d36b53b239295788f5",
+    "original_failed_hash_paths": 4,
+    "corrected_payloads_verified_remotely": 21,
+    "old_evidence_retained": true
+  },
+  "limits": [
+    "Machine full traversal and exact matched spans are not complete application semantic reading or human attribution approval.",
+    "Current native image repair remains unverified until the running provider changes and produces real output.",
+    "No complete novel text or local routing/credential data is republished.",
+    "No private novel upload, independent paid image API, new external connector or social publishing enabled."
+  ]
+}

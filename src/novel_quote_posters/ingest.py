@@ -3,17 +3,22 @@
 import posixpath
 import re
 import zipfile
+from bisect import bisect_right
 from pathlib import Path, PurePosixPath
 from urllib.parse import unquote
 from xml.etree import ElementTree as ET
 
 from .storage import sha256
 
-CHAPTER = re.compile(
+LEGACY_CHAPTER = re.compile(
     r"(?m)^[ \t]*(?:第[零〇一二三四五六七八九十百千万两\d]+[章节卷回部][^\n]*"
     r"|chapter\s+\d+[^\n]*)[ \t]*$", re.IGNORECASE
 )
-PARSER_VERSION = "ingest-1"
+CHAPTER = re.compile(
+    r"(?m)^[ \t\u3000]*(?:第[零〇一二三四五六七八九十百千万两\d]+[章节卷回部](?=[ \t\u3000]|$)[^\n]*"
+    r"|chapter\s+\d+[^\n]*)[ \t\u3000]*$", re.IGNORECASE
+)
+PARSER_VERSION = "ingest-2"
 MAX_INPUT = 100 * 1024 * 1024
 
 
@@ -101,8 +106,22 @@ def epub_text(raw: bytes) -> tuple[str, list[dict]]:
     return "".join(sections), locations
 
 
-def index_text(text: str, source_hash: str, title: str, **metadata) -> dict:
-    headings = list(CHAPTER.finditer(text))
+def index_text(text: str, source_hash: str, title: str, *, parser_version: str = PARSER_VERSION, **metadata) -> dict:
+    if parser_version not in {"ingest-1", "ingest-2"}:
+        raise ValueError("unsupported source parser version")
+    headings = list((LEGACY_CHAPTER if parser_version == "ingest-1" else CHAPTER).finditer(text))
+    heading_issues = []
+    if parser_version == "ingest-2":
+        unique = []
+        for match in headings:
+            if (unique and " ".join(unique[-1].group().split()) == " ".join(match.group().split())
+                    and not text[unique[-1].end():match.start()].strip(" \t\n\u3000-=─_＿")):
+                heading_issues.append({"type": "adjacent_repeated_heading", "start": match.start(),
+                                       "end": match.end(), "retained_chapter_start": unique[-1].start(),
+                                       "text_preserved": True})
+            else:
+                unique.append(match)
+        headings = unique
     starts = [m.start() for m in headings]
     if not starts or starts[0] > 0:
         starts.insert(0, 0)
@@ -114,21 +133,23 @@ def index_text(text: str, source_hash: str, title: str, **metadata) -> dict:
             chapters.append({"chapter_id": f"ch{len(chapters)+1:04d}", "title": heading,
                              "start": start, "end": end})
     paragraphs = []
+    chapter_starts = [c["start"] for c in chapters]
     for match in re.finditer(r"[^\n]+", text):
         if not match.group().strip():
             continue
-        chapter = next(c for c in chapters if c["start"] <= match.start() < c["end"])
+        chapter = chapters[bisect_right(chapter_starts, match.start())-1]
         paragraphs.append({"paragraph_id": f"p{len(paragraphs)+1:06d}",
                            "chapter_id": chapter["chapter_id"],
                            "start": match.start(), "end": match.end()})
-    return {"schema_version": 1, "parser_version": PARSER_VERSION,
+    return {"schema_version": 1, "parser_version": parser_version,
             "book_id": source_hash[:16], "title": title, "source_hash": source_hash,
             "canonical_hash": sha256(text.encode()), "coordinate_unit": "unicode_codepoint",
             "interval": "half_open", "text": text, "chapters": chapters,
-            "paragraphs": paragraphs, **metadata}
+            "paragraphs": paragraphs, **({"heading_issues": heading_issues} if parser_version == "ingest-2" else {}), **metadata}
 
 
-def ingest(path: Path, title: str | None = None, encoding: str | None = None) -> dict:
+def ingest(path: Path, title: str | None = None, encoding: str | None = None,
+           *, parser_version: str = PARSER_VERSION) -> dict:
     if path.stat().st_size > MAX_INPUT:
         raise ValueError("input exceeds 100 MiB limit")
     raw = path.read_bytes()
@@ -144,7 +165,7 @@ def ingest(path: Path, title: str | None = None, encoding: str | None = None) ->
         raise ValueError("V1 currently supports TXT and EPUB only; DOCX/PDF/OCR not implemented")
     if not text.strip():
         raise ValueError("empty book")
-    return index_text(text, sha256(raw), title or path.stem, format=suffix[1:], encoding=codec,
+    return index_text(text, sha256(raw), title or path.stem, parser_version=parser_version, format=suffix[1:], encoding=codec,
                       transformations=["CRLF/CR to LF", "EPUB block text extraction" if locations
                                        else "TXT decoded without replacement"],
                       container_locations=locations)
