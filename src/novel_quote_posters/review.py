@@ -13,6 +13,17 @@ from .source import validate_source
 from .storage import contained, digest_file, load_json, now, save_json, sha256
 
 
+def character_label(identity: str | None, characters: dict) -> str:
+    if identity not in characters:
+        return "未确定"
+    character = characters[identity]
+    name = character["name"]
+    if sum(c["name"] == name for c in characters.values()) > 1:
+        aliases = [a for a in character.get("aliases", []) if isinstance(a, str) and a != name]
+        return f"{name}（{'、'.join(aliases) if aliases else '人物档案 ' + identity}）"
+    return name
+
+
 def review_targets(run: Path, quotes_only: bool = False) -> dict:
     recover_documents(run)
     book = load_json(run / "book.json")
@@ -24,10 +35,10 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
         check_display(book, quote, allow_rewrite=True)
         context = quote["source"]
         speaker = quote["speaker"]
-        rows.append({"quote_id": quote["quote_id"], "fingerprint": quote_fingerprint(quote),
+        rows.append({"quote_id": quote["quote_id"], "fingerprint": quote_fingerprint(quote, characters.get(speaker["character_id"])),
                      "quote_exact": quote["quote_exact"], "display_text": quote["display_text"],
                      "text_mode": quote["text_mode"], "quote_type": quote["quote_type"],
-                     "speaker": characters.get(speaker["character_id"], {}).get("name", "未确定"),
+                     "speaker": character_label(speaker["character_id"], characters),
                      "speaker_status": speaker["status"], "speaker_evidence": speaker.get("evidence", []),
                      "chapter": context["chapter"],
                      "context": book["text"][context["context_start"]:context["context_end"]],
@@ -155,11 +166,14 @@ function decision(row,article){const label=element('label','审核决定 ',artic
  for(const [value,text] of [['pending','待审核'],['approved','通过'],['rejected','退回']]){const option=element('option',text,select);option.value=value;}
  select.onchange=()=>row.status=select.value;
  const noteLabel=element('label','说明 ',article), note=element('textarea',undefined,noteLabel);note.rows=2;note.oninput=()=>row.note=note.value;}
+const typeNames={dialogue:'对白',monologue:'独白',narration:'旁白或说明',unclassified:'待分类'};
+const statusNames={explicit:'明确归属',context_inferred:'依据上下文',ambiguous:'归属待定',narration:'叙述文字'};
 for(const row of review.quotes){const a=element('article',undefined,document.getElementById('quotes'));
- element('small',row.quote_id+' · '+row.chapter+' · '+row.quote_type,a);
- element('blockquote',row.display_text,a);element('p','拟归属：'+row.speaker+'（'+row.speaker_status+'） · '+row.text_mode,a);
+ element('small',row.chapter+' · '+(typeNames[row.quote_type]||'待分类'),a);
+ element('blockquote',row.display_text,a);element('p','拟归属：'+row.speaker+' · '+(statusNames[row.speaker_status]||'待核对')+' · '+(row.text_mode==='rewrite'?'用户改写':'原文片段'),a);
+ if(row.text_mode==='rewrite')element('pre','原始依据：'+row.quote_exact,a);
  const details=element('details',undefined,a);element('summary','查看上下文与归属证据',details);element('pre',row.context,details);
- element('pre',JSON.stringify(row.speaker_evidence,null,2),details);decision(row,a);}
+ element('pre',row.speaker_evidence.map(e=>e.text).join(String.fromCharCode(10)),details);element('small','记录编号：'+row.quote_id,details);decision(row,a);}
 for(const row of review.cards){const a=element('article',undefined,document.getElementById('cards'));
  element('h3',row.card_id,a);element('p','来源：'+row.image_kind+' · '+(row.draft?'带待审核标签':'无标签候选，尚未批准'),a);
  const image=element('img',undefined,a);image.src=row.image_data;image.alt=row.card_id+' 海报预览';

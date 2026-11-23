@@ -1,7 +1,12 @@
 import pytest
 
 from novel_quote_posters.rendering import render_cards
-from novel_quote_posters.review import apply_review, review_targets, write_review_page
+from novel_quote_posters.review import (
+    apply_review,
+    character_label,
+    review_targets,
+    write_review_page,
+)
 from novel_quote_posters.storage import load_json, save_json
 
 
@@ -78,3 +83,20 @@ def test_review_requires_a_real_timestamp_with_timezone(poster_run, time):
     record["reviewed_at"] = time
     with pytest.raises(ValueError, match="review"):
         apply_review(poster_run, record)
+
+
+def test_character_identity_change_invalidates_prior_speaker_approval(poster_run):
+    record = signed_test_record(poster_run, quotes_only=True)
+    apply_review(poster_run, record)
+    characters = load_json(poster_run / "characters.json")
+    characters["lin_che"]["name"] = "另一个角色"
+    save_json(poster_run / "characters.json", characters)
+    with pytest.raises(ValueError, match="invalidated"):
+        apply_review(poster_run, record)
+
+
+def test_same_name_characters_are_distinguishable_to_the_human_reviewer():
+    characters = {"young": {"name": "林澈", "aliases": ["林澈", "阿澈"]},
+                  "elder": {"name": "林澈", "aliases": ["林澈", "林先生"]}}
+    assert character_label("young", characters) == "林澈（阿澈）"
+    assert character_label("elder", characters) == "林澈（林先生）"

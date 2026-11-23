@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 .state/
 .ingest-staging/
+.export-staging/
 *.egg-info/
 .env
 data/

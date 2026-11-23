@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .analysis import apply_analysis
 from .bootstrap import initialize_run
+from .bundles import verify_archive
 from .documents import commit_documents, recover_documents
 from .export import export_bundle
 from .images import (
@@ -54,6 +55,9 @@ def main():
     command.add_argument("--output", type=Path, required=True)
     command.add_argument("--draft", action="store_true", help="requires visible pending-review labels")
     command.add_argument("--allow-rewrite", action="store_true")
+    command.add_argument("--resume", action="store_true")
+    command = commands.add_parser("verify-export", help="check portable ZIP integrity without original book")
+    command.add_argument("archive", type=Path)
     command = commands.add_parser("review", help="write a private offline human-review page")
     command.add_argument("--run", type=Path, required=True)
     command.add_argument("--output", type=Path, required=True)
@@ -94,7 +98,7 @@ def main():
     commands.add_parser("styles", help="print built-in, editable layout parameters")
     args = parser.parse_args()
     try:
-        if args.command not in {"ingest", "styles", "recover", "status"}:
+        if args.command not in {"ingest", "styles", "recover", "status", "verify-export"}:
             recover_documents(args.run)
         if args.command == "ingest":
             report = initialize_run(args.source, args.run, title=args.title, encoding=args.encoding,
@@ -110,7 +114,7 @@ def main():
             print(f"Rendered {report['rendered']}; reused {report['reused']}; image calls 0.")
         elif args.command == "export":
             report = export_bundle(args.run, args.output, draft=args.draft,
-                                   allow_rewrite=args.allow_rewrite)
+                                   allow_rewrite=args.allow_rewrite, resume=args.resume)
             print(f"Exported {len(report['assets'])} cards; draft={report['draft']}")
         elif args.command == "apply-analysis":
             book = load_json(args.run / "book.json")
@@ -172,6 +176,9 @@ def main():
                 report = set_reference(args.run, args.asset_id, args.character)
             elif args.command == "status":
                 report = run_status(args.run)
+            elif args.command == "verify-export":
+                verified = verify_archive(args.archive)
+                report = {k: v for k, v in verified.items() if k != "manifest"}
             else:
                 raise ValueError("unhandled command")
             print(json.dumps(report, ensure_ascii=False, indent=2))

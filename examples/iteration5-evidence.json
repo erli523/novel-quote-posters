@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "iteration": 5,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {"passed": 98, "failed": 0},
+    "ruff": "passed",
+    "private_evidence_id": "20261123T034038Z-b1599817"
+  },
+  "implemented": [
+    "atomic export publication and explicit resume",
+    "portable layout and image provenance summaries",
+    "standalone archive integrity verification",
+    "deterministic ZIP container metadata",
+    "export history invalidation",
+    "distinct same-name character review labels and identity-bound approval"
+  ],
+  "actual_dialogue_sample": {
+    "source": "fixtures/dialogue_cases.txt",
+    "source_hash": "39e384f4bcfbf940180d35cae9631a6bf9107330b3ef43ac7ca0feb1b9f049d6",
+    "chapters": 4,
+    "application_processed_windows": 4,
+    "pending_proposals": 14,
+    "authored_expectations_matched": 14,
+    "human_approved": 0,
+    "truth_scope": "author_defined_fixture_not_external_human_gold",
+    "corrected_issue": "single-character occurrence selected inside a name; corrected to quoted mention at codepoint 196",
+    "browser_check": "both same-name alias labels rendered; elder context expanded; all pending; no console errors"
+  },
+  "controlled_test_scope": [
+    "completed ZIP recovery before report creation",
+    "order changed during export prevents publication",
+    "modified archive payload rejected",
+    "unsafe member paths rejected",
+    "incorrect alias merge withdrawn through reanalysis",
+    "character name change invalidates prior approval"
+  ],
+  "native_image_tools": {
+    "new_calls_this_iteration": 0,
+    "total_calls": 2,
+    "results": "both HTTP 404",
+    "actual_images": 0,
+    "budget_limit": 10,
+    "reserved": 2,
+    "remaining": 8,
+    "external_api_fallback_enabled": false
+  },
+  "limits": [
+    "standalone verification checks integrity, not authenticity or original quote truth",
+    "portable package is not a complete rerender environment",
+    "test fixtures and simulated approvals do not satisfy actual visual or human acceptance",
+    "real image generation, editing, handoff and full 28-item acceptance remain incomplete"
+  ]
+}

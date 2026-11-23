@@ -1,19 +1,20 @@
 """Reviewed exports and visibly marked draft bundles; never include full book text."""
 
-import csv
-import io
-import tempfile
-import zipfile
+import os
+import re
+import uuid
 from pathlib import Path
 
 from PIL import Image
 
+from .bundles import build_payload, verify_archive, write_archive
 from .documents import recover_documents
 from .images import validate_image_asset
 from .quotes import check_display
 from .rendering import validate_tracked_render
 from .source import validate_source
-from .storage import contained, digest_file, load_json, save_json, sha256
+from .storage import contained, digest_file, fingerprint, load_json, now, save_json, sha256
+from .workflow import Ledger
 
 
 def review_fingerprint(card: dict, quote: dict, image_hash: str, layout_hash: str) -> str:
@@ -24,14 +25,17 @@ def review_fingerprint(card: dict, quote: dict, image_hash: str, layout_hash: st
     return sha256(json.dumps(material, ensure_ascii=False, sort_keys=True).encode())
 
 
-def quote_fingerprint(quote: dict) -> str:
+def quote_fingerprint(quote: dict, character: dict | None = None) -> str:
     import json
-    return sha256(json.dumps({k: v for k, v in quote.items() if k != "review"},
+    material = {"quote": {k: v for k, v in quote.items() if k != "review"},
+                "speaker_identity": {k: character.get(k) for k in ["character_id", "name", "aliases"]}
+                if character else None}
+    return sha256(json.dumps(material,
                              sort_keys=True, ensure_ascii=False).encode())
 
 
-def export_bundle(run: Path, destination: Path, *, draft: bool = False,
-                  allow_rewrite: bool = False) -> dict:
+def _select(run: Path, *, draft: bool = False,
+            allow_rewrite: bool = False) -> tuple:
     recover_documents(run)
     book = load_json(run / "book.json")
     validate_source(run, book)
@@ -40,8 +44,10 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
     cards = load_json(run / "cards.json")
     if not cards or len({c["card_id"] for c in cards}) != len(cards):
         raise ValueError("empty or duplicate card IDs")
-    selected, assets = [], []
+    selected = []
     for card in cards:
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", card["card_id"]):
+            raise ValueError("card ID must be an ASCII identifier")
         quote = quotes[card["quote_id"]]
         check_display(book, quote, allow_rewrite)
         image = contained(run, card["poster"])
@@ -78,75 +84,161 @@ def export_bundle(run: Path, destination: Path, *, draft: bool = False,
             if (speaker_review.get("status") != "approved"
                     or speaker_review.get("reviewer_type") != "human"
                     or not speaker_review.get("reviewer")
-                    or speaker_review.get("fingerprint") != quote_fingerprint(quote)):
+                    or speaker_review.get("fingerprint") != quote_fingerprint(quote, characters[card["character_id"]])):
                 raise ValueError("speaker has not received human approval")
             if (review.get("status") != "approved" or review.get("reviewer_type") != "human"
                     or review.get("fingerprint") != fingerprint or not review.get("reviewer")):
                 raise ValueError("human visual approval missing or invalidated")
         selected.append((card, quote, image, layout_path, fingerprint))
-    if destination.exists():
-        raise ValueError("export destination already exists; choose a new version")
-    destination.mkdir(parents=True)
-    zip_path = destination / ("draft-review.zip" if draft else "export.zip")
+    return book, characters, selected
+
+
+def _snapshot(book: dict, characters: dict, selected: list, draft: bool, allow_rewrite: bool) -> dict:
+    return {"schema_version": 2, "source": {k: book[k] for k in ["source_hash", "canonical_hash", "title"]},
+            "draft": draft, "allow_rewrite": allow_rewrite,
+            "characters": {c["character_id"]: characters[c["character_id"]] for c, *_ in selected},
+            "cards": [{"card": card, "quote": quote, "poster_sha256": digest_file(image),
+                       "layout_sha256": digest_file(layout), "approval": approval}
+                      for card, quote, image, layout, approval in selected],
+            "exporter_code": digest_file(Path(__file__)),
+            "bundler_code": digest_file(Path(build_payload.__code__.co_filename))}
+
+
+def _record_export(run: Path, destination: Path, report: dict, snapshot: dict):
+    identity = fingerprint({"destination": str(destination), "input": report["input_fingerprint"],
+                            "zip": report["zip_sha256"]})
+    path = run / ".state" / "exports" / (identity + ".json")
+    with Ledger(run / ".state/ledger.sqlite") as ledger, ledger.db:
+        ledger.db.execute("UPDATE config SET value=value WHERE key='limit'")
+        if not path.exists():
+            save_json(path, {"created_at": now(), "destination": str(destination),
+                             "report": report, "snapshot": snapshot})
+        else:
+            previous = load_json(path)
+            if previous["destination"] != str(destination) or previous["report"] != report or previous["snapshot"] != snapshot:
+                raise ValueError("export history record damaged")
+        key = "export_event:" + identity
+        if not ledger.db.execute("SELECT 1 FROM config WHERE key=?", (key,)).fetchone():
+            ledger._event("export_published", {"record_id": identity,
+                                              "zip_sha256": report["zip_sha256"],
+                                              "input_fingerprint": report["input_fingerprint"]})
+            ledger.db.execute("INSERT INTO config VALUES (?,?)", (key, "recorded"))
+
+
+def _ready_report(folder: Path, zip_name: str, signature: str) -> dict | None:
+    archive = folder / zip_name
+    if not archive.is_file():
+        return None
+    if {p.name for p in folder.iterdir()} - {zip_name, "export-report.json"}:
+        return None
     try:
-        with tempfile.TemporaryDirectory(dir=destination) as temporary:
-            stage = Path(temporary)
-            (stage / "douyin_batch").mkdir()
-            csv_file = io.StringIO(newline="")
-            fields = ["sequence", "character", "quote_exact", "display_text", "text_mode",
-                      "chapter", "start", "end", "source_hash", "review_status"]
-            writer = csv.DictWriter(csv_file, fieldnames=fields)
-            writer.writeheader()
-            for index, (card, quote, image, layout_path, fingerprint) in enumerate(selected, 1):
-                name = f"{index:03d}_{card['card_id']}.png"
-                if any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in card["card_id"]):
-                    raise ValueError("card ID must be an ASCII identifier")
-                target = stage / "douyin_batch" / name
-                target.write_bytes(image.read_bytes())
-                preview = image.with_name(image.stem + "-preview.png")
-                if preview.is_file():
-                    (stage / "previews").mkdir(exist_ok=True)
-                    (stage / "previews" / name).write_bytes(preview.read_bytes())
-                row = {"sequence": index, "character": characters[card["character_id"]]["name"],
-                       "quote_exact": quote["quote_exact"], "display_text": quote["display_text"],
-                       "text_mode": quote["text_mode"], "chapter": quote["source"]["chapter"],
-                       "start": quote["source"]["start"], "end": quote["source"]["end"],
-                       "source_hash": quote["source"]["source_hash"],
-                       "review_status": "pending" if draft else "approved"}
-                # Spreadsheet formula injection protection; JSON preserves exact original strings.
-                writer.writerow({k: "'"+v if isinstance(v, str) and v[:1] in "=+-@" and v else v
-                                 for k, v in row.items()})
-                assets.append({"path": f"douyin_batch/{name}", "sha256": digest_file(target),
-                               "card_id": card["card_id"], "quote_id": quote["quote_id"],
-                               "fingerprint": fingerprint, "image_kind": card.get("image_kind", "unknown"),
-                               "image_asset_id": card.get("image_asset_id")})
-            (stage / "quotes.csv").write_text(csv_file.getvalue(), encoding="utf-8-sig", newline="")
-            save_json(stage / "cards.json", cards)
-            save_json(stage / "quotes.json", [q for _, q, *_ in selected])
-            save_json(stage / "characters.json", characters)
-            manifest = {"schema_version": 1, "draft": draft, "source_hash": book["source_hash"],
-                        "book_title": book["title"], "assets": assets,
-                        "review_status": "pending" if draft else "approved"}
-            save_json(stage / "manifest.json", manifest)
-            (stage / "发布说明.txt").write_text(
-                ("待审核演示包，不是已批准的发布成品。\n" if draft else "已审阅图集，请手工上传。\n")
-                + "按 douyin_batch 文件名前缀排序；出处见 quotes.csv。\n未自动发布抖音。\n",
-                encoding="utf-8")
-            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
-                for path in sorted(stage.rglob("*")):
-                    if path.is_file():
-                        archive.write(path, path.relative_to(stage).as_posix())
-        with zipfile.ZipFile(zip_path) as archive:
-            if archive.testzip():
-                raise ValueError("ZIP integrity failure")
-            for asset in assets:
-                if sha256(archive.read(asset["path"])) != asset["sha256"]:
-                    raise ValueError("ZIP content hash mismatch")
-        save_json(destination / "export-report.json", {**manifest, "zip_sha256": digest_file(zip_path),
-                                                      "zip_integrity": "passed"})
-        return manifest
-    except Exception:
-        # A failed output is explicitly marked; never leave an apparently valid export.
-        zip_path.unlink(missing_ok=True)
-        save_json(destination / "failed.json", {"status": "failed"})
-        raise
+        verified = verify_archive(archive)
+        manifest = verified["manifest"]
+        if manifest["input_fingerprint"] != signature:
+            return None
+        report = {**manifest, "zip_sha256": digest_file(archive), "zip_integrity": "passed"}
+        report_path = folder / "export-report.json"
+        if report_path.exists() and load_json(report_path) != report:
+            return None
+        if not report_path.exists():
+            save_json(report_path, report)
+        if {p.name for p in folder.iterdir()} != {zip_name, "export-report.json"}:
+            return None
+        return report
+    except (ValueError, OSError):
+        return None
+
+
+def export_bundle(run: Path, destination: Path, *, draft: bool = False,
+                  allow_rewrite: bool = False, resume: bool = False) -> dict:
+    run, destination = run.resolve(), destination.resolve()
+    book, characters, selected = _select(run, draft=draft, allow_rewrite=allow_rewrite)
+    snapshot = _snapshot(book, characters, selected, draft, allow_rewrite)
+    signature = fingerprint(snapshot)
+    zip_name = "draft-review.zip" if draft else "export.zip"
+    if destination == destination.parent:
+        raise ValueError("a named export directory is required")
+    staging_root = (destination.parent / ".export-staging").resolve()
+    if destination == staging_root:
+        raise ValueError("export destination cannot be the staging root")
+    staging_root.mkdir(parents=True, exist_ok=True)
+    stage = (staging_root / f"{destination.name}-{signature[:20]}").resolve()
+    if stage.parent != staging_root or destination.parent != staging_root.parent:
+        raise ValueError("export paths escape requested parent")
+    with Ledger(staging_root / "coordination.sqlite") as lock, lock.db:
+        lock.db.execute("UPDATE config SET value=value WHERE key='limit'")
+        if destination.exists():
+            if not resume:
+                raise ValueError("export destination already exists; use --resume or a new version")
+            report = _ready_report(destination, zip_name, signature)
+            if not report:
+                raise ValueError("existing export damaged or inputs changed; preserve it and choose a new version")
+            _record_export(run, destination, report, snapshot)
+            return {**report, "reused": True}
+        if stage.exists() and not resume:
+            raise ValueError("unfinished export checkpoint exists; use --resume")
+        stage.mkdir(exist_ok=True)
+        input_file = stage / "input-snapshot.json"
+        if input_file.exists() and load_json(input_file) != snapshot:
+            raise ValueError("export checkpoint inputs differ")
+        if not input_file.exists():
+            save_json(input_file, snapshot)
+        attempts = stage / "attempts"
+        attempts.mkdir(exist_ok=True)
+        ready, report = None, None
+        try:
+            if resume:
+                for attempt in sorted(attempts.iterdir()):
+                    if not attempt.is_dir():
+                        continue
+                    candidate = attempt / "release"
+                    report = _ready_report(candidate, zip_name, signature)
+                    if report:
+                        ready = candidate
+                        break
+            reused = ready is not None
+            if ready is None:
+                attempt = attempts / uuid.uuid4().hex
+                attempt.mkdir()
+                ready = attempt / "release"
+                ready.mkdir()
+                payload = attempt / "payload"
+                build_payload(run, payload, book, characters, selected, draft=draft, signature=signature)
+                write_archive(payload, ready / zip_name)
+                report = _ready_report(ready, zip_name, signature)
+                if not report:
+                    raise ValueError("new export failed archive verification")
+            current = _snapshot(*_select(run, draft=draft, allow_rewrite=allow_rewrite), draft, allow_rewrite)
+            if fingerprint(current) != signature:
+                raise ValueError("inputs changed while exporting; no final package was published")
+            # Both absolute paths are checked before this Windows directory move.
+            if not ready.resolve().is_relative_to(stage) or destination.resolve().parent != staging_root.parent:
+                raise ValueError("unsafe export publication path")
+            if destination.exists():
+                raise ValueError("export destination appeared; nothing was overwritten")
+            os.rename(ready, destination)
+            _record_export(run, destination, report, snapshot)
+            return {**report, "reused": reused}
+        except Exception as error:
+            save_json(stage / f"failure-{uuid.uuid4().hex}.json", {"type": type(error).__name__, "note": str(error)})
+            raise
+
+
+def export_status(run: Path) -> dict:
+    records = run / ".state" / "exports"
+    if not records.is_dir() or not list(records.glob("*.json")):
+        return {"state": "not_exported"}
+    row = max((load_json(p) for p in records.glob("*.json")), key=lambda r: r["created_at"])
+    report = row["report"]
+    archive = Path(row["destination"]) / ("draft-review.zip" if report["draft"] else "export.zip")
+    try:
+        if not archive.exists():
+            return {"state": "missing", "input_fingerprint": report["input_fingerprint"]}
+        if digest_file(archive) != report["zip_sha256"]:
+            return {"state": "corrupt", "input_fingerprint": report["input_fingerprint"]}
+        snapshot = _snapshot(*_select(run, draft=report["draft"], allow_rewrite=row["snapshot"]["allow_rewrite"]),
+                             report["draft"], row["snapshot"]["allow_rewrite"])
+        return {"state": "current" if fingerprint(snapshot) == report["input_fingerprint"] else "invalidated",
+                "draft": report["draft"], "input_fingerprint": report["input_fingerprint"]}
+    except (ValueError, OSError, KeyError) as error:
+        return {"state": "invalidated", "reason": str(error)}

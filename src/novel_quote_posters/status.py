@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from .documents import recover_documents
-from .export import quote_fingerprint, review_fingerprint
+from .export import export_status, quote_fingerprint, review_fingerprint
 from .images import budget_summary, validate_image_asset
 from .rendering import validate_tracked_render
 from .source import validate_source
@@ -58,7 +58,7 @@ def run_status(run: Path) -> dict:
                 approved = (visual.get("status") == "approved" and visual.get("reviewer_type") == "human"
                             and visual.get("fingerprint") == current and bool(visual.get("reviewer"))
                             and semantic.get("status") == "approved" and semantic.get("reviewer_type") == "human"
-                            and semantic.get("fingerprint") == quote_fingerprint(quote)
+                            and semantic.get("fingerprint") == quote_fingerprint(quote, characters.get(card["character_id"]))
                             and quote["speaker"]["character_id"] == card["character_id"]
                             and quote["speaker"]["status"] in {"explicit", "context_inferred"})
                 row["state"] = ("draft_ready" if report["draft"] else "approved_candidate"
@@ -75,4 +75,5 @@ def run_status(run: Path) -> dict:
             "index_ranges_complete": not gap and covered == len(book["text"]),
             "semantic_quality_claim": "requires_actual_review", "candidate_count": len(quotes),
             "card_counts": counts, "cards": rows, "budget": budget_summary(run),
+            "export": export_status(run),
             "overall_acceptance": "not_inferred_from_progress"}

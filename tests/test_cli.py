@@ -40,6 +40,8 @@ def test_cli_source_analysis_render_reuse_review_export_recovery(tmp_path, chine
     with zipfile.ZipFile(output / "draft-review.zip") as archive:
         assert archive.testzip() is None
         assert "book.json" not in archive.namelist()
+    assert '"integrity": "passed"' in cli("verify-export", output / "draft-review.zip")
+    cli("export", "--run", run, "--output", output, "--draft", "--resume")
     assert "No pending" in cli("recover", "--run", run)
     assert "draft flag" in cli("export", "--run", run, "--output", tmp_path / "final", expected=2)
 
