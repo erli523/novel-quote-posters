@@ -44,6 +44,15 @@ def test_cli_source_analysis_render_reuse_review_export_recovery(tmp_path, chine
     cli("export", "--run", run, "--output", output, "--draft", "--resume")
     assert "No pending" in cli("recover", "--run", run)
     assert "draft flag" in cli("export", "--run", run, "--output", tmp_path / "final", expected=2)
+    edit = run / "edits-v1.json"
+    cli("edit-template", "--run", run, "--output", edit)
+    request = load_json(edit)
+    request.update(editor="SIMULATED_CLI_TEST", reason="test style edit without image calls",
+                   operations=[{"type": "set-style", "card_id": "card001", "style_id": "archive_paper"}])
+    save_json(edit, request)
+    assert '"image_tool_calls": 0' in cli("apply-edits", edit, "--run", run)
+    assert '"reused": true' in cli("apply-edits", edit, "--run", run)
+    assert "Rendered 1; reused 0" in cli("render", "--run", run, "--font", chinese_font)
 
 
 def test_cli_image_budget_provenance_and_pending_card_progress(tmp_path):

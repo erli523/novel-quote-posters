@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "iteration": 7,
+  "contract": "docs/plans/v1.md",
+  "checks": {
+    "pytest": {"passed": 115, "failed": 0},
+    "ruff": "passed",
+    "private_evidence_id": "20261123T041119Z-2eeecd86"
+  },
+  "implemented": [
+    "version-bound edit templates and atomic batch application",
+    "source-preserving display edits with explicit rewrite permission",
+    "binding cards to existing verified quote candidates",
+    "incompatible character imagery pointer removal",
+    "style and order edits without image calls",
+    "compare-and-swap of dependency documents inside the commit lock",
+    "request/transaction recovery and rejection of stale or damaged plans"
+  ],
+  "actual_application_qa": {
+    "scope": "self_authored_synthetic_software_test",
+    "changed_then_restored": ["display_text", "text_mode", "style_id"],
+    "unchanged": ["quote_exact", "source_span", "background_bytes"],
+    "old_and_changed_posters_preserved": true,
+    "original_poster_reused_on_restore": true,
+    "actual_human_approvals": 0,
+    "actual_image_tool_calls": 0
+  },
+  "controlled_regressions": [
+    "whole-batch failure leaves original documents unchanged",
+    "concurrent quote or book metadata change prevents stale commit",
+    "rebound character drops incompatible imagery without deleting old files",
+    "order change invalidates export but reuses single-card images",
+    "interruption after durable commit replays without duplicate edits",
+    "old requests cannot overwrite later changes",
+    "net-no-change batches do not create duplicate transactions",
+    "damaged plan is retained and refused"
+  ],
+  "image_budget": {"limit": 10, "reserved": 2, "remaining": 8, "actual_images": 0},
+  "limits": [
+    "named editor is a declaration rather than identity authentication",
+    "direct external file writes do not participate in the cooperative lock",
+    "whole-album order and rhythm review remains a required next step",
+    "real image generation, editing, handoff and real human acceptance remain incomplete",
+    "no external image API fallback enabled"
+  ]
+}

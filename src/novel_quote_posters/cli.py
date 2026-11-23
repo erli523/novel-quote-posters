@@ -8,6 +8,7 @@ from .analysis import apply_analysis
 from .bootstrap import initialize_run
 from .bundles import verify_archive
 from .documents import commit_documents, recover_documents
+from .edits import apply_edits, edit_targets
 from .export import export_bundle
 from .images import (
     attach_image,
@@ -24,7 +25,7 @@ from .rendering import render_cards
 from .review import apply_review, write_review_page
 from .source import validate_source
 from .status import run_status
-from .storage import digest_file, load_json
+from .storage import digest_file, load_json, save_json
 
 
 def main():
@@ -65,6 +66,13 @@ def main():
     command = commands.add_parser("apply-review", help="validate and import actual human decisions")
     command.add_argument("record", type=Path)
     command.add_argument("--run", type=Path, required=True)
+    command = commands.add_parser("edit-template", help="write a private version-bound edit request")
+    command.add_argument("--run", type=Path, required=True)
+    command.add_argument("--output", type=Path, required=True)
+    command = commands.add_parser("apply-edits", help="apply a validated edit batch without image calls")
+    command.add_argument("request", type=Path)
+    command.add_argument("--run", type=Path, required=True)
+    command.add_argument("--allow-rewrite", action="store_true")
     command = commands.add_parser("recover", help="finish an interrupted JSON transaction")
     command.add_argument("--run", type=Path, required=True)
     command = commands.add_parser("status", help="show observed progress and stale/awaiting cards")
@@ -179,6 +187,14 @@ def main():
             elif args.command == "verify-export":
                 verified = verify_archive(args.archive)
                 report = {k: v for k, v in verified.items() if k != "manifest"}
+            elif args.command == "edit-template":
+                if args.output.exists():
+                    raise ValueError("edit template exists; choose a new version")
+                report = edit_targets(args.run)
+                save_json(args.output, report)
+                report = {"output": str(args.output), "expected_fingerprint": report["expected_fingerprint"]}
+            elif args.command == "apply-edits":
+                report = apply_edits(args.run, load_json(args.request), allow_rewrite=args.allow_rewrite)
             else:
                 raise ValueError("unhandled command")
             print(json.dumps(report, ensure_ascii=False, indent=2))

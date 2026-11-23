@@ -60,7 +60,7 @@ def recover_documents(run: Path) -> bool:
         return _recover(run, ledger)
 
 
-def commit_documents(run: Path, values: dict, *, reason: str) -> str:
+def commit_documents(run: Path, values: dict, *, reason: str, expected: dict | None = None) -> str:
     if not values or not set(values) <= ALLOWED:
         raise ValueError("unsupported transaction document")
     if not run.is_dir():
@@ -68,6 +68,13 @@ def commit_documents(run: Path, values: dict, *, reason: str) -> str:
     with Ledger(run / ".state" / "ledger.sqlite") as ledger, ledger.db:
         ledger.db.execute("UPDATE config SET value=value WHERE key='limit'")
         _recover(run, ledger)
+        if expected is not None:
+            if not set(expected) <= ALLOWED | {"book.json"}:
+                raise ValueError("unsupported expected document")
+            for name, value in expected.items():
+                current = load_json(run / name) if (run / name).exists() else None
+                if current != value:
+                    raise ValueError("documents changed since edit snapshot; prepare a fresh request")
         relative = f".state/transactions/{uuid.uuid4().hex}.json"
         transaction = run / relative
         before = {name: load_json(run / name) if (run / name).exists() else None for name in values}

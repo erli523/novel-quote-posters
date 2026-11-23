@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "6d4f17d1de3601264abae5c364e60a4299382f2d1cde5eb828655ce0853f7a64",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "1826171446f6e611707fd84d329747ccadd56c81d13bed2b292d04b6bd535f75",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "e4a9c0ab624940e7d78514d3fd5de6d33ebf3e09d5bc0c3d53a83f9a3050bfa4",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "077559b9a725e883fbcab4ca9c09f2fe2aaf669f8a1aedf7bbd67337ab1224da",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "ad0078ffb4c7ee7ac8f80e179d36ee5e0c218da301ebda102296f5810e1f39c2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "d84d02a418e7ea1e669b8d22ef891cf2b7123a33172b569bc00c3d7e971f7558",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/edit-workflow.md",
+      "sha256": "74f6ba6ac3f72fd85586835d2cd7ba782498796b4d257741e706f4297d02c9f9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "2c96046aa7bb65eaa4532f03963c55a744e4945469e5f7190454c036a7d81f1d",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/documents.py",
+      "sha256": "3e1bcce583ac313242585003ae55b51afb37635dbe6af9b4474e8f0db011878f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/edits.py",
+      "sha256": "72cbc710c66a92b25475679c235cfd54d913900d33e261b0bf3eef4948725b99",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "sha256": "c9b363849f3e613d9046684212c6e1c01f177315cd658571e8765f7ebebebc5c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_edits.py",
+      "sha256": "17d94442c8512abe502049bb73bc3c4df90265695dbe2e2e577798704f2deae7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration7-evidence.json",
+      "sha256": "484147389c51afcad4294a90997c1ca1e0c8f7244cc5d03fca9987679966cad5",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}
