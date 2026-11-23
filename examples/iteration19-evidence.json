@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "iteration": 19,
+  "date": "2026-11-23",
+  "timezone": "Asia/Shanghai",
+  "authorization": "Existing V1 self-authored image development and public milestone authorization; user explicitly approved user-level provider repair and verification chat.",
+  "provider_repair": {
+    "user_level_top_key_changed": "model_provider",
+    "from": "cc-switch-official",
+    "to": "openai",
+    "current_chat_own_startup_metadata": "openai",
+    "independent_config_read_is_not_session_proof": true,
+    "credentials_read": false,
+    "independent_api_enabled": false,
+    "auto_restore_performed": false
+  },
+  "main_contract_version": 5,
+  "budget": {
+    "limit": 10,
+    "occupied": 10,
+    "remaining": 0,
+    "old_terminal_failures": 5,
+    "new_successes": 5,
+    "unknown": 0,
+    "allocation": {
+      "reference": 5,
+      "background": 3,
+      "edit": 1,
+      "unclassified": 1,
+      "alternative": 0,
+      "retry": 0,
+      "unallocated": 0
+    }
+  },
+  "native_outputs": {
+    "reference": 1,
+    "independent_backgrounds": 3,
+    "reference_edit": 1,
+    "persistent_readable_files": 5
+  },
+  "posters": 3,
+  "distinct_main_styles": 3,
+  "same_quote_six_style_samples": 6,
+  "six_style_version": 2,
+  "pixel_checks": [
+    {
+      "id": "card001",
+      "sha256": "860f0c157f9e705916017562c08f66a6bf17fdc556f41198608a9bbcdcf6abc4",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 76,
+      "solid_text_panel_contrast_ratio": 16.92,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "card002",
+      "sha256": "d6e98cf9628deb2ff704dfdc623cc72a5daa0bad670138dbab0596551b1ca9ef",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 73,
+      "solid_text_panel_contrast_ratio": 10.82,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "card003",
+      "sha256": "a90b9f0b0eb5398e258c754e84e2764c731094571f4090882bc6d78af1a8eef1",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 76,
+      "solid_text_panel_contrast_ratio": 10.44,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "mist_cinema",
+      "sha256": "7118fa6ca3e3fc6de001fff0f5f302c4ece1d347a25be7af9f1b166cd9f1750d",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 76,
+      "solid_text_panel_contrast_ratio": 16.92,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "archive_paper",
+      "sha256": "1ba0a9af36a5420246cd4ccc829c63bfc401120b4be258e408bd7d27c38b96be",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 76,
+      "solid_text_panel_contrast_ratio": 10.82,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "dark_stage",
+      "sha256": "27692ff34f79928772b9878608bf89faaea6f4e60bb6583c9514e8e1e66fc383",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 75,
+      "solid_text_panel_contrast_ratio": 18.1,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "ink_whitespace",
+      "sha256": "84cecc3c48251bcbccd240fa21c69727bf931343f8e6f52bd77717bb08cf3c3f",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 76,
+      "solid_text_panel_contrast_ratio": 10.44,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "modern_editorial",
+      "sha256": "61439a705728c988b619c07e6167e11ae17cf967cb1c67db95d528afbf292df5",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 76,
+      "solid_text_panel_contrast_ratio": 15.0,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    },
+    {
+      "id": "warm_memory",
+      "sha256": "403757ca3728c83c3c2d311eca27f92502615570b46aeda36af3d90231070d4d",
+      "size": [
+        1080,
+        1440
+      ],
+      "rgb_srgb_profile": true,
+      "text_lines_equal_input": true,
+      "text_boxes_inside_safe_region": true,
+      "font_size": 76,
+      "solid_text_panel_contrast_ratio": 9.42,
+      "contrast_scope": "solid text panel only; no OCR or face detection",
+      "crop_simulation": [
+        0,
+        180,
+        1080,
+        1260
+      ],
+      "human_review": "pending"
+    }
+  ],
+  "style_pair_matrix": {
+    "pairs": 15,
+    "reviewer_type": "AI",
+    "human_status": "pending"
+  },
+  "recovery": {
+    "request_replay": "reuse",
+    "render_reused": 3,
+    "draft_export_resumed": true,
+    "additional_native_calls": 0
+  },
+  "formal_export_gate": "Unlabelled actual candidates rejected: speaker has not received human approval. Draft restored unchanged.",
+  "local_bundle": {
+    "draft_files_checked": 17,
+    "copy_extract_hashes": "passed",
+    "handoff_files": 33,
+    "handoff_sha256": "b856504c5f07a8879d1300b251e6dd77164b4ddf7372f46e408c7798ce5c8407",
+    "actual_client_download": "not_observed"
+  },
+  "human_approvals": 0,
+  "full_product_acceptance": "not_achieved",
+  "source_upload": false,
+  "limitations": [
+    "Ink face is stylized; eyebrow scar weak. Human identity check required.",
+    "Small auxiliary labels require user phone-size judgment.",
+    "Centered square crops lose attribution and may clip hair; only full 3:4 candidates delivered.",
+    "Long novel semantic reading remains incomplete; prior machine coverage is not full semantic reading.",
+    "Image model version, seed and monetary cost unavailable."
+  ],
+  "code_changed": false,
+  "local_220_suite_rerun": false,
+  "new_checks": "actual artifact/provenance/reuse/export/HTML syntax checks only",
+  "private_config_raw_logs_novels_and_images_published": false,
+  "reviewer_type": "AI",
+  "human_privacy_review": "pending",
+  "current_clean_candidates": [
+    {
+      "card_id": "card001",
+      "poster_sha256": "33e6dc289a25174bc339073a13eb23db52b324f50ad495af66043d743619bfd5",
+      "draft_poster_sha256": "860f0c157f9e705916017562c08f66a6bf17fdc556f41198608a9bbcdcf6abc4",
+      "difference_bbox": [
+        97,
+        1368,
+        178,
+        1395
+      ],
+      "difference_scope": "only former pending label at bottom; exact quote, image and layout unchanged",
+      "status": "pending_human_review",
+      "draft": false
+    },
+    {
+      "card_id": "card002",
+      "poster_sha256": "e2f2da976bd734f66744253679d936d332f43026ee3a3a35c5d15540d7302582",
+      "draft_poster_sha256": "d6e98cf9628deb2ff704dfdc623cc72a5daa0bad670138dbab0596551b1ca9ef",
+      "difference_bbox": [
+        97,
+        1368,
+        178,
+        1395
+      ],
+      "difference_scope": "only former pending label at bottom; exact quote, image and layout unchanged",
+      "status": "pending_human_review",
+      "draft": false
+    },
+    {
+      "card_id": "card003",
+      "poster_sha256": "c06f8d03a8ce9abda7d30bc0badca2027ad3584808e89e3ad2b98358399b20d2",
+      "draft_poster_sha256": "a90b9f0b0eb5398e258c754e84e2764c731094571f4090882bc6d78af1a8eef1",
+      "difference_bbox": [
+        97,
+        1368,
+        178,
+        1395
+      ],
+      "difference_scope": "only former pending label at bottom; exact quote, image and layout unchanged",
+      "status": "pending_human_review",
+      "draft": false
+    }
+  ],
+  "review_page_binds_current_clean_candidates": true,
+  "labelled_preview_zip_is_separate_snapshot": true
+}

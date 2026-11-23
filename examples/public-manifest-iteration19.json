@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "8e253650dea993839cbdc04f42286f8cecdac80aaf8bcc4f18829a8f9008ed08",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-generation-diagnosis.md",
+      "sha256": "136f074d8d66d6ccd7b28b2684d13428cadf680e62aa937fbd485b1f8a6ddf68",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "d434f87d1ddfeab1d471baacbfd50833e3e75be176ef596a4be6c9aef9b8c063",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "b854edaa06e8ee5771f9106036abc2e55eee94de5aedf11a1faf73be56f1e233",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "1ccb219d0dec57806987e66560d0025d1c9e0886389700c24668315482174cb2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/image-recovery-real-novels.md",
+      "sha256": "1aaf84fa56862dc3e0768445f6e6a82f65c86af2c15977fc7dd90e51f348ff29",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-image-demo.md",
+      "sha256": "ff95076924bb9f967711c7f3573b0f55bcefee2a427012aa4e55133469e2e90a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration19-evidence.json",
+      "sha256": "8710fbaf542eb012c6a0053d53b2210c3a8bd42dd2792c66b40ac8f398d3992b",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}
