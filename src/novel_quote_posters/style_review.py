@@ -80,6 +80,9 @@ def _material(run: Path, samples: str, ledger: Ledger | None = None) -> tuple[di
         raise ValueError("six-style review requires explicit task contract")
     manifest_path = folder / "manifest.json"
     manifest = load_json(manifest_path)
+    if isinstance(manifest, dict) and "managed" in manifest:
+        from .samples import validate_managed_samples
+        validate_managed_samples(run, folder, ledger=ledger)
     if (
         not isinstance(manifest, dict)
         or manifest.get("schema_version") != 1

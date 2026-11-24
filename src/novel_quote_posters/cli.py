@@ -23,6 +23,7 @@ from .images import (
 from .layout import STYLES
 from .rendering import render_cards
 from .review import apply_review, write_review_page
+from .samples import render_samples, sample_template
 from .status import run_status
 from .storage import load_json, save_json
 from .style_review import apply_style_review, write_style_review_page
@@ -74,6 +75,16 @@ def main():
     command = commands.add_parser("apply-style-review", help="import actual supplementary human decisions")
     command.add_argument("record", type=Path)
     command.add_argument("--run", type=Path, required=True)
+    command = commands.add_parser("sample-template", help="prepare an explicit six-style composition plan")
+    command.add_argument("--run", type=Path, required=True)
+    command.add_argument("--quote", required=True)
+    command.add_argument("--font", type=Path, required=True)
+    command.add_argument("--output", type=Path, required=True)
+    command = commands.add_parser("render-samples", help="compose six local styles from registered images")
+    command.add_argument("plan", type=Path)
+    command.add_argument("--run", type=Path, required=True)
+    command.add_argument("--output", type=Path, required=True)
+    command.add_argument("--resume", action="store_true")
     command = commands.add_parser("edit-template", help="write a private version-bound edit request")
     command.add_argument("--run", type=Path, required=True)
     command.add_argument("--output", type=Path, required=True)
@@ -187,6 +198,14 @@ def main():
                 report = edit_targets(args.run)
                 save_json(args.output, report)
                 report = {"output": str(args.output), "expected_fingerprint": report["expected_fingerprint"]}
+            elif args.command == "sample-template":
+                if args.output.exists():
+                    raise ValueError("sample template exists; choose a new version")
+                report = sample_template(args.run, args.quote, args.font)
+                save_json(args.output, report)
+                report = {"output": str(args.output), "image_tool_calls": 0}
+            elif args.command == "render-samples":
+                report = render_samples(args.run, load_json(args.plan), args.output, resume=args.resume)
             elif args.command == "apply-edits":
                 report = apply_edits(args.run, load_json(args.request), allow_rewrite=args.allow_rewrite)
             elif args.command == "contract-template":

@@ -26,3 +26,5 @@ samples相对于run，不能越界。已有输出拒绝覆盖，请用新版本�
 整批验证后使用文档事务提交，并在提交锁内复查文件和上一个审核版本。相同记录仍是当前结果时重放复用；提交后返回丢失可恢复，不重复记录。私有.state/style-review-records保留接收的尝试，是否实际生效以文档事务及six-style-review.json为准，不能把单独历史文件当作已提交。status的six_style_review显示not_started/pending/rejected/approved/invalidated；approved仅指这份补充样张记录，不表示完整V1验收。
 
 本轮浏览器file协议仍受安全策略拒绝，未绕过。独立JS语法、内嵌图像哈希/解码和本地ZIP复制解压检查不等于浏览器交互或实际客户端下载通过。
+
+同句六套可先通过[可恢复样张命令](style-samples.md)生成，替代一次性脚本。带managed声明的目录进入审阅时，额外核对build-seal的20项载荷、原运行私有快照和当前字体/来源/代码；文件或依赖变化后不能继续批准。原一次性目录不自动升级为托管成果。

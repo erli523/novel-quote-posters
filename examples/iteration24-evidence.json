@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "iteration": 24,
+  "date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "task_id": "managed-samples-v1",
+  "contract_version": 1,
+  "main_contract_version": 5,
+  "previous_goal_turn": "progress",
+  "tests": {
+    "full_suite": 333,
+    "lint": "passed",
+    "sample_targeted": 21,
+    "strengthened_decoded_pixel_regression": 1,
+    "code_hashes_match_checked_snapshot": true
+  },
+  "image_calls_added": 0,
+  "budget": {
+    "limit": 10,
+    "occupied": 10,
+    "remaining": 0,
+    "old_failures": 5,
+    "successes": 5,
+    "unknown": 0
+  },
+  "managed_generation": {
+    "commands": [
+      "sample-template",
+      "render-samples"
+    ],
+    "explicit_same_quote_asset_font_reason_and_layout_plan": true,
+    "preflight": "All six source/task/provenance/geometry/glyph inputs before output; capacity checked during composition.",
+    "per_style_cache": true,
+    "old_output_overwrite": "rejected",
+    "interruption": "completed cache items reused in simulated regression",
+    "damaged_cache": "preserved; new attempt file",
+    "input_change_before_publication": "rejected",
+    "published_return_loss": "same bytes recovered in simulated regression",
+    "directory_files": 21,
+    "sealed_payload_files": 20,
+    "physical_font_paths_in_manifest": false,
+    "font_files_distributed": false,
+    "managed_review_dependency_validation": true,
+    "semantic_compatibility": "Application rationale plus real human review; not an automatic semantic verdict."
+  },
+  "real_samples": {
+    "version": 7,
+    "rendered": 6,
+    "subsequent_reused": 6,
+    "same_decoded_pixels_as_v6": 5,
+    "changed_visual_geometry": [
+      "ink_whitespace"
+    ],
+    "all_backgrounds_and_font_hashes_unchanged": true,
+    "ink_retained_source_area": 0.8416565164433619,
+    "comparison": "Full head retained in wider ink frame; AI inspected, human pending.",
+    "png_hash_change_is_not_pixel_change": true,
+    "main_card_quote_character_documents_unchanged": true,
+    "unsigned_review_import": "rejected",
+    "human_records_in_main_run": 0,
+    "pixels": [
+      {
+        "style_id": "mist_cinema",
+        "same_decoded_pixels_as_v6": true,
+        "old_sha256": "7c0c3265e53cabb0f60ca3027b13936b5ad003b3802aa541f03b83e44127715f",
+        "new_sha256": "cb85a578dd516957655c8d91cae8d7c61775c2a0e47d256e0d9c4836b07c9b49",
+        "font_sha256": "d79c55e68b1131eea0cc1c47be4f572d964f28c682e143db2ad09c1e4cb07a3f",
+        "human_review": "pending"
+      },
+      {
+        "style_id": "archive_paper",
+        "same_decoded_pixels_as_v6": true,
+        "old_sha256": "a29fb16476e20e6fec031cead84dd08ef755c3a00ebfac8fda2cb4e94a0e015e",
+        "new_sha256": "0d6529f4ec2d6780d3a2f87945f6f59010ab022b762ac91de4da8176f3dfd267",
+        "font_sha256": "1526ac24375f51f6eb73bc2d3f8072dbe4a80a3a65217677c9d9a84f67dab2ab",
+        "human_review": "pending"
+      },
+      {
+        "style_id": "dark_stage",
+        "same_decoded_pixels_as_v6": true,
+        "old_sha256": "d197f84c16e7c1cc9a3945b26ecbaa37eebf71eef7478c65fc168512d58e4409",
+        "new_sha256": "fa1fca984e86e6c48740be9f48d6a1047aa2ed320adaaa8d67b3d45679ca063f",
+        "font_sha256": "9b1959db3b3abeb7efdaec26edf7dfe871a6039de8d614af7248575207be629e",
+        "human_review": "pending"
+      },
+      {
+        "style_id": "ink_whitespace",
+        "same_decoded_pixels_as_v6": false,
+        "old_sha256": "cfe649098fe2efe30873dfb74886a80967bb4526a432f98447b92e713a85f751",
+        "new_sha256": "001f1845913f355dfb684a38d2a3f121196fbfd0ce68ff684411741c5e035d79",
+        "font_sha256": "95b3e69321f4e55f6ecf36b29d1e31a0c1205acfde0117df6472a17494c3cbd2",
+        "human_review": "pending"
+      },
+      {
+        "style_id": "modern_editorial",
+        "same_decoded_pixels_as_v6": true,
+        "old_sha256": "5fab4581edbfbd9575cc3a52b8e0ebc8cd6b49624a43a20c6466906c4eaa19e3",
+        "new_sha256": "e9e983c489bfeb862f604fda5110be9dfdf7f4d8ab3563c42e262ea61dfd2d13",
+        "font_sha256": "d79c55e68b1131eea0cc1c47be4f572d964f28c682e143db2ad09c1e4cb07a3f",
+        "human_review": "pending"
+      },
+      {
+        "style_id": "warm_memory",
+        "same_decoded_pixels_as_v6": true,
+        "old_sha256": "ac10e3a25005c72ed5c0fca9e473f038e3bdb15a677a1db09d5d5f710b76c614",
+        "new_sha256": "f30d893fe3b5b39154dc9c051350fcadadf25b43bf4f50758db77d649e8a256f",
+        "font_sha256": "d79c55e68b1131eea0cc1c47be4f572d964f28c682e143db2ad09c1e4cb07a3f",
+        "human_review": "pending"
+      }
+    ]
+  },
+  "handoff": {
+    "files": 41,
+    "sha256": "c7ce4dfeb24a71f6d9d1ae73a03b7b69d3313db663c46497b046018b242c7a67",
+    "zip_copy_extract_hashes": "passed",
+    "managed_seal_files_checked": 20,
+    "style_view_hashes": 24,
+    "style_embedded_pngs": 19,
+    "main_embedded_pngs": 12,
+    "script_syntax": "passed separately",
+    "main_cards_awaiting_review": 3,
+    "six_style_state": "pending",
+    "actual_client_download": "not_observed"
+  },
+  "browser_validation": {
+    "status": "blocked",
+    "reason": "Local file scheme rejected by browser security policy; not bypassed.",
+    "interaction": "not_verified"
+  },
+  "human_approvals": 0,
+  "long_novel_semantic_reading": "incomplete",
+  "full_V1_acceptance": "not_achieved",
+  "reviewer_type": "AI",
+  "human_privacy_review": "pending",
+  "private_images_configs_logs_real_novels_and_human_records_published": false
+}

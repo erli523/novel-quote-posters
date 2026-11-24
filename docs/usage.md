@@ -161,3 +161,9 @@ workflow.Ledger 已接入 render 的资产与依赖记录。CLI 的分析、审�
 `style-review --run runs/my-demo --samples six-styles-v1 --output runs/my-demo/six-review-v1.html`生成六套/15对的私有离线页，包含原句上下文、基准、完整/手机/方形模拟。本人填好后用`apply-style-review runs/my-demo/six-style-human-review.json --run runs/my-demo`导入；schema 2与现有一次性schema 1不混用，不自动迁移批准。完整输入要求、修改/并发/恢复及记录边界见[六风格审阅](style-review.md)。
 
 status的six_style_review独立显示状态。认可样张不批准人物归属、主卡或整组；后来的否决不会被旧批准重放覆盖。当前真实样本仍pending，已有图片原样复用，未新增图像请求。浏览器file限制、实际客户端下载未观察的缺口仍保留。
+
+## 可恢复的同句六风格生成
+
+使用`sample-template --run runs/my-demo --quote 实际quote_id --font C:/Windows/Fonts/msyh.ttc --output runs/my-demo/samples-plan-v1.json`建立显式映射，填写六套实际登记底图、字体说明和兼容理由，再运行`render-samples runs/my-demo/samples-plan-v1.json --run runs/my-demo --output runs/my-demo/six-styles-v1`。完整输入、缓存/损坏/中断与--resume语义见[六风格样张](style-samples.md)。
+
+命令不选择精彩句、不判断场景语义、不调用图片工具，也不修改主卡/人物/原句。样张目录含21文件，完成后才发布，旧版本拒绝覆盖。可直接接入style-review；托管模式还会复核原任务的输入快照及当前字体/来源/代码。便携包不含原始字体/底图/私有快照，不是完整重建环境。
