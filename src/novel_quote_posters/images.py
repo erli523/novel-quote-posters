@@ -219,7 +219,8 @@ def register_image(run: Path, source: Path, receipt: dict) -> dict:
         return record
 
 
-def validate_image_asset(run: Path, card: dict, *, required: bool = False) -> dict | None:
+def validate_image_asset(run: Path, card: dict, *, required: bool = False,
+                         ledger: Ledger | None = None) -> dict | None:
     identity = card.get("image_asset_id")
     if not identity:
         if required:
@@ -239,14 +240,20 @@ def validate_image_asset(run: Path, card: dict, *, required: bool = False) -> di
             or identity != "asset_" + fingerprint(receipt)[:24]):
         raise ValueError("registered image provenance changed or does not match this card")
     if asset["source_kind"] == "generated":
-        with Ledger(run / ".state" / "ledger.sqlite") as ledger:
-            call = next((c for c in ledger.budget()["calls"] if c["call_id"] == asset["call_id"]), None)
-            if not call or call["status"] != "succeeded" or call["input_hash"] != asset["input_hash"] or call["output"] != "image:" + identity or not ledger.valid(call["output"]) or (call["result"] or {}).get("receipt_sha256") != asset["receipt_sha256"]:
+        def check_call(current):
+            call = next((c for c in current.budget()["calls"] if c["call_id"] == asset["call_id"]), None)
+            if not call or call["status"] != "succeeded" or call["input_hash"] != asset["input_hash"] or call["output"] != "image:" + identity or not current.valid(call["output"]) or (call["result"] or {}).get("receipt_sha256") != asset["receipt_sha256"]:
                 raise ValueError("generated image result has not been reconciled to a successful call")
+        if ledger is None:
+            with Ledger(run / ".state" / "ledger.sqlite") as current:
+                check_call(current)
+        else:
+            check_call(ledger)
     return asset
 
 
-def validate_character_reference(run: Path, character: dict, *, required: bool = False) -> dict | None:
+def validate_character_reference(run: Path, character: dict, *, required: bool = False,
+                                 ledger: Ledger | None = None) -> dict | None:
     """Check the baseline's own provenance, rather than trusting a reference filename."""
     identity, path = character.get("reference_asset_id"), character.get("reference_image")
     if not identity or not path:
@@ -255,7 +262,7 @@ def validate_character_reference(run: Path, character: dict, *, required: bool =
         return None
     asset = load_json(run / "image-assets.json")[identity]
     result = validate_image_asset(run, {"background": path, "image_asset_id": identity,
-        "image_kind": asset["source_kind"], "character_id": character["character_id"]}, required=True)
+        "image_kind": asset["source_kind"], "character_id": character["character_id"]}, required=True, ledger=ledger)
     if required and result["source_kind"] not in {"generated", "user_provided"}:
         raise ValueError("test fixtures cannot be the baseline reference for a generated final card")
     return result

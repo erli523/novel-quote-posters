@@ -155,3 +155,9 @@ workflow.Ledger 已接入 render 的资产与依赖记录。CLI 的分析、审�
 使用edit-template生成新版本，再以set-layout整体替换单卡布局；空对象恢复模板默认，示例与九项白名单见[受控修改](edit-workflow.md)。renderer_version4共享有效布局解析，先做长句适配再覆盖指定字段；编辑政策4额外绑定不可变文档事务头，恢复相同内容也不会接受旧计划。失效请求须重新规划，不能修改版本值硬套。
 
 主样本水墨画框加宽、偏上cover保留完整头部，人物更醒目；这是AI选择的待审候选，不是人脸检测或人工批准。默认水墨六风格样张保持兼容复用，和主卡自定义取景分别记录。新布局只重排，图像调用仍0。最新待审包38文件；主预览ZIP为17项有效载荷加manifest共18项，本地复制解压核对，实际客户端下载仍未观察。
+
+## 六风格补充记录
+
+`style-review --run runs/my-demo --samples six-styles-v1 --output runs/my-demo/six-review-v1.html`生成六套/15对的私有离线页，包含原句上下文、基准、完整/手机/方形模拟。本人填好后用`apply-style-review runs/my-demo/six-style-human-review.json --run runs/my-demo`导入；schema 2与现有一次性schema 1不混用，不自动迁移批准。完整输入要求、修改/并发/恢复及记录边界见[六风格审阅](style-review.md)。
+
+status的six_style_review独立显示状态。认可样张不批准人物归属、主卡或整组；后来的否决不会被旧批准重放覆盖。当前真实样本仍pending，已有图片原样复用，未新增图像请求。浏览器file限制、实际客户端下载未观察的缺口仍保留。

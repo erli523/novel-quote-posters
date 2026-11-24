@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "b775f86ccd8e253d6ede3298ae94076ba4f0ff7428f4dded1e1ad983150dfd5a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/edit-workflow.md",
+      "sha256": "f4a48fc65ea73dbae3bdc459d7933b7faf229e95f0637b756427dfda1a1599f7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "bbcb6f3c1598bbf1b16988cb982c9d3ba8ae214d0a2fd53989e519f007cbb017",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "8fb8582109a27d76ff31bb0892114383b4076aac97db274ab29875e3a044a386",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "b780edd408b25da1afcffee2a0c8d307564a44633cbe0b5022934ab64bbab470",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/style-review-v1.md",
+      "sha256": "a3e17ac81aa6478f93d794f18f05c569a22eecd513090f95f9abad2788809e1f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-image-demo.md",
+      "sha256": "cbcba4b197b51cc562822c4db1e8a6f595ae53ee0549556b33255f8d27900b56",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/style-review.md",
+      "sha256": "9a142d4730009f9733857adbd0b60adb2dac589be1c69ae0e26c234d862b7b7e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "4d556bbc86de272163af233fba30d966d590ad5d4765e44a6fab6e053380df40",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration23-evidence.json",
+      "sha256": "7dc91a0c72347c7ec4a9785332d92007c246748ef6339ae974cba701b24936a9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/cli.py",
+      "sha256": "a26e7f1d3d70cb29a85bbd8b2fb6311281b97c0b8bf9248dafcad815d580665a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/documents.py",
+      "sha256": "08c7a0470cb1016c97f0bc79a783354c04910a3b1286321998a39a5875140246",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/images.py",
+      "sha256": "8bccd56ee45548712199bb2b05815a438844c59aa8a8a8b8a373e61e89e7581c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/status.py",
+      "sha256": "b12a9bc696e2551053faebaafb2b6f7ea288554961d6f5c580c6326bcec0ad62",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/style_review.py",
+      "sha256": "93e8aa4a78685757bad95626eade6192695ceab17e58a22e1ec105ebc87bddf1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/style_review_page.py",
+      "sha256": "f456035c213a6f486c1a69e7900d5626598f9b946fa0c017af0349a772fe5066",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_style_review.py",
+      "sha256": "dd0fde0441bee9e850e66b9c3e3ab0cd312d63abb2fe0cf821e3c23b1c3b795e",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

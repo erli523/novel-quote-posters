@@ -13,7 +13,8 @@ from .storage import contained, digest_file, load_json, now, save_json
 from .workflow import Ledger
 
 ALLOWED = {"quotes.json", "characters.json", "cards.json", "chunks.json", "analysis-report.json",
-           "image-assets.json", "album-review.json", "task-contract.json", "preparation-report.json", "card-sequence.json"}
+           "image-assets.json", "album-review.json", "task-contract.json", "preparation-report.json", "card-sequence.json",
+           "six-style-target.json", "six-style-review.json"}
 
 
 def _recover(run: Path, ledger: Ledger) -> bool:

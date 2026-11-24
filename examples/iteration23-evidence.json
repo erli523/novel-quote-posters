@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "iteration": 23,
+  "date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "task_id": "style-review-v1",
+  "contract_version": 1,
+  "main_contract_version": 5,
+  "previous_goal_turn": "progress",
+  "tests": {
+    "full_suite": 312,
+    "lint": "passed",
+    "style_review_targeted": 27,
+    "earlier_related_exploratory": 54,
+    "code_hashes_match_checked_snapshot": true
+  },
+  "image_calls_added": 0,
+  "budget": {
+    "limit": 10,
+    "occupied": 10,
+    "remaining": 0,
+    "old_failures": 5,
+    "successes": 5,
+    "unknown": 0
+  },
+  "supplementary_review": {
+    "schema_version": 2,
+    "style_count": 6,
+    "pair_count": 15,
+    "min_human_dimensions_per_approved_pair": 3,
+    "default_decisions": "pending",
+    "default_signature": "empty; attested false",
+    "source_passages": "Exact adjacent full paragraphs and explicit gaps; not full novel semantic coverage.",
+    "bound_inputs": [
+      "source",
+      "quote_and_context",
+      "character",
+      "reference",
+      "background_assets",
+      "sample_pngs",
+      "layout_reports",
+      "views",
+      "task_contract",
+      "layout_and_review_code",
+      "registered_target_version",
+      "prior_human_decision_snapshot"
+    ],
+    "old_schema_1": "rejected; regenerate and actually review",
+    "old_approval_over_later_rejection": "rejected",
+    "concurrent_input_and_review_changes": "rejected under commit lock",
+    "interruption_after_commit": "recovered and reused in simulated tests",
+    "same_current_record_replay": "reused without duplicate transaction",
+    "scope": "Supplementary sample comparison only; no attribution/main-card/album/release approval."
+  },
+  "real_sample": {
+    "main_card_quote_character_documents_unchanged": true,
+    "images_reused_without_fresh_generation_or_render": true,
+    "same_quote_six_style_version": 6,
+    "six_style_state": "pending",
+    "main_card_states": {
+      "awaiting_review": 3
+    },
+    "unsigned_import": "rejected",
+    "signed_human_records": 0,
+    "view_hashes_checked": 24,
+    "distinct_embedded_style_pngs": 19,
+    "main_embedded_pngs": 12,
+    "script_syntax": "passed separately"
+  },
+  "scene_suitability": {
+    "reviewer_type": "AI",
+    "human_approval": false,
+    "self_authored_chapters_read": 3,
+    "station_samples_with_mountain_quote": "Thematic interpretation; not literal mountain speaking scene.",
+    "third_main_card": "Thematic mountain image; actual spoken context is at night with coat on chair.",
+    "claim_limit": "Scene suitability remains human judgment; source exactness does not certify illustration literalness."
+  },
+  "handoff": {
+    "files": 38,
+    "sha256": "8f077c72cced1b2687ef432e7dc66ce826eb4f4c0decafc8824eb04a14941c82",
+    "local_zip_copy_extract_hashes": "passed",
+    "actual_client_download": "not_observed"
+  },
+  "browser_validation": {
+    "status": "blocked",
+    "reason": "Local file scheme rejected by browser security policy; not bypassed.",
+    "static_checks": "Separate syntax/data/resource checks only; no interaction claim"
+  },
+  "human_approvals": 0,
+  "long_novel_semantic_reading": "incomplete",
+  "full_V1_acceptance": "not_achieved",
+  "private_images_configs_logs_real_novels_and_human_records_published": false,
+  "reviewer_type": "AI",
+  "human_privacy_review": "pending"
+}

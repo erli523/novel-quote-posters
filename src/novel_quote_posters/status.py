@@ -13,6 +13,7 @@ from .source import validate_source
 from .source_context import SourceContext, context_review_complete
 from .source_quality import source_observations
 from .storage import contained, digest_file, load_json
+from .style_review import style_review_status
 
 
 def run_status(run: Path) -> dict:
@@ -99,4 +100,5 @@ def run_status(run: Path) -> dict:
                               "shortfall": max(0, contract["definition"]["target_count"]-len(cards)) if contract else None},
             "album_review": album_status(run, album_target(book, album_rows, contract) if len(album_rows) == len(cards) else None),
             "export": export_status(run),
+            "six_style_review": style_review_status(run),
             "overall_acceptance": "not_inferred_from_progress"}

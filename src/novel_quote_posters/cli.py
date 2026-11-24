@@ -25,6 +25,7 @@ from .rendering import render_cards
 from .review import apply_review, write_review_page
 from .status import run_status
 from .storage import load_json, save_json
+from .style_review import apply_style_review, write_style_review_page
 
 
 def main():
@@ -64,6 +65,13 @@ def main():
     command.add_argument("--quotes-only", action="store_true")
     command.add_argument("--selected-only", action="store_true", help="with --quotes-only, show explicitly selected quotes")
     command = commands.add_parser("apply-review", help="validate and import actual human decisions")
+    command.add_argument("record", type=Path)
+    command.add_argument("--run", type=Path, required=True)
+    command = commands.add_parser("style-review", help="prepare offline supplementary six-style review")
+    command.add_argument("--run", type=Path, required=True)
+    command.add_argument("--samples", required=True, help="samples directory relative to run")
+    command.add_argument("--output", type=Path, required=True)
+    command = commands.add_parser("apply-style-review", help="import actual supplementary human decisions")
     command.add_argument("record", type=Path)
     command.add_argument("--run", type=Path, required=True)
     command = commands.add_parser("edit-template", help="write a private version-bound edit request")
@@ -141,6 +149,12 @@ def main():
         elif args.command == "apply-review":
             report = apply_review(args.run, load_json(args.record))
             print(f"Imported human decisions: {report['quotes_changed']} quotes, {report['cards_changed']} cards.")
+        elif args.command == "style-review":
+            report = write_style_review_page(args.run, args.samples, args.output)
+            print(f"Prepared {report['styles']} styles and {report['pairs']} pairs; no approval granted.")
+        elif args.command == "apply-style-review":
+            import json
+            print(json.dumps(apply_style_review(args.run, load_json(args.record)), ensure_ascii=False, indent=2))
         elif args.command == "recover":
             print("Recovered pending transaction." if recover_documents(args.run) else "No pending transaction.")
         else:
