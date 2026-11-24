@@ -14,7 +14,7 @@ from .workflow import Ledger
 
 ALLOWED = {"quotes.json", "characters.json", "cards.json", "chunks.json", "analysis-report.json",
            "image-assets.json", "album-review.json", "task-contract.json", "preparation-report.json", "card-sequence.json",
-           "six-style-target.json", "six-style-review.json"}
+           "six-style-target.json", "six-style-review.json", "review-decisions.json"}
 
 
 def _recover(run: Path, ledger: Ledger) -> bool:

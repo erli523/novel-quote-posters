@@ -16,6 +16,13 @@ from .export import quote_fingerprint, review_fingerprint
 from .images import validate_character_reference
 from .quotes import check_display
 from .rendering import validate_tracked_render
+from .review_decisions import DOCUMENT as DECISION_DOCUMENT
+from .review_decisions import (
+    advance_decision,
+    decision_target,
+    load_decisions,
+    validate_decision_fields,
+)
 from .review_policy import VISUAL_CHECKS, VISUAL_POLICY_VERSION, visual_review_complete
 from .source import validate_source
 from .source_context import CONTEXT_POLICY_VERSION, SourceContext
@@ -86,6 +93,7 @@ def _data_url(raw: bytes) -> str:
 
 def review_targets(run: Path, quotes_only: bool = False) -> dict:
     recover_documents(run)
+    _decision_document, decisions = load_decisions(run)
     book = load_json(run / "book.json")
     validate_source(run, book)
     quotes = load_json(run / "quotes.json")
@@ -113,7 +121,8 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
                      "context": book["text"][context["context_start"]:context["context_end"]],
                      "source_context": source_context, "context_policy_version": CONTEXT_POLICY_VERSION,
                      "context_fingerprint": source_context["fingerprint"],
-                     "status": "pending", "note": ""})
+                     "status": "pending", "note": "",
+                     **decision_target(decisions, "quotes", quote["quote_id"], quote.get("review"))})
     card_rows = []
     if not quotes_only:
         by_id = {q["quote_id"]: q for q in quotes}
@@ -140,10 +149,15 @@ def review_targets(run: Path, quotes_only: bool = False) -> dict:
                               "crop_box": views["crop_box"],
                               "visual_policy_version": VISUAL_POLICY_VERSION,
                               "visual_checks": {key: "pending" for key in VISUAL_CHECKS},
-                              "status": "pending", "note": ""})
-    return {"schema_version": 3, "source_hash": book["source_hash"], "book_title": book["title"],
+                              "status": "pending", "note": "",
+                              **decision_target(decisions, "cards", card["card_id"], card.get("review"))})
+    album = album_target(book, card_rows, contract)
+    if album is not None:
+        prior_album = load_json(run / "album-review.json") if (run / "album-review.json").exists() else None
+        album.update(decision_target(decisions, "album", None, prior_album))
+    return {"schema_version": 4, "source_hash": book["source_hash"], "book_title": book["title"],
             "reviewer_type": "human", "reviewer": "", "attested": False,
-            "reviewed_at": "", "quotes": rows, "cards": card_rows, "album": album_target(book, card_rows, contract),
+            "reviewed_at": "", "quotes": rows, "cards": card_rows, "album": album,
             "task_contract": contract, "task_issues": issues}
 
 
@@ -197,8 +211,8 @@ def write_review_page(run: Path, output: Path, *, quotes_only: bool = False, sel
 
 def apply_review(run: Path, record: dict) -> dict:
     recover_documents(run)
-    if record.get("schema_version") != 3:
-        raise ValueError("review schema 3 required; regenerate old review forms without upgrading approvals")
+    if not isinstance(record, dict) or type(record.get("schema_version")) is not int or record["schema_version"] != 4:
+        raise ValueError("review schema 4 required; regenerate old review forms without upgrading approvals")
     if (record.get("reviewer_type") != "human"
             or record.get("attested") is not True or not isinstance(record.get("reviewer"), str)
             or not record["reviewer"].strip() or not isinstance(record.get("reviewed_at"), str)):
@@ -211,6 +225,9 @@ def apply_review(run: Path, record: dict) -> dict:
         raise ValueError("review time must be ISO 8601 with a timezone") from error
     snapshot = {name: load_json(run / name) if (run / name).exists() else None for name in
                 ["book.json", "quotes.json", "characters.json", "cards.json", "album-review.json", "task-contract.json"]}
+    decision_document, decisions = load_decisions(run)
+    snapshot[DECISION_DOCUMENT] = decision_document
+    next_decisions = copy.deepcopy(decisions)
     expected = review_targets(run, quotes_only=not bool(record.get("cards")))
     if record["source_hash"] != expected["source_hash"]:
         raise ValueError("review targets a different source")
@@ -229,6 +246,7 @@ def apply_review(run: Path, record: dict) -> dict:
                 raise ValueError("invalid review decision")
             if row["status"] == "pending":
                 continue
+            validate_decision_fields(row)
             if (category == "quotes" and row["status"] == "approved" and any(
                     row.get(k) != available[key][k] for k in ["source_context", "context_policy_version", "context_fingerprint"])):
                 raise ValueError("source context changed or missing; regenerate attribution review page")
@@ -262,6 +280,7 @@ def apply_review(run: Path, record: dict) -> dict:
         if not isinstance(album, dict) or album.get("status") not in {"pending", "approved", "rejected"}:
             raise ValueError("invalid whole-album review decision")
         if album["status"] != "pending":
+            validate_decision_fields(album)
             target = expected["album"]
             if target is None or album.get("fingerprint") != target["fingerprint"] or album.get("material") != target["material"]:
                 raise ValueError("whole-album review invalidated by order/content changes")
@@ -280,6 +299,7 @@ def apply_review(run: Path, record: dict) -> dict:
                         "reviewer": record["reviewer"], "attested": True, "reviewed_at": record["reviewed_at"],
                         "note": album.get("note", "")}
             if proposed != snapshot["album-review.json"]:
+                advance_decision(next_decisions, "album", None, snapshot["album-review.json"], album)
                 values["album-review.json"] = proposed
                 album_changed = True
     # Validate the whole record before committing any decisions, including the album.
@@ -292,9 +312,13 @@ def apply_review(run: Path, record: dict) -> dict:
                     if item.get("review") == proposed:
                         del changes[category][item[identity]]
                     else:
+                        reviewed_row = next(row for row in record[category] if row[identity] == item[identity])
+                        advance_decision(next_decisions, category, item[identity], item.get("review"), reviewed_row)
                         item["review"] = proposed
             if changes[category]:
                 values[f"{category}.json"] = items
+    if next_decisions != decisions:
+        values[DECISION_DOCUMENT] = next_decisions
     record_hash = sha256(json.dumps(record, sort_keys=True, ensure_ascii=False).encode())
     history = run / "reviews" / f"{record_hash}.json"
     with Ledger(run / ".state/ledger.sqlite") as ledger, ledger.db:

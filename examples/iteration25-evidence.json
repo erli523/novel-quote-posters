@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "iteration": 25,
+  "date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "task_id": "review-decision-v1",
+  "contract_version": 1,
+  "main_contract_version": 5,
+  "previous_goal_turn": "progress",
+  "tests": {
+    "full_suite": 352,
+    "lint": "passed",
+    "related_targeted": 31,
+    "new_decision_cases": 19,
+    "code_hashes_match_checked_snapshot": true
+  },
+  "image_calls_added": 0,
+  "budget": {
+    "limit": 10,
+    "occupied": 10,
+    "remaining": 0,
+    "old_failures": 5,
+    "successes": 5,
+    "unknown": 0
+  },
+  "original_failure": {
+    "controlled_self_authored_synthetic_reproduction": true,
+    "real_main_run_modified": false,
+    "old_approval_replaced_later_rejection": [
+      "quotes",
+      "cards",
+      "album"
+    ],
+    "failure_preserved": true
+  },
+  "repair": {
+    "main_request_schema": 4,
+    "per_target_prior_decision_fingerprint": true,
+    "persistent_monotonic_decision_versions": true,
+    "decision_versions_committed_atomically": true,
+    "deleted_or_rolled_back_version_file": "reject, do not silently reset",
+    "source_roundtrip_with_same_content_and_pending_metadata": "old completed approval rejected",
+    "later_human_rejection": "retained after old replay",
+    "same_current_result_replay": "no new version or transaction",
+    "unchanged_other_target_partial_review": "allowed",
+    "mixed_stale_batch_and_commit_lock_conflict": "rejected without partial decision",
+    "return_loss_after_commit": "recovered without duplicate decision",
+    "old_schema3_requests": "rejected; no automatic approval upgrade",
+    "supplementary_six_style_schema": 2
+  },
+  "real_main_run": {
+    "documents_and_pixels_unchanged": true,
+    "total_verified_original_quotes": 8,
+    "selected_main_cards": 3,
+    "independent_background_calls": 3,
+    "reference_is_separate": true,
+    "distinct_main_styles": 3,
+    "managed_six_styles_valid": true,
+    "main_card_states": {
+      "awaiting_review": 3
+    },
+    "six_style_state": "pending",
+    "actual_decision_version_file_created": false,
+    "unsigned_import": "rejected",
+    "formal_export_without_human_approval": "rejected",
+    "human_records": 0
+  },
+  "completion_audit": {
+    "original_goal_and_contract_scope_preserved": true,
+    "standards_count": 28,
+    "automatic_passes_granted": 0,
+    "rows": [
+      {
+        "id": "AC-001",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "User assessment of contract adequacy remains unrecorded; existing development authorization is valid.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-002",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Human assessment of the whole gate/evidence chain remains unrecorded.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-003",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Exact code/document whitelist is machine-screened; independent human rights/privacy review remains unrecorded.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-004",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Machine remote checks are performed per commit; actual human visibility/summary review remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-101",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "TXT/EPUB three-chapter fixtures and real full-book structure verified; human transcription/mapping fidelity review remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-102",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "All current source slices in audited runs match; human original-container mapping spot-check remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-103",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "No actual named human attribution approvals; AI/source equality cannot supply these.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-104",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Immutable source/display and rewrite labels tested; actual human label/edited-output inspection remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-105",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Trait evidence classification/alias correction implemented and tested; actual human evidence judgment remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-106",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Aq4/4 application windows processed; long books fully indexed/structurally checked; semantic human spot-check remains, and long semantic reading is explicitly not claimed.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-107",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Selection reasons and shortfall paths exist; actual human quality/spoiler/semantic-duplicate judgments remain.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-108",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Controlled injection/path cases pass; independent human scenario review remains, no absolute immunity claim.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-201",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Actual native reference+three backgrounds+edit persisted; complete chain human confirmation and upstream approvals remain.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-202",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Actual tool-to-local-compose and local ZIP copy/unpack verified; actual client download and human operability confirmation missing.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-203",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Three independent real backgrounds, three1080x1440 candidates/three styles; actual user inspection and upstream gate release remain.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-204",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Real reference/sample comparison available; ink stylization/scar weakness requires human identity judgment; no new call budget remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-205",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Only minimal self-authored visual inputs used; independent human minimization/rights judgment remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-206",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Total10/10, failures5/successes5/unknown0 and allocations verified; human classification review remains; no provider price claim.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-301",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Same-quote six real samples/15 pairs available; actual human difference and identity approvals remain.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-302",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Six-style24-case matrix and capacity/glyph/punctuation checks retained; all actual boundary images still need human reading review.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-303",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Full/mobile/crop/identity views with exact hashes prepared; actual human text/readability/face-occlusion checks remain.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-304",
+        "conclusion": "not_applicable_current_contract",
+        "remaining_evidence": "Not applicable to current fixed3:4 contract; no9:16 delivery promised or certified.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-305",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Controlled fault/replay coverage and actual persisted native assets verified; human association of complete recovery boundaries remains; not every real provider interruption occurred.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-306",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Dependency/revision/rollback/conflict checks implemented; full table association and actual visual compatibility/order human review remain.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-307",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Real18-file draft archive and concentrated review package local integrity checked; actual client download and human opening/middle/end/album approval missing.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-308",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Source-to-tool/asset/render/package chain retained; human trace/complete migration-rollback review remains; model/seed/cost unavailable as declared.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-309",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Native404, composition and stale-review defects retained with repair/regression; complete associated gate human review remains.",
+        "automatic_pass_granted": false
+      },
+      {
+        "id": "AC-310",
+        "conclusion": "completion_not_proven",
+        "remaining_evidence": "Only whitelisted code/documents/statistics public; images/novels/configs/records local. Current remote check and final rights/privacy human review remain.",
+        "automatic_pass_granted": false
+      }
+    ],
+    "real_novel_source_slices_rechecked": 4411,
+    "novels": [
+      {
+        "run": "real-aq-wikisource-v1",
+        "numbered_chapters": 9,
+        "indexed_sections_including_front_matter": 9,
+        "windows": 4,
+        "application_processed": 4,
+        "verified_quote_slices": 247,
+        "selected_pending": 6,
+        "human_approvals": 0,
+        "source_hash": "9394e9f0759e985d57cb8727198937b6b9cd37f1015654de1cbd28e1a1df537c"
+      },
+      {
+        "run": "real-honglou-v1",
+        "numbered_chapters": 120,
+        "indexed_sections_including_front_matter": 121,
+        "windows": 159,
+        "application_processed": 0,
+        "verified_quote_slices": 297,
+        "selected_pending": 0,
+        "human_approvals": 0,
+        "source_hash": "c233903e44eb345e4a5433813f0a68c79f9cad967f2e7b881c6da973ef7ba524"
+      },
+      {
+        "run": "real-rulin-wikisource-v1",
+        "numbered_chapters": 56,
+        "indexed_sections_including_front_matter": 56,
+        "windows": 59,
+        "application_processed": 0,
+        "verified_quote_slices": 3867,
+        "selected_pending": 0,
+        "human_approvals": 0,
+        "source_hash": "b97107fa7c6d8d4f3a7107655e96f03ae7fe0544044db4dd87a901ef7a342008"
+      }
+    ],
+    "scope_clarification": "Original real-novel contract promises full Aq reading and long-book structure/performance checks, explicitly disclosing unread semantic scope.",
+    "current_independent_contract_work": "implemented, checked and prepared for review; no identified further independent repair in this audit",
+    "remaining_evidence": "Actual human judgment/approval and client download evidence; AI cannot supply these.",
+    "completion": "not_achieved"
+  },
+  "handoff": {
+    "files": 41,
+    "sha256": "c34d039f7b656475630ffe7be4267cb1ae4b3bd73b665d854d520b3302d9b71d",
+    "main_embedded_pngs": 12,
+    "style_artifacts_reused": true,
+    "script_syntax_and_links": "passed separately",
+    "local_zip_copy_extract_hashes": "passed",
+    "actual_client_download": "not_observed"
+  },
+  "browser_validation": {
+    "status": "blocked",
+    "reason": "Local file scheme rejected by browser security policy; not bypassed.",
+    "interaction": "not_verified"
+  },
+  "human_approvals": 0,
+  "full_V1_acceptance": "not_achieved",
+  "reviewer_type": "AI",
+  "human_privacy_review": "pending",
+  "private_images_configs_logs_real_novels_and_human_records_published": false
+}
