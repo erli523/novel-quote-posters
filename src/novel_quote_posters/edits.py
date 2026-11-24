@@ -5,10 +5,11 @@ from pathlib import Path
 
 from .contracts import load_contract
 from .documents import commit_documents, recover_documents
-from .layout import STYLES
+from .layout import STYLES, resolve_style
+from .layout_options import LAYOUT_KEYS, normalize_layout_overrides
 from .quotes import check_display
 from .source import validate_source
-from .storage import fingerprint, load_json, now, save_json
+from .storage import contained, digest_file, fingerprint, load_json, now, save_json
 from .workflow import Ledger
 
 DOCUMENTS = ["quotes.json", "characters.json", "cards.json", "task-contract.json"]
@@ -27,19 +28,34 @@ def _read(run: Path) -> tuple[dict, dict]:
 
 
 def _signature(book: dict, values: dict) -> str:
-    return fingerprint({"edit_policy_version": 2, "book": book, "documents": values})
+    return fingerprint({"edit_policy_version": 4, "book": book, "documents": values})
+
+
+def _document_head(run: Path) -> dict | None:
+    path = run / ".state/documents-head.json"
+    if not path.exists():
+        return None
+    reference = load_json(path)
+    if (not isinstance(reference, dict) or set(reference) != {"path", "sha256"}
+            or not isinstance(reference["path"], str)
+            or not reference["path"].startswith(".state/transactions/")
+            or digest_file(contained(run, reference["path"])) != reference["sha256"]):
+        raise ValueError("invalid document revision; preserve evidence and recover")
+    return reference
 
 
 def edit_targets(run: Path) -> dict:
     recover_documents(run)
     book, values = _read(run)
     return {"schema_version": 1, "source_hash": book["source_hash"],
-            "expected_fingerprint": _signature(book, values), "editor": "", "reason": "",
+            "expected_fingerprint": _signature(book, values), "expected_document_head": _document_head(run),
+            "editor": "", "reason": "",
             "operations": [], "available": {
                 "quotes": [{"quote_id": q["quote_id"], "quote_exact": q["quote_exact"],
                             "display_text": q["display_text"], "text_mode": q["text_mode"],
                             "speaker": q["speaker"]} for q in values["quotes.json"]],
-                "cards": values["cards.json"] or []}}
+                "cards": values["cards.json"] or [], "layout_keys": list(LAYOUT_KEYS),
+                "layout_operation": "set-layout replaces overrides; empty object restores defaults"}}
 
 
 def _fields(operation: dict, names: set[str]):
@@ -108,6 +124,22 @@ def _apply(book: dict, values: dict, operations: list, allow_rewrite: bool) -> l
             _pending(card, "style_edited")
             impacts.append({"type": kind, "invalidated_cards": [card["card_id"]],
                             "reused_imagery": True, "old_style_overrides_cleared": True})
+        elif kind == "set-layout":
+            _fields(operation, {"card_id", "overrides"})
+            card = cards[operation["card_id"]]
+            if not isinstance(operation["overrides"], dict):
+                raise ValueError("set-layout overrides must be an object; use empty object to reset")
+            overrides = normalize_layout_overrides(operation["overrides"])
+            resolve_style(card["style_id"], quotes[card["quote_id"]]["display_text"], overrides)
+            if normalize_layout_overrides(card.get("layout_overrides")) == overrides:
+                continue
+            if overrides:
+                card["layout_overrides"] = overrides
+            else:
+                card.pop("layout_overrides", None)
+            _pending(card, "layout_edited")
+            impacts.append({"type": kind, "invalidated_cards": [card["card_id"]],
+                            "reused_imagery": True, "render_validation_required": True})
         elif kind == "reorder-cards":
             _fields(operation, {"card_ids"})
             order = operation["card_ids"]
@@ -126,11 +158,12 @@ def _apply(book: dict, values: dict, operations: list, allow_rewrite: bool) -> l
 
 def apply_edits(run: Path, request: dict, *, allow_rewrite: bool = False) -> dict:
     recover_documents(run)
-    if (request.get("schema_version") != 1 or not isinstance(request.get("editor"), str)
+    if (request.get("schema_version") != 1 or "expected_document_head" not in request
+            or not isinstance(request.get("editor"), str)
             or not request["editor"].strip() or not isinstance(request.get("reason"), str)
             or not request["reason"].strip() or not isinstance(request.get("operations"), list)
             or not request["operations"]):
-        raise ValueError("edits require schema, named editor, reason and nonempty operations")
+        raise ValueError("edits require current document revision, schema, named editor, reason and operations; prepare a fresh request")
     request_hash = fingerprint({"request": request, "allow_rewrite": allow_rewrite})
     reason = "application_edits:" + request_hash
     history = run / ".state" / "edits" / (request_hash + ".json")
@@ -141,6 +174,7 @@ def apply_edits(run: Path, request: dict, *, allow_rewrite: bool = False) -> dic
             for op in request["operations"]):
         raise ValueError("rewrite forbidden by task contract, even with --allow-rewrite")
     current = _signature(book, before)
+    current_head = _document_head(run)
     if history.exists():
         previous = load_json(history)
         if (previous.get("request") != request or previous.get("allow_rewrite") != allow_rewrite
@@ -149,12 +183,16 @@ def apply_edits(run: Path, request: dict, *, allow_rewrite: bool = False) -> dic
             raise ValueError("edit plan history differs from this request; preserve it for inspection")
         completed = [p for p in (run / ".state/transactions").glob("*.json")
                      if load_json(p).get("reason") == reason]
-        if current == previous["after_fingerprint"] and (completed or previous.get("no_document_changes")):
-            return {**previous["result"], "transaction": completed[-1].relative_to(run).as_posix() if completed else None,
+        completed_paths = {p.relative_to(run).as_posix() for p in completed}
+        same_completed_head = current_head is not None and current_head["path"] in completed_paths
+        same_noop_head = previous.get("no_document_changes") and current_head == previous.get("before_document_head")
+        if current == previous["after_fingerprint"] and (same_completed_head or same_noop_head):
+            return {**previous["result"], "transaction": current_head["path"] if same_completed_head else None,
                     "reused": True}
-        if current != previous["before_fingerprint"]:
+        if current != previous["before_fingerprint"] or current_head != request["expected_document_head"]:
             raise ValueError("old edit request cannot overwrite later changes; prepare a fresh request")
-    if request.get("source_hash") != book["source_hash"] or request.get("expected_fingerprint") != current:
+    if (request.get("source_hash") != book["source_hash"] or request.get("expected_fingerprint") != current
+            or request["expected_document_head"] != current_head):
         raise ValueError("edit targets changed; prepare a fresh snapshot")
     after = copy.deepcopy(before)
     try:
@@ -166,10 +204,13 @@ def apply_edits(run: Path, request: dict, *, allow_rewrite: bool = False) -> dic
     changed = {name: value for name, value in after.items() if value != before[name]}
     record = {"at": now(), "request": request, "allow_rewrite": allow_rewrite,
               "before_fingerprint": current, "after_fingerprint": _signature(book, after),
+              "before_document_head": current_head,
               "impacts": impacts, "result": result, "no_document_changes": not changed}
     # Concurrent planners must not overwrite the first immutable request record.
     with Ledger(run / ".state/ledger.sqlite") as ledger, ledger.db:
         ledger.db.execute("UPDATE config SET value=value WHERE key='limit'")
+        if _document_head(run) != current_head:
+            raise ValueError("documents changed since edit snapshot; prepare a fresh request")
         if history.exists():
             previous = load_json(history)
             if {k: v for k, v in previous.items() if k != "at"} != {k: v for k, v in record.items() if k != "at"}:
@@ -178,6 +219,10 @@ def apply_edits(run: Path, request: dict, *, allow_rewrite: bool = False) -> dic
             save_json(history, record)
     # Check all dependency documents while holding the same lock as the atomic commit.
     validate_source(run, book)
-    transaction = commit_documents(run, changed, reason=reason,
+    def guard_revision(_ledger):
+        if _document_head(run) != current_head:
+            raise ValueError("documents changed since edit snapshot; prepare a fresh request")
+
+    transaction = commit_documents(run, changed, reason=reason, guard=guard_revision,
                                    expected={**before, "book.json": book, "task-contract.json": contract}) if changed else None
     return {**result, "transaction": transaction, "reused": False}

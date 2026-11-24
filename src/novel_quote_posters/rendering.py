@@ -5,7 +5,7 @@ import importlib.metadata
 import re
 from pathlib import Path
 
-from . import layout
+from . import layout, layout_options
 from .documents import commit_documents, recover_documents
 from .images import validate_character_reference, validate_image_asset
 from .quotes import check_display
@@ -30,8 +30,9 @@ def render_inputs(run: Path, book: dict, quote: dict, character: dict, card: dic
     if character.get("reference_image"):
         reference = contained(run, character["reference_image"])
         references[character["reference_image"]] = digest_file(reference)
-    return {"renderer_version": 3, "renderer_code": {
-                "layout": digest_file(Path(layout.__file__)), "rendering": digest_file(Path(__file__))},
+    return {"renderer_version": 4, "renderer_code": {
+                "layout": digest_file(Path(layout.__file__)), "rendering": digest_file(Path(__file__)),
+                "layout_options": digest_file(Path(layout_options.__file__))},
             "packages": {p: importlib.metadata.version(p) for p in ["Pillow", "fonttools"]},
             "source": {k: book[k] for k in ["source_hash", "canonical_hash", "title", "parser_version"]},
             "quote": {k: v for k, v in quote.items() if k != "review"},

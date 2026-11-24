@@ -13,6 +13,7 @@ from PIL import Image
 from .albums import album_review_complete, album_target, portable_album_review, selection_target
 from .contracts import load_contract, portable_contract, selection_issues, verify_packaged_contract
 from .images import validate_image_asset
+from .layout_options import LAYOUT_KEYS
 from .storage import contained, copy_atomic, digest_file, load_json, save_json, sha256
 
 
@@ -74,7 +75,7 @@ def build_payload(run: Path, folder: Path, book: dict, characters: dict, selecte
                 ["text", "font_size", "bbox"]) for name in ["footer", "header", "labels"]
                 if name in original["auxiliary_text"]}
         report["lines"] = [_fields(line, ["text", "xy", "bbox"]) for line in original["lines"]]
-        report["style"] = _fields(original["style"], ["bg", "fg", "accent", "image", "panel", "text"])
+        report["style"] = _fields(original["style"], LAYOUT_KEYS)
         # Physical font paths are runtime locators; the font hash and layout survive export.
         report["render_options"] = _fields(original.get("render_options", {}), ["width", "height", "draft"])
         report["preview"] = f"previews/{filename}.png"
@@ -83,7 +84,7 @@ def build_payload(run: Path, folder: Path, book: dict, characters: dict, selecte
         save_json(folder / "layouts" / (filename + ".json"), report)
         portable = _fields(card, ["card_id", "quote_id", "character_id", "style_id", "image_kind", "image_asset_id", "layout_overrides"])
         if "layout_overrides" in portable:
-            portable["layout_overrides"] = _fields(portable["layout_overrides"], ["bg", "fg", "accent", "image", "panel", "text"])
+            portable["layout_overrides"] = _fields(portable["layout_overrides"], LAYOUT_KEYS)
         portable.update(poster=f"douyin_batch/{filename}.png", preview=f"previews/{filename}.png",
                         layout_report=f"layouts/{filename}.json", source_review_fingerprint=approval_hash,
                         background={"sha256": report["background_sha256"], "included": False,

@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "iteration": 22,
+  "date": "2026-11-24",
+  "timezone": "Asia/Shanghai",
+  "task_id": "controlled-layout-v1",
+  "contract_version": 1,
+  "main_contract_version": 5,
+  "previous_goal_turn": "progress",
+  "authorization": "Autonomous novel-to-quote-to-image iteration; existing public milestone authorization; no routine chat choice questions.",
+  "tests": {
+    "full_suite": 285,
+    "lint": "passed",
+    "current_code_hashes_match_checked_snapshot": true,
+    "critical_revision_regressions": 3,
+    "earlier_revision_targeted_attempt": {
+      "passed": 48,
+      "failed": 1,
+      "cause": "Fixture did not yet restore identical pending-review reason; preserved then corrected precondition."
+    }
+  },
+  "image_calls_added": 0,
+  "budget": {
+    "limit": 10,
+    "occupied": 10,
+    "remaining": 0,
+    "old_failures": 5,
+    "successes": 5,
+    "unknown": 0
+  },
+  "renderer_version": 4,
+  "edit_policy_version": 4,
+  "layout": {
+    "allowed_keys": [
+      "bg",
+      "fg",
+      "accent",
+      "image",
+      "panel",
+      "text",
+      "image_fit",
+      "max_crop",
+      "image_anchor"
+    ],
+    "whole_override_replacement": true,
+    "empty_object_restores_defaults": true,
+    "long_adaptation_before_explicit_overrides": true,
+    "single_card_invalidated": true,
+    "contrast_min": 4.5,
+    "contrast_scope": "solid body text/panel only",
+    "face_detection": "not_performed",
+    "main_ink_retained_source_area": 0.8416565164433619
+  },
+  "real_failure_and_repair": {
+    "original_failure": "Old request reexecuted after identical content restoration (ABA).",
+    "failure_preserved": true,
+    "repair": "Immutable document head plus content identity; rechecked in history/write lock and commit guard.",
+    "same_card_content_round_trip_verified": true,
+    "stale_unapplied_and_completed_requests_rejected": true,
+    "old_policy_migration_rejected_separately": true,
+    "human_approvals_granted": 0
+  },
+  "actual_rendering": {
+    "first_candidate_rendered": 1,
+    "first_candidate_reused": 2,
+    "reset_reused": 3,
+    "readopt_reused": 3,
+    "draft_rendered": 3,
+    "final_clean_reused": 3,
+    "same_quote_six_styles_v6_compatible_reused": 6,
+    "layout_probes_compatible_reused": 18,
+    "compatible_samples_not_freshly_rendered": true
+  },
+  "source": {
+    "original_quote_slices_equal": 3,
+    "quote_and_character_documents_unchanged": true,
+    "imagery_unchanged": true,
+    "third_scene": "Thematic illustration, not literal reconstruction of the night-time speaking scene.",
+    "long_novel_semantic_reading": "incomplete"
+  },
+  "actual_cards": [
+    {
+      "id": "card001",
+      "sha256": "c846241dbd0a151f48c5cd47d52327cbb6726c3cdae1c5739d18d80db717195c",
+      "font_size": 64,
+      "human_review": "pending"
+    },
+    {
+      "id": "card002",
+      "sha256": "e5a710c3ee60851cd2bf292b4a84c7f0eeb2207c1a82fa44ec5b6b5144240edb",
+      "font_size": 63,
+      "human_review": "pending"
+    },
+    {
+      "id": "card003",
+      "sha256": "b976a213e171958f7c07ccb963470357fb7bd0a835b7f8b9dcb593450a1deb94",
+      "font_size": 64,
+      "human_review": "pending"
+    }
+  ],
+  "handoff": {
+    "files": 38,
+    "sha256": "c7049e84021404afaf7dc02280e385d41ef3c10c8ce526351aaa46a3e2fbc50b",
+    "native_zip_files_including_manifest": 18,
+    "native_payload_files_excluding_manifest": 17,
+    "earlier_17_count_clarification": "Previous 17 count excluded manifest; full archive contains 18 entries.",
+    "local_copy_extract_hash_and_srgb": "passed",
+    "formal_export_without_human_approval": "rejected",
+    "export_resume": true
+  },
+  "browser_validation": {
+    "status": "blocked",
+    "reason": "Local file scheme rejected by browser security policy; not bypassed.",
+    "static_embedded_pngs": {
+      "main": 12,
+      "six_styles": 19
+    },
+    "script_syntax_and_links": "passed separately",
+    "defaults": "pending; no attestation",
+    "actual_client_download": "not_observed"
+  },
+  "human_approvals": 0,
+  "full_V1_acceptance": "not_achieved",
+  "reviewer_type": "AI",
+  "human_privacy_review": "pending",
+  "private_images_configs_logs_and_real_novels_published": false
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "782e14ab2dcb0c463afc9b22adcfae595890956778d16b70422d4febf0e404a6",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/edit-workflow.md",
+      "sha256": "e0a895a2e3837d6612fd0023849b84abaede319ec7c05394487d4e60a3ccf292",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/image-workflow.md",
+      "sha256": "589e146ebd55a27ac7e5b26084df16ccd4bdee97eae131f31b47c4051ec10a87",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "0cd615ee99f44a632b1758d73a634c646b425bec6f97a8678c3787724333dd2e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "ab69c53027db55bca39b52c7288ea3a0b2ca274ac8423e5edb8d82013107e679",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/controlled-layout-v1.md",
+      "sha256": "621a1066838566059de99e370e1282d13d889fad23491ffaccab8495ce9cbf6d",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-image-demo.md",
+      "sha256": "0032594272e454578587a172b2dadc934f42bcf2e4f0b650aa61421c05d433fd",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "583d95247a4fc518734405d1333175d2929e6d1e17b91aa122ba3c06fd713bb0",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration22-evidence.json",
+      "sha256": "52797be4218695395fae971dc265031178f1f1199c8de84c3660cb7ac0430ed5",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/bundles.py",
+      "sha256": "2141d66e984840ab9119d16bbedbd241f82eaf310c137daaf36f3971d72fab0e",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/edits.py",
+      "sha256": "9151c3247b407bd4b33740e5c6103a8174518b088d48e82702064388806908f2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/layout.py",
+      "sha256": "cc9190bdbc0d4b92e06dd5af31a11c07098121a229a5f640678dfa02be1cb490",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/layout_options.py",
+      "sha256": "1de62bf111548932c541d381cc9b4129500f3a1671b9b815075833d91ee17bce",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/rendering.py",
+      "sha256": "cce080f83a312e50ee6aaf11f49e2ed9bf20d1ad678e2ff719a4cdb221ccba0c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_layout_edits.py",
+      "sha256": "2a14d59b6b4bbd7257fd03be6dc4e69c04e5506741ec57331e8bb8ae95590863",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

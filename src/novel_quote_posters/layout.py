@@ -6,6 +6,7 @@ from pathlib import Path
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageCms, ImageDraw, ImageFont, ImageOps
 
+from .layout_options import normalize_layout_overrides, validate_effective_layout
 from .storage import digest_file, save_json
 
 # Normalized boxes are scaled separately for each export size, never stretched bitmaps.
@@ -143,15 +144,12 @@ def fit(text: str, font_path: Path, width: int, height: int, minimum: int, maxim
     raise ValueError("text exceeds template capacity at minimum font size; choose another layout")
 
 
-def compose(background: Path, output: Path, *, text: str, character: str, title: str,
-            chapter: str, font_path: Path, style_id: str = "mist_cinema",
-            width: int = 1080, height: int = 1440, draft: bool = True,
-            rewrite: bool = False, overrides: dict | None = None) -> dict:
-    if width < 720 or height < 960 or style_id not in STYLES:
-        raise ValueError("invalid dimensions or style")
-    style = {**STYLES[style_id], **(overrides or {})}
+def resolve_style(style_id: str, text: str, overrides: dict | None = None) -> dict:
+    if style_id not in STYLES:
+        raise ValueError("unknown style")
+    style = dict(STYLES[style_id])
     # Long text receives more space rather than a smaller-than-contract font.
-    if len(text) > 70 and not overrides:
+    if len(text) > 70:
         if style_id == "mist_cinema":
             style.update(image=(.08, .06, .92, .50), panel=(0, .50, 1, 1),
                          text=(.09, .54, .91, .86), image_fit="auto")
@@ -168,6 +166,19 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
         elif style_id == "dark_stage":
             style.update(image=(.24, .06, .76, .47), panel=(0, .47, 1, 1),
                          text=(.10, .50, .90, .86))
+    style.update(normalize_layout_overrides(overrides))
+    style = normalize_layout_overrides(style)
+    validate_effective_layout(style)
+    return style
+
+
+def compose(background: Path, output: Path, *, text: str, character: str, title: str,
+            chapter: str, font_path: Path, style_id: str = "mist_cinema",
+            width: int = 1080, height: int = 1440, draft: bool = True,
+            rewrite: bool = False, overrides: dict | None = None) -> dict:
+    if width < 720 or height < 960 or style_id not in STYLES:
+        raise ValueError("invalid dimensions or style")
+    style = resolve_style(style_id, text, overrides)
     fg, accent = style["fg"], style["accent"]
     scale = width / 1080
 
