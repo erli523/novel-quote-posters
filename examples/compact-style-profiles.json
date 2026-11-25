@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "scope": "Application-coordinator layout examples; fill in your own registered assets and installed fonts in a current sample/edit plan. Not a ready-to-run signed request or human approval.",
+  "main_compact_profiles": {
+    "warm_memory": {
+      "image": [
+        0,
+        0,
+        1,
+        0.66
+      ],
+      "panel": [
+        0,
+        0.66,
+        1,
+        1
+      ],
+      "text": [
+        0.09,
+        0.7,
+        0.91,
+        0.85
+      ],
+      "show_chapter": false,
+      "bg": "#eee0c7",
+      "fg": "#302922",
+      "accent": "#8b654b"
+    },
+    "mist_cinema": {
+      "image": [
+        0,
+        0,
+        1,
+        0.66
+      ],
+      "panel": [
+        0,
+        0.66,
+        1,
+        1
+      ],
+      "text": [
+        0.09,
+        0.7,
+        0.91,
+        0.85
+      ],
+      "show_chapter": false,
+      "bg": "#10171d",
+      "fg": "#f1e8d8",
+      "accent": "#b5a17a"
+    }
+  },
+  "six_style_choices": [
+    {
+      "style_id": "mist_cinema",
+      "suggested_local_font_filename": "msyh.ttc",
+      "asset_requirement": "photographic_background",
+      "layout_overrides": {
+        "bg": "#10171d",
+        "fg": "#f1e8d8",
+        "accent": "#b5a17a",
+        "image": [
+          0,
+          0.05,
+          1,
+          0.62
+        ],
+        "panel": [
+          0,
+          0.62,
+          1,
+          1
+        ],
+        "text": [
+          0.09,
+          0.69,
+          0.91,
+          0.83
+        ],
+        "show_chapter": false
+      }
+    },
+    {
+      "style_id": "archive_paper",
+      "suggested_local_font_filename": "simsun.ttc",
+      "asset_requirement": "graphite_reference_edit",
+      "layout_overrides": {
+        "bg": "#eee7d8",
+        "fg": "#45362a",
+        "accent": "#806049",
+        "image": [
+          0.08,
+          0.05,
+          0.92,
+          0.63
+        ],
+        "panel": [
+          0,
+          0.63,
+          1,
+          1
+        ],
+        "text": [
+          0.12,
+          0.68,
+          0.88,
+          0.83
+        ],
+        "show_chapter": false
+      }
+    },
+    {
+      "style_id": "dark_stage",
+      "suggested_local_font_filename": "simhei.ttf",
+      "asset_requirement": "photographic_background",
+      "layout_overrides": {
+        "bg": "#0b0b0d",
+        "fg": "#f8ede1",
+        "accent": "#b56142",
+        "image": [
+          0.06,
+          0.28,
+          0.94,
+          0.89
+        ],
+        "panel": [
+          0,
+          0,
+          1,
+          0.27
+        ],
+        "text": [
+          0.12,
+          0.16,
+          0.88,
+          0.26
+        ],
+        "show_chapter": false
+      }
+    },
+    {
+      "style_id": "ink_whitespace",
+      "suggested_local_font_filename": "simkai.ttf",
+      "asset_requirement": "ink_reference_edit",
+      "layout_overrides": {
+        "bg": "#f4eedf",
+        "fg": "#293936",
+        "accent": "#9b4d3d",
+        "image": [
+          0.05,
+          0.28,
+          0.95,
+          0.89
+        ],
+        "panel": [
+          0,
+          0,
+          1,
+          0.27
+        ],
+        "text": [
+          0.13,
+          0.16,
+          0.87,
+          0.26
+        ],
+        "show_chapter": false
+      }
+    },
+    {
+      "style_id": "modern_editorial",
+      "suggested_local_font_filename": "msyh.ttc",
+      "asset_requirement": "graphite_reference_edit",
+      "layout_overrides": {
+        "bg": "#f1eee7",
+        "fg": "#1b1b1b",
+        "accent": "#bd442b",
+        "image": [
+          0,
+          0,
+          1,
+          0.68
+        ],
+        "panel": [
+          0,
+          0.68,
+          1,
+          1
+        ],
+        "text": [
+          0.35,
+          0.71,
+          0.91,
+          0.85
+        ],
+        "show_chapter": false
+      }
+    },
+    {
+      "style_id": "warm_memory",
+      "suggested_local_font_filename": "msyh.ttc",
+      "asset_requirement": "photographic_background",
+      "layout_overrides": {
+        "bg": "#eee0c7",
+        "fg": "#302922",
+        "accent": "#8b654b",
+        "image": [
+          0,
+          0,
+          1,
+          0.69
+        ],
+        "panel": [
+          0.065,
+          0.6,
+          0.935,
+          0.94
+        ],
+        "text": [
+          0.1,
+          0.67,
+          0.9,
+          0.83
+        ],
+        "show_chapter": false
+      }
+    }
+  ],
+  "font_note": "Fonts are installed locally; no font files distributed.",
+  "capacity_note": "These are short-quote profiles. On a clear capacity error, explicitly select an existing long-text layout; render API does not silently switch styles.",
+  "source_quote_or_private_assets_included": false
+}

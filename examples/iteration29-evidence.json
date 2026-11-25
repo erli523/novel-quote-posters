@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "iteration": 29,
+  "date": "2026-11-25",
+  "timezone": "Asia/Shanghai",
+  "task_id": "full-novel-album-v1",
+  "goal_status": "active",
+  "main_contract_version": 2,
+  "complete_real_novel": {
+    "title": "阿Q正传",
+    "author": "鲁迅",
+    "chapters": 9,
+    "characters": 22138,
+    "same_source_actual_prior_processed_windows_reused": 4,
+    "txt_epub_occurrences_verified": 247,
+    "huozhe_full_book_claimed": false
+  },
+  "art": {
+    "reference": 1,
+    "independent_scene_roots": 10,
+    "material_edits": 2,
+    "wardrobe_correction": 1,
+    "new_successful_calls": 14,
+    "iteration_limit": 16,
+    "aggregate_calls": 28,
+    "aggregate_successes": 23,
+    "old_tool_unavailable": 5,
+    "unknown": 0,
+    "only_one_main_image_changed_by_costume_fix": [
+      "card005"
+    ]
+  },
+  "candidates": {
+    "main": 10,
+    "main_styles": 2,
+    "same_person_quote_styles": 6,
+    "all16_clean_without_approval": true,
+    "main_and_style_resume_reused": 16,
+    "no_native_calls_from_rerender": true
+  },
+  "checks": {
+    "unchanged_code_full_suite": 358,
+    "lint": "passed",
+    "implementation_snapshot_files": 61,
+    "code_stage_commit": "5f6ad299bbdc8d4bf536ebdc55d0382c2e17b403",
+    "code_stage_ci": {
+      "conclusion": "success",
+      "databaseId": 45558936982,
+      "headSha": "5f6ad299bbdc8d4bf536ebdc55d0382c2e17b403",
+      "status": "completed",
+      "url": "https://github.com/erli523/novel-quote-posters/actions/runs/45558936982"
+    },
+    "capacity_cases": 24,
+    "capacity_renders": 18,
+    "overcapacity_rejections": 6,
+    "explicit_long_layout_selections": 9,
+    "automatic_api_fallback_claimed": false,
+    "actual_full_and_phone_candidates_seen_by_ai": 16,
+    "style_pairs_ai_notes": 15,
+    "logical_review_views_hash_verified": 59,
+    "review_html_node_syntax": "passed",
+    "focused_retained_targets_unchanged": true,
+    "browser_interaction": "not_run"
+  },
+  "review_package": {
+    "entries": 104,
+    "bytes": 81563917,
+    "sha256": "108980979e0873590eb765ba78039338adf831772e5440e9bce4ab838f1270bf",
+    "local_payload_checks": "passed",
+    "independent_unzip_and16_parameter_reproductions": "same RGB pixels; local fonts verified, font files not distributed",
+    "whole_novel_included": false,
+    "exact_random_generation_reproducibility_claimed": false
+  },
+  "human_approval": false,
+  "actual_client_download": "not_observed",
+  "formal_export": "rejects missing human speaker approval",
+  "full_goal_complete": false,
+  "privacy": "Public only docs, reusable parameter examples and redacted statistics; no novel, image, raw prompt, proposal, receipt, host config or logs.",
+  "model": "unavailable",
+  "seed": "unavailable",
+  "cost": "unavailable"
+}

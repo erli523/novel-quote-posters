@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "docs/plans/full-novel-album-v1.md",
+      "sha256": "8b8de6e7380b9da32ff574a7edd5f7e3aca9fc94ad6a68438909a682d86ebe50",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/full-delivery-status.md",
+      "sha256": "3e77e4b6085a1a74eac797c4cf0f3344dfe8099c3b9d3dc925c2fb255519113c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "23374a461f428ec8f5ff98a2d78254dd1b7b3368cf9ee8bfa1f4a9c9f6366099",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "0d955d0193076cdf7498c25f605e2120232bb9e5b70f5d25ffa82e5cda1c4721",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/style-samples.md",
+      "sha256": "3d7bce3c6593cda7edb8d0b7821f50d127e0aa53f62601bb5162ea3f7a565f62",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/compact-style-profiles.json",
+      "sha256": "be88d2f91ed90541074ce7ed943cd7124af422eac7163fd21ced7d68084cf92f",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration29-evidence.json",
+      "sha256": "eaae67d2d55b7e64631818317be352703341b6319bf07afdbcd99c52b7d69c93",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}
