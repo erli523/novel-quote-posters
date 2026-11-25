@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "docs/plans/source-driven-composition-v1.md",
+      "sha256": "35f8ff83add9ebc09b0911319150ce4ca5be9d150b9eedbd9e22facb05a71adc",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/full-novel-album-v1.md",
+      "sha256": "4d610485c78dec52133d0fa95ffc21ce9b5bdd2f2021ed83787c8c3cc32429fc",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/full-delivery-status.md",
+      "sha256": "5dc14a1c5cf6bb398f1d6a59894daa558c6ba30ab93d5a282f111c06fca4dbd9",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "c8ef7858f744560ab7af6cbf412cf5a4107716522ad2ca385c0c6d70ec01de7c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "cccc8139a86790190b4f679cf6f4e4d8453fbae661b5f9a527603079fc9088b5",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration30-evidence.json",
+      "sha256": "a2adf17ac7cc5cf3070f3e3ea6c9870163682955d22cb42d25ad8c5a1e9a05d4",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

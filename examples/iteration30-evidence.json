@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "iteration": 30,
+  "date": "2026-11-25",
+  "timezone": "Asia/Shanghai",
+  "user_feedback": "Rejected repetitive character portrayal; requested source-grounded composition and continued work",
+  "ten_contexts_reaudited": 10,
+  "trial_requests": 3,
+  "trial_succeeded": 2,
+  "trial_unknown": 1,
+  "blind_retry": false,
+  "main_images_revised": 2,
+  "remaining_main_revisions": 8,
+  "old_six_styles": "historical; visual rework pending",
+  "old_full_album_accepted": false,
+  "same_source_quote_texts_unchanged": true,
+  "main_rendered": 2,
+  "main_reused": 8,
+  "resume_reused": 10,
+  "human_approval": false,
+  "actual_client_download": "not_observed",
+  "aq_budget": {
+    "previous_limit": 16,
+    "current_limit": 20,
+    "previous_calls_preserved": 14,
+    "current_used": 17,
+    "successes": 16,
+    "unknown": 1
+  },
+  "aggregate": {
+    "calls": 31,
+    "successes": 25,
+    "old_tool_unavailable": 5,
+    "unknown": 1
+  },
+  "package": {
+    "sha256": "edfcb864b3eaf4a286ee21a6813da8a82e3103ea6074bfc1d507734f3a760989",
+    "bytes": 14338494,
+    "entries": 19,
+    "all_payload_hashes_verified": true,
+    "posters": 2,
+    "human_approval": false,
+    "actual_client_download": "not_observed"
+  },
+  "implementation_unchanged_files": 61,
+  "last_matching_full_suite": 358,
+  "full_goal_complete": false,
+  "privacy": "No actual quotes, novel contexts, images, raw prompts, receipts, local config or logs published",
+  "model": "unavailable",
+  "seed": "unavailable",
+  "cost": "unavailable"
+}
