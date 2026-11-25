@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "eb2400815be1d28da9b5810a9d7b471168380587bb923d7607c42f880c220295",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-image-demo.md",
+      "sha256": "a7b07defe4185d3debb7bd505705591eb92f38dfc1bc28bee3ce5431675cc682",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "3008700f92ab2dee2fd65c4b323ba95791deb541c856260db7834cc48266b8b0",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "b747d5d0dca8d42580a12921a6d7ddb88935ab1e0b662edc500540989c00a110",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/user-visual-rework-v1.md",
+      "sha256": "94592ef837fcf0b06aad363f7bdc169b489abe6330b7f461c19f739d7da17b5c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration26-evidence.json",
+      "sha256": "7e0266efe3f1adbff9f2db14414a14625f032f5b29bf00b469cfa638ca9774fa",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

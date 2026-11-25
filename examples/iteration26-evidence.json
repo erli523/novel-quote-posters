@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "iteration": 26,
+  "date": "2026-11-25",
+  "timezone": "Asia/Shanghai",
+  "task_id": "user-visual-rework-v1",
+  "contract_version": 2,
+  "main_contract_version": 7,
+  "trigger": "Actual human rejection of four layouts and AI-like face; warm direction to revise.",
+  "authorization": "User approved added native generation and lifted original character-budget constraint; this work unit executed two.",
+  "image_calls_added": 2,
+  "new_calls_succeeded": 2,
+  "budget": {
+    "occupied": 12,
+    "successes": 7,
+    "historical_tool_unavailable": 5,
+    "unknown": 0,
+    "old_calls_retained": 10,
+    "iteration_allocated_cap": 12,
+    "allocation": {
+      "reference": 5,
+      "background": 3,
+      "edit": 1,
+      "alternative": 2,
+      "unclassified": 1
+    }
+  },
+  "artifacts": {
+    "new_reference": 1,
+    "new_reference_guided_station": 1,
+    "new_warm_layouts": 2,
+    "zip_entries": 11,
+    "zip_sha256": "af25a5aad7bffb0dc76fb4d6927f3a6c3a77952c65d54174f22b752a90003b86",
+    "new_six_styles_complete": false
+  },
+  "checks": {
+    "exact_text": true,
+    "dimensions_and_text_bounds": true,
+    "image_receipt_and_zip_hashes": true,
+    "actual_full_and_phone_images_viewed_by_ai": true,
+    "code_modified": false,
+    "full_suite_rerun": false,
+    "local_preflight_failures_corrected_before_tool": true
+  },
+  "human_approval_count": 0,
+  "actual_client_download": "not_observed",
+  "full_v1_passed": false,
+  "privacy": "Only this redacted summary and approved project docs are public; images, source proposals, raw logs, local configs, receipts remain private.",
+  "model_version": "unavailable",
+  "seed": "unavailable",
+  "cost": "unavailable"
+}
