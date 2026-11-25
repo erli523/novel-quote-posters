@@ -5,7 +5,7 @@ import math
 from PIL import ImageColor
 
 LAYOUT_KEYS = ("bg", "fg", "accent", "image", "panel", "text",
-               "image_fit", "max_crop", "image_anchor")
+               "image_fit", "max_crop", "image_anchor", "show_chapter")
 
 
 def _number(value):
@@ -20,7 +20,11 @@ def normalize_layout_overrides(value: dict | None) -> dict:
         raise ValueError("layout overrides contain unsupported fields")
     result = {}
     for key, item in value.items():
-        if key in {"bg", "fg", "accent"}:
+        if key == "show_chapter":
+            if type(item) is not bool:
+                raise ValueError("show_chapter must be a boolean")
+            result[key] = item
+        elif key in {"bg", "fg", "accent"}:
             if not isinstance(item, str):
                 raise ValueError("layout color must be an opaque RGB string")
             try:

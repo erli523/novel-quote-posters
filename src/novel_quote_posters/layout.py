@@ -31,11 +31,11 @@ CLAUSE_END = set("，。！？；：")
 CLOSING_QUOTES = set("”’」』）》】〉)]}")
 
 
-def _clause_boundary(text: str, end: int) -> bool:
+def _clause_boundary(text: str, end: int, punctuation=CLAUSE_END) -> bool:
     index = end-1
     while index >= 0 and text[index] in CLOSING_QUOTES:
         index -= 1
-    return index >= 0 and text[index] in CLAUSE_END
+    return index >= 0 and text[index] in punctuation
 
 
 def _inside_ascii_word(text: str, end: int) -> bool:
@@ -111,7 +111,8 @@ def wrap(text: str, font: ImageFont.FreeTypeFont, width: int, *, prefer_clauses:
                     raise ValueError("textbox too narrow for punctuation")
                 end = legal[-1]
                 clauses = [i for i in legal if prefer_clauses and _clause_boundary(paragraph, i)
-                           and font.getlength(paragraph[start:i]) >= width*.5]
+                           and (font.getlength(paragraph[start:i]) >= width*.5
+                                or _clause_boundary(paragraph, i, "。！？"))]
                 if prefer_clauses and clauses:
                     end = clauses[-1]
                 elif _inside_ascii_word(paragraph, end):
@@ -203,7 +204,8 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
         raise ValueError("text box is outside canvas")
     font, lines, step = fit(text, font_path, bounds[2]-bounds[0], bounds[3]-bounds[1],
                             max(36, round(36 * scale)), round(64 * scale))
-    glyphs(font_path, character + title + chapter + "待审核用户改写人物语录")
+    show_chapter = style.get("show_chapter", True)
+    glyphs(font_path, character + title + (chapter if show_chapter else "") + "待审核用户改写人物语录")
     records = []
     for index, line in enumerate(lines):
         xy = (bounds[0], bounds[1] + index * step)
@@ -223,7 +225,7 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
     footer_box = draw.textbbox((label_x, label_y), footer, font=footer_font, anchor="lt")
     draw.text((label_x, label_y), footer, font=footer_font, fill=fg, anchor="lt")
     auxiliary = {"footer": {"text": footer, "font_size": footer_font.size, "bbox": footer_box}}
-    if chapter:
+    if chapter and show_chapter:
         header = chapter
         if small.getlength(header) > .82 * width:
             raise ValueError("chapter title too long; supply a shorter display title")
@@ -259,7 +261,7 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
               "title": title, "draft": draft, "rewrite": rewrite, "font_size": font.size,
               "text_box": bounds, "lines": records, "style": style,
               "visual_review": "pending", "preview": preview.name, "image_fit": image_fit,
-              "line_break_policy": "punctuation-first-1", "auxiliary_text": auxiliary,
+              "line_break_policy": "punctuation-first-2", "auxiliary_text": auxiliary,
               "line_break_fallback": lines != wrap(text, font, bounds[2]-bounds[0])}
     save_json(output.with_suffix(".layout.json"), report)
     return report

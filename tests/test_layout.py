@@ -122,6 +122,16 @@ def test_fit_can_reduce_size_to_keep_two_whole_clauses(chinese_font):
     assert lines == ["有些告别没有声音，", "却会在往后的每一场雨里响起。"]
 
 
+def test_short_complete_question_keeps_following_sentence_whole(chinese_font):
+    font = ImageFont.truetype(str(chinese_font), 64)
+    text = "路還在嗎？你再抬頭看看山那邊？走……"
+    width = int(font.getlength("路" * 14))
+    lines = wrap(text, font, width)
+    assert lines == ["路還在嗎？", "你再抬頭看看山那邊？走……"]
+    assert "".join(lines) == text
+    assert all(font.getlength(line) <= width for line in lines)
+
+
 def test_quote_and_bracket_clusters_never_start_generated_lines(chinese_font):
     font = ImageFont.truetype(str(chinese_font), 48)
     text = "“他说（路还在！）”甲说：“好。”"
@@ -171,7 +181,7 @@ def test_auxiliary_text_is_recorded_at_readable_size_and_header_is_not_truncated
                      title="雾山来信", chapter=chapter, font_path=chinese_font)
     assert report["auxiliary_text"]["header"]["text"] == chapter
     assert report["auxiliary_text"]["footer"]["font_size"] == 36
-    assert report["line_break_policy"] == "punctuation-first-1"
+    assert report["line_break_policy"] == "punctuation-first-2"
     for label in report["auxiliary_text"].values():
         left, top, right, bottom = label["bbox"]
         assert 0 <= left <= right <= 1080 and 0 <= top <= bottom <= 1440

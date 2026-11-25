@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "iteration": 28,
+  "date": "2026-11-25",
+  "timezone": "Asia/Shanghai",
+  "task_id": "full-novel-album-v1",
+  "full_goal_preserved": true,
+  "goal_status": "active",
+  "novel": {
+    "title": "阿Q正传",
+    "chapters": 9,
+    "characters": 22138,
+    "actual_prior_processed_windows_reused": 4,
+    "source_sha256": "9394e9f0759e985d57cb8727198937b6b9cd37f1015654de1cbd28e1a1df537c",
+    "txt_epub_quote_occurrences_verified": 247,
+    "epub": "derived, not independent download",
+    "epubcheck": "not_run",
+    "huozhe": "short excerpt only"
+  },
+  "rendering": {
+    "show_chapter": "strict boolean persisted through edits/render/resume/ZIP; source retained",
+    "line_break_policy": "punctuation-first-2",
+    "actual_short_question_bad_break_fixed": true
+  },
+  "tests": {
+    "full_suite": 358,
+    "lint": "passed",
+    "snapshot_files_verified": 61,
+    "prior_failures_preserved": true
+  },
+  "native_art": {
+    "reference": 1,
+    "independent_backgrounds": 10,
+    "new_run_calls": 11,
+    "iteration_limit": 16,
+    "new_successes": 11,
+    "aggregate_calls": 25,
+    "aggregate_successes": 20,
+    "historical_tool_unavailable": 5,
+    "unknown": 0
+  },
+  "delivery": {
+    "posters": 10,
+    "styles": 2,
+    "size": [
+      1080,
+      1440
+    ],
+    "sRGB": true,
+    "phone_preview": [
+      360,
+      480
+    ],
+    "no_change_reused": 10,
+    "render_image_calls": 0,
+    "zip_entries": 39,
+    "zip_sha256": "514a8f96fcac50f095536c7930fab880b568eef9d855079f4baa3fc9343d4ab9",
+    "zip_payloads_verified": 38,
+    "six_styles": "not_finished"
+  },
+  "human_approvals": 0,
+  "actual_client_download": "not_observed",
+  "formal_export": "clean candidate rejected without human speaker approval; original draft restored exactly",
+  "full_v1_passed": false,
+  "privacy": "Only code, synthetic tests, docs and redacted statistics; no raw novel, proposal, image, prompt, receipt or config published.",
+  "model": "unavailable",
+  "seed": "unavailable",
+  "cost": "unavailable"
+}

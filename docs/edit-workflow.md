@@ -54,7 +54,7 @@ set-display-text 使用 original 时必须与 quote_exact 完全相同。润色�
 {"type":"set-layout","card_id":"card003","overrides":{"image":[0.18,0.39,0.94,0.87],"image_fit":"cover","image_anchor":[0.5,0.05]}}
 ```
 
-每次整体替换overrides，未列字段回到当前模板默认；不是与旧覆盖合并。用`"overrides":{}`恢复默认。只接受bg/fg/accent、image/panel/text、image_fit/max_crop/image_anchor九项，颜色规范为不透明RGB，矩形/锚点为归一化坐标，非法/未知/非有限值整批拒绝。切换风格会清除旧覆盖。
+每次整体替换overrides，未列字段回到当前模板默认；不是与旧覆盖合并。用`"overrides":{}`恢复默认。只接受bg/fg/accent、image/panel/text、image_fit/max_crop/image_anchor、show_chapter十项，颜色规范为不透明RGB，矩形/锚点为归一化坐标，非法/未知/非有限值整批拒绝。切换风格会清除旧覆盖。
 
 本次采纳的正文安全区为横向80/1080至1-80/1080、纵向0.15～0.875，文字框必须在不透明面板内，实色正文字/面板对比至少4.5:1。这是工程选择，不是平台规定，也不检测人脸。合法参数仍须render检查字形/容量，再由用户看实际整图/手机图。长句先获得模板自适应面积，再覆盖明确字段，单改锚点不会取消长句适配。
 
@@ -63,3 +63,5 @@ set-display-text 使用 original 时必须与 quote_exact 完全相同。润色�
 六风格补充样张使用独立[审阅记录](style-review.md)。单卡修改与补充样张分别计算实际依赖，不能把六风格通过转成主卡或整组批准；后续人工判断有快照，旧记录不能覆盖新否决。
 
 主审核请求现为schema 4，逐原句/单卡/整组决策版本独立保存在review-decisions.json。显示编辑、取景或重排变为pending也不清除历史版本；恢复完全相同的内容后，旧已被后来判断取代的批准不能覆盖。真正需要改判断时生成新审核页，勿修改旧快照字段。
+
+无章节图文示例：`{"type":"set-layout","card_id":"card001","overrides":{"show_chapter":false}}`。该布尔项只控制画面标签，原句来源章节、审核上下文及导出出处仍保留；字符串或数字拒绝。可与image/panel/text等紧凑布局参数一并保存，渲染缓存、修改回退和ZIP均携带该选择。设置true或用空覆盖恢复模板可重新显示章节，且需要重新视觉审阅。

@@ -23,7 +23,7 @@ def test_archive_is_portable_deterministic_and_inventory_covers_every_payload(po
             assert card["layout_report"] in archive.namelist()
             report = json.loads(archive.read(card["layout_report"]))
             assert "font" not in report["render_options"]
-            assert report["line_break_policy"] == "punctuation-first-1"
+            assert report["line_break_policy"] == "punctuation-first-2"
             assert report["auxiliary_text"]["footer"]["font_size"] == 36
             assert card["background"]["available_in"] == "original_run"
         assert {row["path"] for row in result["files"]} | {"manifest.json"} == set(archive.namelist())

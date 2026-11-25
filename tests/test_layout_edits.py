@@ -67,6 +67,30 @@ def test_equivalent_color_is_canonical_noop_and_preserves_current_render(poster_
     assert (poster_run / "cards.json").read_bytes() == before
 
 
+def test_hidden_chapter_survives_render_resume_and_export_without_erasing_source(
+        poster_run, chinese_font, tmp_path):
+    quotes_before = (poster_run / "quotes.json").read_bytes()
+    edits.apply_edits(poster_run, plan(poster_run, {"show_chapter": False}))
+    render_cards(poster_run, chinese_font)
+    assert render_cards(poster_run, chinese_font)["reused"] == 2
+    export_bundle(poster_run, tmp_path / "hidden", draft=True)
+    with zipfile.ZipFile(tmp_path / "hidden/draft-review.zip") as archive:
+        card = json.loads(archive.read("cards.json"))[0]
+        report = json.loads(archive.read(card["layout_report"]))
+        assert card["layout_overrides"]["show_chapter"] is False
+        assert report["style"]["show_chapter"] is False
+        assert "header" not in report["auxiliary_text"]
+    assert (poster_run / "quotes.json").read_bytes() == quotes_before
+    assert load_json(poster_run / "quotes.json")[0]["source"]["chapter"]
+    edits.apply_edits(poster_run, plan(poster_run, {"show_chapter": True}))
+    render_cards(poster_run, chinese_font)
+    card = load_json(poster_run / "cards.json")[0]
+    report = load_json((poster_run / card["poster"]).with_suffix(".layout.json"))
+    assert report["auxiliary_text"]["header"]["text"]
+    with Ledger(poster_run / ".state/ledger.sqlite") as ledger:
+        assert not ledger.budget()["calls"]
+
+
 @pytest.mark.parametrize("overrides", [None, [], {"font_path": "private"},
     {"image": [-.1, 0, 1, 1]}, {"image": [0, 0, 2, 1]}, {"image": [0, 0, 0, 1]},
     {"image": [0, 0, float("nan"), 1]}, {"panel": [False, 0, 1, 1]},
@@ -74,7 +98,8 @@ def test_equivalent_color_is_canonical_noop_and_preserves_current_render(poster_
     {"text": [.1, .6, .9, .9]}, {"panel": [0, .7, 1, 1]},
     {"image_fit": []}, {"max_crop": 1}, {"max_crop": True},
     {"image_anchor": [.5, 2]}, {"image_anchor": [float("inf"), .5]},
-    {"bg": "rgba(0,0,0,0.5)"}, {"fg": "#ffffff", "bg": "#ffffff"}])
+    {"bg": "rgba(0,0,0,0.5)"}, {"fg": "#ffffff", "bg": "#ffffff"},
+    {"show_chapter": "false"}, {"show_chapter": 0}, {"show_chapter": None}])
 def test_invalid_layout_is_rejected_without_any_document_change(poster_run, overrides):
     before = {name: (poster_run / name).read_bytes() for name in edits.DOCUMENTS}
     with pytest.raises(ValueError):

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "src/novel_quote_posters/layout.py",
+      "sha256": "e8c3dbe66de6e274ca4cd4875279672ee34f438937c1c0009b189db302c9df96",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "src/novel_quote_posters/layout_options.py",
+      "sha256": "bb878951fa45633fb4e506d207910a01d63ae842590b0bad18f709ccf70c431c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_layout.py",
+      "sha256": "06840564a0f1ae4dfdbafcd282f94edee5195bf933119b730093a112d2d7d37d",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_layout_edits.py",
+      "sha256": "eff3a61811aac742772516aabe7b5a71aaa2a292502df312ab5b4b030ec5e002",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_bundles.py",
+      "sha256": "81845b802968f3ae1c64617b57887d9dfbfa07aa90546b1505397c18c02aedc4",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/edit-workflow.md",
+      "sha256": "fd149a20da54e8d76ba3bb948a62f2d5ebe0a04fb4b823e8cc1bab429aef44a1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/usage.md",
+      "sha256": "bdfab4b4de15b99a1596e488a7f4d94ba816d54f3be5261d091b46bbcf824465",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/full-novel-album-v1.md",
+      "sha256": "4c3ad6f24c6d59996a1a180bf4cb0ee9a215bc96464054f091c26941328554b1",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "0bb7cb7921cb407e6adc1beefdd55b3670ce3e3bb888b7cde2b1dbd89af6c957",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "df3576eb7675117f0017480d26f5876a19f102d1372a4f2553f8d81201ff2925",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-novel-tests.md",
+      "sha256": "40ed6c335907fb7248b48188371447fab7d4e2ca8517bf2f6822a939a6130af2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration28-evidence.json",
+      "sha256": "7716ddf943ac8010d65374bf82199f054fc9e74175961824a51a812252326b67",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}
