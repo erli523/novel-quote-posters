@@ -222,16 +222,17 @@ def compose(background: Path, output: Path, *, text: str, character: str, title:
     draw.line((label_x, label_y-28*scale, width-label_x, label_y-28*scale), fill=accent, width=2)
     footer_box = draw.textbbox((label_x, label_y), footer, font=footer_font, anchor="lt")
     draw.text((label_x, label_y), footer, font=footer_font, fill=fg, anchor="lt")
-    header = chapter
-    if small.getlength(header) > .82 * width:
-        raise ValueError("chapter title too long; supply a shorter display title")
-    header_xy = (label_x, round(.09*height))
-    header_box = draw.textbbox(header_xy, header, font=small, anchor="lt")
-    draw.rectangle((header_box[0]-8, header_box[1]-8, header_box[2]+8, header_box[3]+8),
-                   fill=style["bg"])
-    draw.text(header_xy, header, font=small, fill=accent, anchor="lt")
-    auxiliary = {"footer": {"text": footer, "font_size": footer_font.size, "bbox": footer_box},
-                 "header": {"text": header, "font_size": small.size, "bbox": header_box}}
+    auxiliary = {"footer": {"text": footer, "font_size": footer_font.size, "bbox": footer_box}}
+    if chapter:
+        header = chapter
+        if small.getlength(header) > .82 * width:
+            raise ValueError("chapter title too long; supply a shorter display title")
+        header_xy = (label_x, round(.09*height))
+        header_box = draw.textbbox(header_xy, header, font=small, anchor="lt")
+        draw.rectangle((header_box[0]-8, header_box[1]-8, header_box[2]+8, header_box[3]+8),
+                       fill=style["bg"])
+        draw.text(header_xy, header, font=small, fill=accent, anchor="lt")
+        auxiliary["header"] = {"text": header, "font_size": small.size, "bbox": header_box}
     labels = []
     if draft:
         labels.append("待审核")

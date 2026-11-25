@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "iteration": 27,
+  "date": "2026-11-25",
+  "timezone": "Asia/Shanghai",
+  "task_id": "huozhe-compact-v1",
+  "contract_version": 2,
+  "source_scope": "19-character short excerpt from a real novel, verified against two public library reading sources; not a full-book read",
+  "source_urls": [
+    "https://www.sohu.com/a/142309283_480195",
+    "https://m.thepaper.cn/baijiahao_9726267"
+  ],
+  "source_text_published": false,
+  "user_feedback": "Preferred compact image/text; rejected chapter badge; explicitly requested this real-novel example. Not a blanket approval.",
+  "image_calls_added": 2,
+  "new_calls_succeeded": 2,
+  "new_run_calls": 2,
+  "historical_main_run_calls": 12,
+  "aggregate": {
+    "calls": 14,
+    "successes": 9,
+    "historical_tool_unavailable": 5,
+    "unknown": 0
+  },
+  "repair": "First image had insufficient headroom; preserved then made one targeted genuine reference edit.",
+  "layout": "Compact image/text, no chapter badge; source attribution retained. Empty chapter no longer paints a small opaque rectangle.",
+  "checks": {
+    "full_suite": 353,
+    "lint": "passed",
+    "full_suite_implementation_hash_matches": true,
+    "test_api_cleanup_followup": "related layout tests and lint",
+    "exact_quote_and_text_bounds": true,
+    "badge_removal_only_changed_original_badge_rectangle": true,
+    "zip_entries": 8,
+    "zip_sha256": "cc5fb2332696e34f792057eb289f3befa97c8b7453ed8f812731110f09b37b2e",
+    "zip_integrity": true,
+    "actual_full_and_phone_pixels_viewed_by_ai": true,
+    "layout_followup_tests": 56
+  },
+  "human_approval_count": 0,
+  "full_novel_read": false,
+  "actual_client_download": "not_observed",
+  "full_v1_passed": false,
+  "tool": "image_gen.imagegen",
+  "model": "unavailable",
+  "seed": "unavailable",
+  "cost": "unavailable",
+  "privacy": "No image, short excerpt text, raw prompt, local config, receipt or private logs published."
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "automated_screening",
+  "human_privacy_review": "pending",
+  "files": [
+    {
+      "path": "src/novel_quote_posters/layout.py",
+      "sha256": "1dc3dc9553da06c9931ddf2f55d28d712dc3132e8e87e2e27dbf0718e7d08935",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "tests/test_layout.py",
+      "sha256": "e6f8c062bddd6f14c5db2d489321e36beddeec624e0d3f548989f3ff02d6943a",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/huozhe-compact-v1.md",
+      "sha256": "3d536f13cd6624ddc2d0b8a592e23a0a0436aaa5361f078a6e0686e9358122e7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/plans/v1.md",
+      "sha256": "f618c8f79ed15a4ccb35e31fa3ced7307582eb277c4dca1b1d9a82551e78cecb",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-image-demo.md",
+      "sha256": "0e77aa3b56e3532e4c1d0e977bf1829989dea7e61a7967532b245b4378795cb7",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/real-novel-tests.md",
+      "sha256": "5b9ca198adb241fb0ddf33d5cb063854ccddd0a0653d663ad59d9e41de63dac2",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/progress.md",
+      "sha256": "377736e4405acb7002ac020b614ef4aadf9283aef0dfbac114b08ee35b5bb14c",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "docs/milestones/acceptance-status.md",
+      "sha256": "16cee5c07f917a6ae768434a7630247b0f44598083aeb0298a76375cd684bb25",
+      "category": "source_documentation_or_self_authored_fixture"
+    },
+    {
+      "path": "examples/iteration27-evidence.json",
+      "sha256": "570053cfa20bae9c84457e11ba75434dc9f9d739aa5781ef62750903304e9bd3",
+      "category": "source_documentation_or_self_authored_fixture"
+    }
+  ],
+  "findings": []
+}

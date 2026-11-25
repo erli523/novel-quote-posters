@@ -39,6 +39,21 @@ def test_oversized_text_rejects_instead_of_shrinking_forever(chinese_font):
         glyphs(chinese_font, chr(0x10FFFF))
 
 
+def test_empty_chapter_leaves_artwork_uncovered(tmp_path, chinese_font):
+    source = tmp_path / "synthetic.png"
+    color = (96, 112, 128)
+    Image.new("RGB", (1200, 900), color).save(source)
+    output = tmp_path / "without-chapter.png"
+    report = compose(source, output, text="山不会替你走路，但它会告诉你，路还在。",
+                     character="林澈", title="雾山来信", chapter="",
+                     font_path=chinese_font, style_id="warm_memory")
+    assert "header" not in report["auxiliary_text"]
+    assert report["auxiliary_text"]["footer"]["text"] == "林澈 · 《雾山来信》"
+    with Image.open(output) as image:
+        # An empty chapter formerly left a small opaque rectangle here.
+        assert image.crop((89, 122, 106, 139)).getextrema() == tuple((v, v) for v in color)
+
+
 @pytest.mark.parametrize("style", STYLES)
 @pytest.mark.parametrize("length", [70, 100])
 def test_long_sentence_capacity(tmp_path, chinese_font, style, length):
